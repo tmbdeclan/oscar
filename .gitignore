@@ -1,0 +1,21 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
+
+# Local runtime data
+data/*.sqlite
+data/*.sqlite-shm
+data/*.sqlite-wal
+raw_json/*
+!raw_json/.gitkeep
+
+# Generated exports
+output/
+*.xlsx
+
+# Streamlit local config
+.streamlit/secrets.toml
