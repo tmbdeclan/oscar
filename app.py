@@ -444,7 +444,18 @@ else:
 
     if geo_mode == "Interactive Vermont map":
         if len(municipal) and vt_geojson.get("features"):
-            map_data = municipal.copy()
+            map_towns = pd.DataFrame(
+                {"municipality": sorted(valid_towns)}
+            )
+            map_data = map_towns.merge(
+                municipal,
+                on="municipality",
+                how="left",
+            )
+            map_data[["amount", "records", "contributors"]] = (
+                map_data[["amount", "records", "contributors"]]
+                .fillna(0)
+            )
 
             fig = px.choropleth(
                 map_data,
@@ -452,6 +463,13 @@ else:
                 locations="municipality",
                 featureidkey="properties.JOIN_NAME",
                 color="amount",
+                color_continuous_scale=[
+                    [0.0, "#eef2f3"],
+                    [0.12, "#dce9e5"],
+                    [0.4, "#a9d4c1"],
+                    [0.7, "#71b596"],
+                    [1.0, "#3f8f72"],
+                ],
                 hover_name="municipality",
                 hover_data={
                     "amount": ":$,.0f",
@@ -460,6 +478,10 @@ else:
                     "municipality": False,
                 },
                 labels={"amount": "Contribution dollars"},
+            )
+            fig.update_traces(
+                marker_line_color="#ffffff",
+                marker_line_width=0.45,
             )
             fig.update_geos(
                 fitbounds="locations",
