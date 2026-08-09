@@ -2,12 +2,15 @@ from __future__ import annotations
 
 import io
 import json
+import hashlib
+import re
 import sqlite3
 from pathlib import Path
 
 import requests
 
 import pandas as pd
+import plotly.graph_objects as go
 import plotly.express as px
 import streamlit as st
 
@@ -19,6 +22,24 @@ VT_TOWNS_QUERY = (
     "FS_VCGI_OPENDATA_Boundary_BNDHASH_poly_towns_SP_v1/FeatureServer/0/query"
 )
 TOWN_ALIASES = HERE / "town_aliases.csv"
+ADDRESS_GEOCODES = HERE / "data" / "windsor_address_geocodes.csv"
+PO_BOX_INFERRED_PARCELS = (
+    HERE / "data" / "windsor_po_box_inferred_parcels.csv"
+)
+PO_BOX_RE = re.compile(
+    r"(^|\b)(P\.?\s*O\.?|POST\s+OFFICE|PO)\s*BOX\b|^P\.?O\.?BOX\b",
+    re.IGNORECASE,
+)
+CANDIDATE_GRADIENTS = [
+    ("#ffe2df", "#c1121f"),
+    ("#d9ecff", "#005f99"),
+    ("#e4f7dd", "#2d7d46"),
+    ("#fff1c7", "#b77900"),
+    ("#eadcff", "#6a3bc2"),
+    ("#d8f5f0", "#087f8c"),
+    ("#ffe0ef", "#b5176f"),
+    ("#e6e6e6", "#4b5563"),
+]
 
 st.set_page_config(
     page_title="Windsor County Campaign Finance",
@@ -43,7 +64,7 @@ def load_vermont_towns():
     """Load official VCGI town polygons as GeoJSON."""
     params = {
         "where": "1=1",
-        "outFields": "TOWNNAME,TOWNNAMEMC,TOWNGEOID",
+        "outFields": "TOWNNAME,TOWNNAMEMC,TOWNGEOID,CNTY",
         "returnGeometry": "true",
         "outSR": "4326",
         "f": "geojson",
@@ -64,7 +85,7 @@ def load_vermont_towns():
 
 
 @st.cache_data(show_spinner=False)
-def load_town_aliases(path: str):
+def load_town_aliases(path: str, modified_at: float):
     alias_path = Path(path)
     if not alias_path.exists():
         return {}
@@ -89,6 +110,135 @@ def load_town_aliases(path: str):
 
 def normalize_place(value: str) -> str:
     return " ".join(str(value or "").strip().upper().split())
+
+
+def normalize_address_part(value: str) -> str:
+    return normalize_place(value)
+
+
+def address_key(*parts: str) -> str:
+    normalized = "|".join(normalize_address_part(part) for part in parts)
+    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:20]
+
+
+def raw_json_field(payload: str, field: str) -> str:
+    if not payload:
+        return ""
+    try:
+        value = json.loads(payload).get(field)
+    except (TypeError, ValueError, json.JSONDecodeError):
+        return ""
+    return "" if value is None else str(value)
+
+
+def is_physical_address(address_line1: str) -> bool:
+    address = str(address_line1 or "").strip()
+    return bool(address) and not PO_BOX_RE.search(address)
+
+
+def is_po_box_address(address_line1: str) -> bool:
+    return bool(PO_BOX_RE.search(str(address_line1 or "").strip()))
+
+
+def summarize_values(values, limit: int = 6) -> str:
+    cleaned = sorted(
+        {
+            str(value).strip()
+            for value in values
+            if str(value or "").strip()
+        }
+    )
+    if len(cleaned) <= limit:
+        return ", ".join(cleaned)
+    shown = ", ".join(cleaned[:limit])
+    return f"{shown}, +{len(cleaned) - limit} more"
+
+
+def hex_to_rgb(value: str) -> tuple[int, int, int]:
+    value = value.lstrip("#")
+    return tuple(int(value[i:i + 2], 16) for i in (0, 2, 4))
+
+
+def rgb_to_hex(rgb: tuple[int, int, int]) -> str:
+    return "#" + "".join(f"{channel:02x}" for channel in rgb)
+
+
+def blend_hex(start: str, end: str, fraction: float) -> str:
+    start_rgb = hex_to_rgb(start)
+    end_rgb = hex_to_rgb(end)
+    fraction = max(0.0, min(1.0, float(fraction or 0)))
+    return rgb_to_hex(
+        tuple(
+            round(start_rgb[i] + (end_rgb[i] - start_rgb[i]) * fraction)
+            for i in range(3)
+        )
+    )
+
+
+def gradient_values(
+    values: pd.Series,
+    start: str,
+    end: str,
+) -> list[str]:
+    numeric = pd.to_numeric(values, errors="coerce").fillna(0)
+    max_value = float(numeric.max()) if len(numeric) else 0.0
+    if max_value <= 0:
+        return [start for _ in numeric]
+    return [
+        blend_hex(start, end, value / max_value)
+        for value in numeric
+    ]
+
+
+def scale_marker_sizes(
+    values: pd.Series,
+    minimum: float = 11,
+    maximum: float = 34,
+) -> list[float]:
+    numeric = pd.to_numeric(values, errors="coerce").fillna(0)
+    max_value = float(numeric.max()) if len(numeric) else 0.0
+    if max_value <= 0:
+        return [minimum for _ in numeric]
+    return [
+        minimum + (maximum - minimum) * (value / max_value) ** 0.5
+        for value in numeric
+    ]
+
+
+@st.cache_data(show_spinner=False)
+def load_windsor_address_geocodes(path: str, modified_at: float):
+    geocode_path = Path(path)
+    if not geocode_path.exists():
+        return pd.DataFrame()
+
+    geocodes = pd.read_csv(geocode_path).fillna("")
+    for col in ["latitude", "longitude", "amount", "records"]:
+        if col in geocodes.columns:
+            geocodes[col] = pd.to_numeric(geocodes[col], errors="coerce")
+    if "address_key" in geocodes.columns:
+        geocodes = geocodes.drop_duplicates("address_key", keep="first")
+    return geocodes
+
+
+@st.cache_data(show_spinner=False)
+def load_windsor_po_box_inferred_parcels(path: str, modified_at: float):
+    inferred_path = Path(path)
+    if not inferred_path.exists():
+        return pd.DataFrame()
+
+    inferred = pd.read_csv(inferred_path).fillna("")
+    for col in [
+        "latitude",
+        "longitude",
+        "amount",
+        "records",
+        "candidate_parcel_matches",
+    ]:
+        if col in inferred.columns:
+            inferred[col] = pd.to_numeric(inferred[col], errors="coerce")
+    if "po_box_key" in inferred.columns:
+        inferred = inferred.drop_duplicates("po_box_key", keep="first")
+    return inferred
 
 
 def attach_vermont_municipality(
@@ -137,7 +287,8 @@ def load_data(db_path: str):
             t.report_name,
             t.election_cycle,
             t.transaction_id,
-            t.transaction_guid
+            t.transaction_guid,
+            t.raw_json
         FROM transactions t
         LEFT JOIN candidates c ON c.roster_name = t.roster_name
         WHERE t.kind = 'contributions'
@@ -172,10 +323,17 @@ def load_data(db_path: str):
         "roster_name", "office", "district", "profile_status",
         "verification_status", "verified_name", "name", "city", "state",
         "zip", "subtype", "report_name", "election_cycle",
-        "transaction_id", "transaction_guid"
+        "transaction_id", "transaction_guid", "raw_json"
     ]:
         if col in contrib.columns:
             contrib[col] = contrib[col].fillna("").astype(str)
+
+    contrib["address_line1"] = contrib["raw_json"].map(
+        lambda payload: raw_json_field(payload, "addressLine1")
+    )
+    contrib["address_line2"] = contrib["raw_json"].map(
+        lambda payload: raw_json_field(payload, "addressLine2")
+    )
 
     for col in status.columns:
         status[col] = status[col].fillna("").astype(str)
@@ -330,7 +488,12 @@ with right:
 st.subheader("Geographic breakdown")
 geo_mode = st.radio(
     "Geographic view",
-    ["Interactive Vermont map", "By state", "Vermont town table"],
+    [
+        "Interactive Vermont map",
+        "Windsor address points",
+        "By state",
+        "Vermont town table",
+    ],
     horizontal=True,
 )
 
@@ -396,7 +559,18 @@ else:
         for feature in vt_geojson.get("features", [])
         if normalize_place(feature.get("properties", {}).get("JOIN_NAME", ""))
     }
-    aliases = load_town_aliases(str(TOWN_ALIASES))
+    windsor_towns = {
+        normalize_place(feature.get("properties", {}).get("JOIN_NAME", ""))
+        for feature in vt_geojson.get("features", [])
+        if feature.get("properties", {}).get("CNTY") == 27
+        and normalize_place(feature.get("properties", {}).get("JOIN_NAME", ""))
+    }
+    alias_modified_at = (
+        TOWN_ALIASES.stat().st_mtime
+        if TOWN_ALIASES.exists()
+        else 0.0
+    )
+    aliases = load_town_aliases(str(TOWN_ALIASES), alias_modified_at)
 
     vt = filtered[filtered["state"] == "VT"].copy()
     vt = attach_vermont_municipality(vt, valid_towns, aliases)
@@ -417,8 +591,17 @@ else:
         municipal["share_of_mapped_vt"] = (
             municipal["amount"] / municipal["amount"].sum()
         )
+        municipal["average_contribution"] = (
+            municipal["amount"] / municipal["records"]
+        )
+        municipal["amount_rank"] = municipal["amount"].rank(
+            method="dense",
+            ascending=False,
+        ).astype(int)
     else:
         municipal["share_of_mapped_vt"] = pd.Series(dtype=float)
+        municipal["average_contribution"] = pd.Series(dtype=float)
+        municipal["amount_rank"] = pd.Series(dtype=int)
 
     mapped_amount = float(matched["amount"].sum())
     unmatched_amount = float(unmatched["amount"].sum())
@@ -432,7 +615,7 @@ else:
         f"{(mapped_amount / vt_amount if vt_amount else 0):.0%}",
     )
 
-    town_options = ["All mapped towns"] + municipal["municipality"].tolist()
+    town_options = ["All towns"] + sorted(valid_towns)
     selected_town = st.selectbox(
         "Inspect a Vermont municipality",
         town_options,
@@ -456,46 +639,1031 @@ else:
                 map_data[["amount", "records", "contributors"]]
                 .fillna(0)
             )
+            map_data["share_of_mapped_vt"] = (
+                map_data["share_of_mapped_vt"].fillna(0)
+            )
+            map_data["average_contribution"] = (
+                map_data["average_contribution"].fillna(0)
+            )
+            map_data["amount_rank"] = (
+                map_data["amount_rank"].fillna(0).astype(int)
+            )
+
+            map_metric_options = {
+                "Total dollars": {
+                    "column": "amount",
+                    "label": "Contribution dollars",
+                    "hover_format": ":$,.0f",
+                    "tick_format": "$,.0f",
+                },
+                "Share of mapped Vermont dollars": {
+                    "column": "share_of_mapped_vt",
+                    "label": "Share of mapped VT",
+                    "hover_format": ":.1%",
+                    "tick_format": ".1%",
+                },
+                "Contribution records": {
+                    "column": "records",
+                    "label": "Contribution records",
+                    "hover_format": ":,",
+                    "tick_format": ",",
+                },
+                "Average contribution": {
+                    "column": "average_contribution",
+                    "label": "Average contribution",
+                    "hover_format": ":$,.0f",
+                    "tick_format": "$,.0f",
+                },
+            }
+            map_metric = st.selectbox(
+                "Map concentration metric",
+                list(map_metric_options),
+            )
+            map_metric_config = map_metric_options[map_metric]
+            map_color_column = map_metric_config["column"]
+            map_color_label = map_metric_config["label"]
+            map_hover_data = {
+                "amount": ":$,.0f",
+                "share_of_mapped_vt": ":.1%",
+                "records": ":,",
+                "contributors": ":,",
+                "average_contribution": ":$,.0f",
+                "amount_rank": ":,",
+                "municipality": False,
+            }
+            map_hover_data[map_color_column] = (
+                map_metric_config["hover_format"]
+            )
 
             fig = px.choropleth(
                 map_data,
                 geojson=vt_geojson,
                 locations="municipality",
                 featureidkey="properties.JOIN_NAME",
-                color="amount",
+                color=map_color_column,
                 color_continuous_scale=[
-                    [0.0, "#eef2f3"],
-                    [0.12, "#dce9e5"],
-                    [0.4, "#a9d4c1"],
-                    [0.7, "#71b596"],
-                    [1.0, "#3f8f72"],
+                    [0.0, "#f4f6f6"],
+                    [0.08, "#e4ece9"],
+                    [0.28, "#c5ddd2"],
+                    [0.58, "#8dbfa5"],
+                    [1.0, "#4f8f78"],
                 ],
                 hover_name="municipality",
-                hover_data={
-                    "amount": ":$,.0f",
-                    "records": ":,",
-                    "contributors": ":,",
-                    "municipality": False,
-                },
-                labels={"amount": "Contribution dollars"},
+                hover_data=map_hover_data,
+                labels={map_color_column: map_color_label},
             )
             fig.update_traces(
-                marker_line_color="#ffffff",
-                marker_line_width=0.45,
+                marker_line_color="#4f5d64",
+                marker_line_width=0.95,
             )
             fig.update_geos(
                 fitbounds="locations",
                 visible=False,
+                bgcolor="rgba(0,0,0,0)",
             )
             fig.update_layout(
                 height=720,
                 margin=dict(l=0, r=0, t=10, b=0),
+                coloraxis_colorbar=dict(
+                    title=map_color_label,
+                    tickformat=map_metric_config["tick_format"],
+                ),
             )
             st.plotly_chart(fig, width="stretch")
         else:
             st.info("No mapped Vermont contributions match the filters.")
 
-    if selected_town != "All mapped towns":
+    if geo_mode == "Windsor address points":
+        geocode_modified_at = (
+            ADDRESS_GEOCODES.stat().st_mtime
+            if ADDRESS_GEOCODES.exists()
+            else 0.0
+        )
+        geocodes = load_windsor_address_geocodes(
+            str(ADDRESS_GEOCODES),
+            geocode_modified_at,
+        )
+
+        if geocodes.empty:
+            st.warning(
+                "No Windsor address geocode cache exists yet. Run "
+                "`python scripts/build_windsor_geocodes.py` to build it."
+            )
+        else:
+            windsor_records = matched[
+                matched["municipality"].isin(windsor_towns)
+            ].copy()
+            windsor_records["address_key"] = windsor_records.apply(
+                lambda row: address_key(
+                    row.get("address_line1", ""),
+                    row.get("address_line2", ""),
+                    row.get("city", ""),
+                    row.get("state", ""),
+                    row.get("zip", ""),
+                ),
+                axis=1,
+            )
+            physical_windsor_records = windsor_records[
+                windsor_records["address_line1"].map(is_physical_address)
+            ].copy()
+            address_summary = (
+                physical_windsor_records
+                .groupby("address_key", as_index=False)
+                .agg(
+                    amount=("amount", "sum"),
+                    records=("amount", "size"),
+                    contributors=("name", "nunique"),
+                    candidates=("roster_name", "nunique"),
+                    contributor_names=(
+                        "name",
+                        lambda values: summarize_values(values),
+                    ),
+                    candidate_names=(
+                        "roster_name",
+                        lambda values: summarize_values(values),
+                    ),
+                    municipality=("municipality", "first"),
+                    address=("address_line1", "first"),
+                    city=("city", "first"),
+                    state=("state", "first"),
+                    zip=("zip", "first"),
+                )
+            )
+
+            geocode_columns = [
+                "address_key",
+                "one_line_address",
+                "matched_address",
+                "geocode_status",
+                "latitude",
+                "longitude",
+            ]
+            address_summary = address_summary.merge(
+                geocodes[geocode_columns],
+                on="address_key",
+                how="left",
+            )
+            for col in ["latitude", "longitude"]:
+                address_summary[col] = pd.to_numeric(
+                    address_summary[col],
+                    errors="coerce",
+                )
+
+            address_points = address_summary[
+                (address_summary["geocode_status"] == "matched")
+                & address_summary["latitude"].notna()
+                & address_summary["longitude"].notna()
+            ].copy()
+            unplaced_addresses = address_summary[
+                ~address_summary["address_key"].isin(
+                    address_points["address_key"]
+                )
+            ].copy()
+
+            inferred_modified_at = (
+                PO_BOX_INFERRED_PARCELS.stat().st_mtime
+                if PO_BOX_INFERRED_PARCELS.exists()
+                else 0.0
+            )
+            inferred_cache = load_windsor_po_box_inferred_parcels(
+                str(PO_BOX_INFERRED_PARCELS),
+                inferred_modified_at,
+            )
+            po_box_records = windsor_records[
+                windsor_records["address_line1"].map(is_po_box_address)
+            ].copy()
+            if not po_box_records.empty:
+                po_box_records["po_box_key"] = po_box_records.apply(
+                    lambda row: address_key(
+                        row.get("name", ""),
+                        row.get("address_line1", ""),
+                        row.get("city", ""),
+                        row.get("state", ""),
+                        row.get("zip", ""),
+                        row.get("municipality", ""),
+                    ),
+                    axis=1,
+                )
+            if not inferred_cache.empty and not po_box_records.empty:
+                po_box_summary = (
+                    po_box_records.groupby("po_box_key", as_index=False)
+                    .agg(
+                        amount=("amount", "sum"),
+                        records=("amount", "size"),
+                        candidates=("roster_name", "nunique"),
+                        candidate_names=(
+                            "roster_name",
+                            lambda values: summarize_values(values),
+                        ),
+                        name=("name", "first"),
+                        filed_po_box=("address_line1", "first"),
+                        city=("city", "first"),
+                        state=("state", "first"),
+                        zip=("zip", "first"),
+                        municipality=("municipality", "first"),
+                    )
+                )
+                inferred_points = po_box_summary.merge(
+                    inferred_cache[
+                        [
+                            "po_box_key",
+                            "match_status",
+                            "match_confidence",
+                            "candidate_parcel_matches",
+                            "parcel_span",
+                            "owner1",
+                            "owner2",
+                            "grand_list_mailing_address",
+                            "parcel_location",
+                            "parcel_location_city",
+                            "latitude",
+                            "longitude",
+                            "source",
+                        ]
+                    ],
+                    on="po_box_key",
+                    how="left",
+                )
+                inferred_points = inferred_points[
+                    (inferred_points["match_status"] == "matched")
+                    & (inferred_points["match_confidence"] == "high")
+                    & inferred_points["latitude"].notna()
+                    & inferred_points["longitude"].notna()
+                ].copy()
+            else:
+                inferred_points = pd.DataFrame()
+
+            street_map_points = address_points.copy()
+            if not street_map_points.empty:
+                street_map_points["location_type"] = "Filed street address"
+                street_map_points["display_address"] = (
+                    street_map_points["one_line_address"]
+                )
+
+            inferred_map_points = inferred_points.copy()
+            if not inferred_map_points.empty:
+                inferred_map_points["location_type"] = (
+                    "Inferred P.O. box parcel"
+                )
+                inferred_map_points["display_address"] = (
+                    inferred_map_points["filed_po_box"].fillna("")
+                    + ", "
+                    + inferred_map_points["city"].fillna("")
+                    + ", "
+                    + inferred_map_points["state"].fillna("")
+                    + " "
+                    + inferred_map_points["zip"].fillna("")
+                ).str.strip(", ")
+                inferred_map_points["one_line_address"] = (
+                    inferred_map_points["display_address"]
+                )
+                inferred_map_points["matched_address"] = (
+                    inferred_map_points["parcel_location"]
+                )
+                inferred_map_points["contributors"] = 1
+                inferred_map_points["contributor_names"] = (
+                    inferred_map_points["name"]
+                )
+
+            combined_points = pd.concat(
+                [street_map_points, inferred_map_points],
+                ignore_index=True,
+                sort=False,
+            )
+
+            windsor_total = float(windsor_records["amount"].sum())
+            point_total = float(combined_points["amount"].sum())
+            physical_total = float(address_summary["amount"].sum())
+
+            p1, p2, p3 = st.columns(3)
+            p1.metric("Windsor mapped dollars", f"${windsor_total:,.0f}")
+            p2.metric("Best-location dollars", f"${point_total:,.0f}")
+            p3.metric(
+                "Point-location coverage",
+                f"{(point_total / windsor_total if windsor_total else 0):.0%}",
+            )
+
+            color_by_candidate = False
+            selected_point_candidates = []
+            candidate_palette = {}
+
+            if len(combined_points):
+                combined_points = combined_points.sort_values(
+                    "amount",
+                    ascending=False,
+                )
+                color_by_candidate = st.toggle(
+                    "Color Windsor points by candidate",
+                    value=False,
+                )
+                candidate_scope_records = windsor_records.copy()
+                if color_by_candidate:
+                    candidate_scopes = (
+                        windsor_records[
+                            ["office", "district"]
+                        ]
+                        .drop_duplicates()
+                        .sort_values(["office", "district"])
+                    )
+                    candidate_scope_options = [
+                        f"{row.office} / {row.district}"
+                        for row in candidate_scopes.itertuples()
+                        if str(row.office).strip()
+                        and str(row.district).strip()
+                    ]
+                    if office != "All" and district != "All":
+                        default_candidate_scope = f"{office} / {district}"
+                    elif "Senate / Windsor" in candidate_scope_options:
+                        default_candidate_scope = "Senate / Windsor"
+                    elif candidate_scope_options:
+                        default_candidate_scope = candidate_scope_options[0]
+                    else:
+                        default_candidate_scope = ""
+
+                    selected_candidate_scope = st.selectbox(
+                        "Candidate district",
+                        candidate_scope_options,
+                        index=(
+                            candidate_scope_options.index(
+                                default_candidate_scope
+                            )
+                            if default_candidate_scope
+                            in candidate_scope_options
+                            else 0
+                        ),
+                    )
+                    if selected_candidate_scope:
+                        selected_office, selected_district = (
+                            selected_candidate_scope.split(" / ", 1)
+                        )
+                        candidate_scope_records = (
+                            windsor_records[
+                                (
+                                    windsor_records["office"]
+                                    == selected_office
+                                )
+                                & (
+                                    windsor_records["district"]
+                                    == selected_district
+                                )
+                            ]
+                            .copy()
+                        )
+
+                candidate_point_totals = (
+                    candidate_scope_records.groupby(
+                        "roster_name",
+                        as_index=False,
+                    )["amount"]
+                    .sum()
+                    .sort_values("amount", ascending=False)
+                )
+                candidate_point_options = (
+                    candidate_point_totals["roster_name"].tolist()
+                )
+                selected_point_candidates = candidate_point_options
+                if color_by_candidate:
+                    selected_point_candidates = st.multiselect(
+                        "Windsor candidates",
+                        candidate_point_options,
+                        default=candidate_point_options,
+                    )
+                    candidate_palette = {
+                        candidate_name: CANDIDATE_GRADIENTS[
+                            idx % len(CANDIDATE_GRADIENTS)
+                        ]
+                        for idx, candidate_name in enumerate(
+                            selected_point_candidates
+                        )
+                    }
+
+                if color_by_candidate:
+                    candidate_records = candidate_scope_records[
+                        candidate_scope_records["roster_name"].isin(
+                            selected_point_candidates
+                        )
+                    ].copy()
+                    candidate_records = candidate_records[
+                        candidate_records["address_line1"].map(
+                            is_physical_address
+                        )
+                    ].copy()
+                    candidate_summary = (
+                        candidate_records
+                        .groupby(
+                            ["address_key", "roster_name"],
+                            as_index=False,
+                        )
+                        .agg(
+                            amount=("amount", "sum"),
+                            records=("amount", "size"),
+                            contributors=("name", "nunique"),
+                            contributor_names=(
+                                "name",
+                                lambda values: summarize_values(values),
+                            ),
+                            municipality=("municipality", "first"),
+                            address=("address_line1", "first"),
+                            city=("city", "first"),
+                            state=("state", "first"),
+                            zip=("zip", "first"),
+                        )
+                    )
+                    candidate_summary = candidate_summary.merge(
+                        geocodes[geocode_columns],
+                        on="address_key",
+                        how="left",
+                    )
+                    for col in ["latitude", "longitude"]:
+                        candidate_summary[col] = pd.to_numeric(
+                            candidate_summary[col],
+                            errors="coerce",
+                        )
+                    candidate_points = candidate_summary[
+                        (candidate_summary["geocode_status"] == "matched")
+                        & candidate_summary["latitude"].notna()
+                        & candidate_summary["longitude"].notna()
+                    ].copy()
+                    if len(candidate_points):
+                        candidate_points["location_type"] = (
+                            "Filed street address"
+                        )
+                        candidate_points["display_address"] = (
+                            candidate_points["one_line_address"]
+                        )
+
+                    if not po_box_records.empty:
+                        candidate_po_box_records = po_box_records[
+                            po_box_records["roster_name"].isin(
+                                selected_point_candidates
+                            )
+                        ].copy()
+                    else:
+                        candidate_po_box_records = pd.DataFrame()
+                    if (
+                        not candidate_po_box_records.empty
+                        and not inferred_cache.empty
+                    ):
+                        candidate_po_box_summary = (
+                            candidate_po_box_records.groupby(
+                                ["po_box_key", "roster_name"],
+                                as_index=False,
+                            )
+                            .agg(
+                                amount=("amount", "sum"),
+                                records=("amount", "size"),
+                                contributors=("name", "nunique"),
+                                contributor_names=(
+                                    "name",
+                                    lambda values: summarize_values(values),
+                                ),
+                                municipality=("municipality", "first"),
+                                filed_po_box=("address_line1", "first"),
+                                city=("city", "first"),
+                                state=("state", "first"),
+                                zip=("zip", "first"),
+                            )
+                        )
+                        candidate_inferred_points = (
+                            candidate_po_box_summary.merge(
+                                inferred_cache[
+                                    [
+                                        "po_box_key",
+                                        "match_status",
+                                        "match_confidence",
+                                        "parcel_location",
+                                        "latitude",
+                                        "longitude",
+                                    ]
+                                ],
+                                on="po_box_key",
+                                how="left",
+                            )
+                        )
+                        candidate_inferred_points = (
+                            candidate_inferred_points[
+                                (
+                                    candidate_inferred_points["match_status"]
+                                    == "matched"
+                                )
+                                & (
+                                    candidate_inferred_points[
+                                        "match_confidence"
+                                    ]
+                                    == "high"
+                                )
+                                & candidate_inferred_points[
+                                    "latitude"
+                                ].notna()
+                                & candidate_inferred_points[
+                                    "longitude"
+                                ].notna()
+                            ]
+                            .copy()
+                        )
+                        if len(candidate_inferred_points):
+                            candidate_inferred_points["location_type"] = (
+                                "Inferred P.O. box parcel"
+                            )
+                            candidate_inferred_points["display_address"] = (
+                                candidate_inferred_points[
+                                    "filed_po_box"
+                                ].fillna("")
+                                + ", "
+                                + candidate_inferred_points["city"].fillna("")
+                                + ", "
+                                + candidate_inferred_points["state"].fillna("")
+                                + " "
+                                + candidate_inferred_points["zip"].fillna("")
+                            ).str.strip(", ")
+                            candidate_inferred_points["one_line_address"] = (
+                                candidate_inferred_points["display_address"]
+                            )
+                            candidate_inferred_points["matched_address"] = (
+                                candidate_inferred_points["parcel_location"]
+                            )
+                        candidate_points = pd.concat(
+                            [candidate_points, candidate_inferred_points],
+                            ignore_index=True,
+                            sort=False,
+                        )
+
+                    point_fig = go.Figure()
+                    for idx, candidate_name in enumerate(
+                        selected_point_candidates
+                    ):
+                        candidate_points_for_trace = candidate_points[
+                            candidate_points["roster_name"] == candidate_name
+                        ].copy()
+                        if not len(candidate_points_for_trace):
+                            continue
+                        start, end = candidate_palette[candidate_name]
+                        candidate_points_for_trace["marker_color"] = (
+                            gradient_values(
+                                candidate_points_for_trace["amount"],
+                                start,
+                                end,
+                            )
+                        )
+                        customdata = candidate_points_for_trace[
+                            [
+                                "one_line_address",
+                                "matched_address",
+                                "municipality",
+                                "amount",
+                                "records",
+                                "contributors",
+                                "contributor_names",
+                                "roster_name",
+                                "location_type",
+                            ]
+                        ].to_numpy()
+                        point_fig.add_trace(
+                            go.Scattermap(
+                                lat=candidate_points_for_trace["latitude"],
+                                lon=candidate_points_for_trace["longitude"],
+                                mode="markers",
+                                name=candidate_name,
+                                customdata=customdata,
+                                marker={
+                                    "size": scale_marker_sizes(
+                                        candidate_points_for_trace["amount"],
+                                    ),
+                                    "color": candidate_points_for_trace[
+                                        "marker_color"
+                                    ],
+                                    "opacity": 0.9,
+                                },
+                                hovertemplate=(
+                                    "<b>%{customdata[7]}</b><br>"
+                                    "Location type: %{customdata[8]}<br>"
+                                    "Filed address: %{customdata[0]}<br>"
+                                    "Mapped location: %{customdata[1]}<br>"
+                                    "Municipality: %{customdata[2]}<br>"
+                                    "Amount: $%{customdata[3]:,.0f}<br>"
+                                    "Records: %{customdata[4]:,}<br>"
+                                    "Named contributors: %{customdata[5]:,}<br>"
+                                    "Contributor names: %{customdata[6]}"
+                                    "<extra></extra>"
+                                ),
+                            )
+                        )
+                    point_fig.update_layout(
+                        height=720,
+                        margin=dict(l=0, r=0, t=10, b=0),
+                        map={
+                            "style": "carto-positron",
+                            "center": {"lat": 43.55, "lon": -72.55},
+                            "zoom": 8.15,
+                        },
+                        legend=dict(
+                            title="Candidate",
+                            orientation="h",
+                            yanchor="bottom",
+                            y=0.01,
+                            xanchor="left",
+                            x=0.01,
+                        ),
+                    )
+                else:
+                    point_fig = px.scatter_map(
+                        combined_points,
+                        lat="latitude",
+                        lon="longitude",
+                        size="amount",
+                        color="amount",
+                        color_continuous_scale=[
+                            [0.0, "#ffd166"],
+                            [0.32, "#f8961e"],
+                            [0.68, "#e85d04"],
+                            [1.0, "#9d0208"],
+                        ],
+                        hover_name="municipality",
+                        hover_data={
+                            "location_type": True,
+                            "display_address": True,
+                            "matched_address": True,
+                            "amount": ":$,.0f",
+                            "records": ":,",
+                            "contributors": ":,",
+                            "contributor_names": True,
+                            "candidates": ":,",
+                            "candidate_names": True,
+                            "latitude": False,
+                            "longitude": False,
+                        },
+                        labels={
+                            "amount": "Contribution dollars",
+                            "location_type": "Location type",
+                            "display_address": "Filed address",
+                            "matched_address": "Mapped location",
+                            "records": "Records",
+                            "contributors": "Named contributors",
+                            "contributor_names": "Contributor names",
+                            "candidates": "Candidates",
+                            "candidate_names": "Candidate names",
+                        },
+                        map_style="carto-positron",
+                        center={"lat": 43.55, "lon": -72.55},
+                        zoom=8.15,
+                        size_max=34,
+                        height=720,
+                    )
+                    point_fig.update_traces(
+                        marker={
+                            "opacity": 0.9,
+                        },
+                    )
+                    point_fig.update_layout(
+                        margin=dict(l=0, r=0, t=10, b=0),
+                        coloraxis_colorbar=dict(
+                            title="Contribution dollars",
+                            tickformat="$,.0f",
+                        ),
+                    )
+                st.plotly_chart(point_fig, width="stretch")
+
+                st.dataframe(
+                    combined_points[
+                        [
+                            "location_type",
+                            "display_address",
+                            "municipality",
+                            "amount",
+                            "records",
+                            "contributors",
+                            "contributor_names",
+                            "candidates",
+                            "candidate_names",
+                            "matched_address",
+                        ]
+                    ].rename(
+                        columns={
+                            "location_type": "Location type",
+                            "display_address": "Filed address",
+                            "municipality": "Municipality",
+                            "amount": "Amount",
+                            "records": "Records",
+                            "contributors": "Named contributors",
+                            "contributor_names": "Contributor names",
+                            "candidates": "Candidates",
+                            "candidate_names": "Candidate names",
+                            "matched_address": "Geocoder match",
+                        }
+                    ),
+                    width="stretch",
+                    hide_index=True,
+                    column_config={
+                        "Amount":
+                            st.column_config.NumberColumn(format="$%.2f"),
+                    },
+                )
+            else:
+                st.info("No mapped Windsor point locations match the filters.")
+
+            if not inferred_points.empty:
+                st.markdown("#### Inferred P.O. box parcel matches")
+                i1, i2, i3 = st.columns(3)
+                i1.metric(
+                    "Inferred P.O. box dollars",
+                    f"${inferred_points['amount'].sum():,.0f}",
+                )
+                i2.metric(
+                    "Inferred P.O. box groups",
+                    f"{len(inferred_points):,}",
+                )
+                i3.metric(
+                    "Source",
+                    "VTrans parcels",
+                )
+
+                if len(inferred_points):
+                    inferred_points = inferred_points.sort_values(
+                        "amount",
+                        ascending=False,
+                    )
+                    if color_by_candidate and selected_point_candidates:
+                        candidate_po_box_records = po_box_records[
+                            po_box_records["roster_name"].isin(
+                                selected_point_candidates
+                            )
+                        ].copy()
+                        candidate_po_box_summary = (
+                            candidate_po_box_records.groupby(
+                                ["po_box_key", "roster_name"],
+                                as_index=False,
+                            )
+                            .agg(
+                                amount=("amount", "sum"),
+                                records=("amount", "size"),
+                                name=("name", "first"),
+                                filed_po_box=("address_line1", "first"),
+                                city=("city", "first"),
+                                state=("state", "first"),
+                                zip=("zip", "first"),
+                                municipality=("municipality", "first"),
+                            )
+                        )
+                        candidate_inferred_points = (
+                            candidate_po_box_summary.merge(
+                                inferred_cache[
+                                    [
+                                        "po_box_key",
+                                        "match_status",
+                                        "match_confidence",
+                                        "parcel_location",
+                                        "owner1",
+                                        "owner2",
+                                        "latitude",
+                                        "longitude",
+                                    ]
+                                ],
+                                on="po_box_key",
+                                how="left",
+                            )
+                        )
+                        candidate_inferred_points = (
+                            candidate_inferred_points[
+                                (
+                                    candidate_inferred_points["match_status"]
+                                    == "matched"
+                                )
+                                & (
+                                    candidate_inferred_points[
+                                        "match_confidence"
+                                    ]
+                                    == "high"
+                                )
+                                & candidate_inferred_points[
+                                    "latitude"
+                                ].notna()
+                                & candidate_inferred_points[
+                                    "longitude"
+                                ].notna()
+                            ]
+                            .copy()
+                        )
+
+                        inferred_fig = go.Figure()
+                        for candidate_name in selected_point_candidates:
+                            candidate_points_for_trace = (
+                                candidate_inferred_points[
+                                    candidate_inferred_points["roster_name"]
+                                    == candidate_name
+                                ]
+                                .copy()
+                            )
+                            if not len(candidate_points_for_trace):
+                                continue
+                            start, end = candidate_palette[candidate_name]
+                            candidate_points_for_trace["marker_color"] = (
+                                gradient_values(
+                                    candidate_points_for_trace["amount"],
+                                    start,
+                                    end,
+                                )
+                            )
+                            customdata = candidate_points_for_trace[
+                                [
+                                    "roster_name",
+                                    "name",
+                                    "filed_po_box",
+                                    "municipality",
+                                    "parcel_location",
+                                    "owner1",
+                                    "owner2",
+                                    "amount",
+                                    "records",
+                                ]
+                            ].to_numpy()
+                            inferred_fig.add_trace(
+                                go.Scattermap(
+                                    lat=candidate_points_for_trace[
+                                        "latitude"
+                                    ],
+                                    lon=candidate_points_for_trace[
+                                        "longitude"
+                                    ],
+                                    mode="markers",
+                                    name=candidate_name,
+                                    customdata=customdata,
+                                    marker={
+                                        "size": scale_marker_sizes(
+                                            candidate_points_for_trace[
+                                                "amount"
+                                            ],
+                                            minimum=12,
+                                            maximum=32,
+                                        ),
+                                        "color": candidate_points_for_trace[
+                                            "marker_color"
+                                        ],
+                                        "opacity": 0.88,
+                                    },
+                                    hovertemplate=(
+                                        "<b>%{customdata[0]}</b><br>"
+                                        "Contributor: %{customdata[1]}<br>"
+                                        "Filed P.O. box: %{customdata[2]}<br>"
+                                        "Municipality: %{customdata[3]}<br>"
+                                        "Inferred parcel: %{customdata[4]}<br>"
+                                        "Grand-list owner 1: "
+                                        "%{customdata[5]}<br>"
+                                        "Grand-list owner 2: "
+                                        "%{customdata[6]}<br>"
+                                        "Amount: $%{customdata[7]:,.0f}<br>"
+                                        "Records: %{customdata[8]:,}"
+                                        "<extra></extra>"
+                                    ),
+                                )
+                            )
+                        inferred_fig.update_layout(
+                            height=520,
+                            margin=dict(l=0, r=0, t=10, b=0),
+                            map={
+                                "style": "carto-positron",
+                                "center": {"lat": 43.55, "lon": -72.55},
+                                "zoom": 8.15,
+                            },
+                            legend=dict(
+                                title="Candidate",
+                                orientation="h",
+                                yanchor="bottom",
+                                y=0.01,
+                                xanchor="left",
+                                x=0.01,
+                            ),
+                        )
+                    else:
+                        inferred_fig = px.scatter_map(
+                            inferred_points,
+                            lat="latitude",
+                            lon="longitude",
+                            size="amount",
+                            color="amount",
+                            color_continuous_scale=[
+                                [0.0, "#d0bfff"],
+                                [0.35, "#9d7de8"],
+                                [0.72, "#7048c8"],
+                                [1.0, "#3b1d8f"],
+                            ],
+                            hover_name="name",
+                            hover_data={
+                                "filed_po_box": True,
+                                "municipality": True,
+                                "parcel_location": True,
+                                "owner1": True,
+                                "owner2": True,
+                                "amount": ":$,.0f",
+                                "records": ":,",
+                                "candidates": ":,",
+                                "candidate_names": True,
+                                "latitude": False,
+                                "longitude": False,
+                            },
+                            labels={
+                                "amount": "Contribution dollars",
+                                "filed_po_box": "Filed P.O. box",
+                                "municipality": "Municipality",
+                                "parcel_location": "Inferred parcel location",
+                                "owner1": "Grand-list owner 1",
+                                "owner2": "Grand-list owner 2",
+                                "records": "Records",
+                                "candidates": "Candidates",
+                                "candidate_names": "Candidate names",
+                            },
+                            map_style="carto-positron",
+                            center={"lat": 43.55, "lon": -72.55},
+                            zoom=8.15,
+                            size_max=32,
+                            height=520,
+                        )
+                        inferred_fig.update_traces(marker={"opacity": 0.86})
+                        inferred_fig.update_layout(
+                            margin=dict(l=0, r=0, t=10, b=0),
+                            coloraxis_colorbar=dict(
+                                title="Inferred dollars",
+                                tickformat="$,.0f",
+                            ),
+                        )
+                    st.plotly_chart(inferred_fig, width="stretch")
+
+                    st.dataframe(
+                        inferred_points[
+                            [
+                                "name",
+                                "filed_po_box",
+                                "municipality",
+                                "amount",
+                                "records",
+                                "candidate_names",
+                                "parcel_location",
+                                "owner1",
+                                "owner2",
+                            ]
+                        ].rename(
+                            columns={
+                                "name": "Contributor",
+                                "filed_po_box": "Filed P.O. box",
+                                "municipality": "Municipality",
+                                "amount": "Amount",
+                                "records": "Records",
+                                "candidate_names": "Candidate names",
+                                "parcel_location": "Inferred parcel location",
+                                "owner1": "Grand-list owner 1",
+                                "owner2": "Grand-list owner 2",
+                            }
+                        ),
+                        width="stretch",
+                        hide_index=True,
+                        column_config={
+                            "Amount":
+                                st.column_config.NumberColumn(format="$%.2f"),
+                        },
+                    )
+                else:
+                    st.info(
+                        "No high-confidence inferred P.O. box parcel matches "
+                        "match the current filters."
+                    )
+
+            with st.expander(
+                f"Unplaced Windsor physical addresses "
+                f"({len(unplaced_addresses):,} groups)"
+            ):
+                if len(unplaced_addresses):
+                    st.dataframe(
+                        unplaced_addresses[
+                            [
+                                "address",
+                                "city",
+                                "state",
+                                "zip",
+                                "municipality",
+                                "amount",
+                                "records",
+                            ]
+                        ].rename(
+                            columns={
+                                "address": "Filed address",
+                                "city": "City",
+                                "state": "State",
+                                "zip": "ZIP",
+                                "municipality": "Municipality",
+                                "amount": "Amount",
+                                "records": "Records",
+                            }
+                        ),
+                        width="stretch",
+                        hide_index=True,
+                        column_config={
+                            "Amount":
+                                st.column_config.NumberColumn(format="$%.2f"),
+                        },
+                    )
+                else:
+                    st.success("All physical Windsor addresses were placed.")
+
+    if selected_town != "All towns":
         town_records = matched[
             matched["municipality"] == selected_town
         ].copy()
@@ -531,22 +1699,65 @@ else:
         )
 
     if geo_mode == "Vermont town table":
+        table_towns = pd.DataFrame(
+            {"municipality": sorted(valid_towns)}
+        )
+        town_table = table_towns.merge(
+            municipal,
+            on="municipality",
+            how="left",
+        )
+        town_table[["amount", "records", "contributors"]] = (
+            town_table[["amount", "records", "contributors"]]
+            .fillna(0)
+        )
+        town_table["share_of_mapped_vt"] = (
+            town_table["share_of_mapped_vt"].fillna(0)
+        )
+        town_table["average_contribution"] = (
+            town_table["average_contribution"].fillna(0)
+        )
+        town_table["amount_rank"] = (
+            town_table["amount_rank"].fillna(0).astype(int)
+        )
+        town_table = town_table.sort_values(
+            ["amount", "records", "municipality"],
+            ascending=[False, False, True],
+        )
+
+        town_table_display = town_table.rename(
+            columns={
+                "amount_rank": "Rank",
+                "municipality": "Municipality",
+                "amount": "Amount",
+                "records": "Records",
+                "contributors": "Named contributors",
+                "share_of_mapped_vt": "Share of mapped VT",
+                "average_contribution": "Average contribution",
+            }
+        )[
+            [
+                "Rank",
+                "Municipality",
+                "Amount",
+                "Share of mapped VT",
+                "Records",
+                "Average contribution",
+                "Named contributors",
+            ]
+        ]
+
         st.dataframe(
-            municipal.rename(
-                columns={
-                    "municipality": "Municipality",
-                    "amount": "Amount",
-                    "records": "Records",
-                    "contributors": "Named contributors",
-                    "share_of_mapped_vt": "Share of mapped VT",
-                }
-            ),
+            town_table_display,
             width="stretch",
             hide_index=True,
             column_config={
+                "Rank": st.column_config.NumberColumn(format="%d"),
                 "Amount": st.column_config.NumberColumn(format="$%.2f"),
                 "Share of mapped VT":
                     st.column_config.NumberColumn(format="%.1%%"),
+                "Average contribution":
+                    st.column_config.NumberColumn(format="$%.2f"),
             },
         )
 
