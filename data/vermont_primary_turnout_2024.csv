@@ -1,0 +1,247 @@
+town_geoid,town,county,registered_voters_2024_primary,primary_votes_cast_2024,primary_turnout_pct_2024,primary_absentee_votes_2024,primary_absentee_pct_2024,source
+5000100325,Addison,Addison,1160,315,0.2716,55,0.1746,Vermont SOS 2024 August Primary Voter Turnout
+5000108575,Bridport,Addison,911,238,0.2613,14,0.0588,Vermont SOS 2024 August Primary Voter Turnout
+5000109025,Bristol,Addison,3310,714,0.2157,124,0.1737,Vermont SOS 2024 August Primary Voter Turnout
+5000116000,Cornwall,Addison,1021,263,0.2576,61,0.2319,Vermont SOS 2024 August Primary Voter Turnout
+5000126300,Ferrisburgh,Addison,2391,437,0.1828,95,0.2174,Vermont SOS 2024 August Primary Voter Turnout
+5000128600,Goshen,Addison,171,54,0.3158,4,0.0741,Vermont SOS 2024 August Primary Voter Turnout
+5000129575,Granville,Addison,237,27,0.1139,4,0.1481,Vermont SOS 2024 August Primary Voter Turnout
+5000131525,Hancock,Addison,265,46,0.1736,6,0.1304,Vermont SOS 2024 August Primary Voter Turnout
+5000139325,Leicester,Addison,765,122,0.1595,10,0.082,Vermont SOS 2024 August Primary Voter Turnout
+5000140075,Lincoln,Addison,1156,336,0.2907,63,0.1875,Vermont SOS 2024 August Primary Voter Turnout
+5000144350,Middlebury,Addison,5878,1274,0.2167,477,0.3744,Vermont SOS 2024 August Primary Voter Turnout
+5000145550,Monkton,Addison,1851,395,0.2134,67,0.1696,Vermont SOS 2024 August Primary Voter Turnout
+5000148700,New Haven,Addison,1328,379,0.2854,62,0.1636,Vermont SOS 2024 August Primary Voter Turnout
+5000153725,Orwell,Addison,965,205,0.2124,59,0.2878,Vermont SOS 2024 August Primary Voter Turnout
+5000153950,Panton,Addison,562,122,0.2171,18,0.1475,Vermont SOS 2024 August Primary Voter Turnout
+5000159650,Ripton,Addison,457,116,0.2538,13,0.1121,Vermont SOS 2024 August Primary Voter Turnout
+5000162575,Salisbury,Addison,946,133,0.1406,32,0.2406,Vermont SOS 2024 August Primary Voter Turnout
+5000165050,Shoreham,Addison,904,195,0.2157,39,0.2,Vermont SOS 2024 August Primary Voter Turnout
+5000170075,Starksboro,Addison,1407,361,0.2566,67,0.1856,Vermont SOS 2024 August Primary Voter Turnout
+5000174650,Vergennes,Addison,2168,364,0.1679,58,0.1593,Vermont SOS 2024 August Primary Voter Turnout
+5000176075,Waltham,Addison,401,95,0.2369,20,0.2105,Vermont SOS 2024 August Primary Voter Turnout
+5000183275,Weybridge,Addison,727,189,0.26,52,0.2751,Vermont SOS 2024 August Primary Voter Turnout
+5000183800,Whiting,Addison,296,48,0.1622,3,0.0625,Vermont SOS 2024 August Primary Voter Turnout
+5000301450,Arlington,Bennington,1987,289,0.1454,45,0.1557,Vermont SOS 2024 August Primary Voter Turnout
+5000304825,Bennington,Bennington,10117,1403,0.1387,391,0.2787,Vermont SOS 2024 August Primary Voter Turnout
+5000317725,Dorset,Bennington,1813,313,0.1726,45,0.1438,Vermont SOS 2024 August Primary Voter Turnout
+5000339025,Landgrove,Bennington,130,43,0.3308,4,0.093,Vermont SOS 2024 August Primary Voter Turnout
+5000342850,Manchester,Bennington,3796,622,0.1639,276,0.4437,Vermont SOS 2024 August Primary Voter Turnout
+5000355000,Peru,Bennington,383,59,0.154,4,0.0678,Vermont SOS 2024 August Primary Voter Turnout
+5000357025,Pownal,Bennington,2371,356,0.1501,228,0.6404,Vermont SOS 2024 August Primary Voter Turnout
+5000358600,Readsboro,Bennington,591,90,0.1523,12,0.1333,Vermont SOS 2024 August Primary Voter Turnout
+5000361000,Rupert,Bennington,529,158,0.2987,39,0.2468,Vermont SOS 2024 August Primary Voter Turnout
+5000362875,Sandgate,Bennington,350,104,0.2971,11,0.1058,Vermont SOS 2024 August Primary Voter Turnout
+5000363175,Searsburg,Bennington,85,18,0.2118,2,0.1111,Vermont SOS 2024 August Primary Voter Turnout
+5000363550,Shaftsbury,Bennington,3037,468,0.1541,153,0.3269,Vermont SOS 2024 August Primary Voter Turnout
+5000369775,Stamford,Bennington,743,66,0.0888,9,0.1364,Vermont SOS 2024 August Primary Voter Turnout
+5000371425,Sunderland,Bennington,883,113,0.128,19,0.1681,Vermont SOS 2024 August Primary Voter Turnout
+5000385075,Winhall,Bennington,793,99,0.1248,24,0.2424,Vermont SOS 2024 August Primary Voter Turnout
+5000385675,Woodford,Bennington,273,47,0.1722,6,0.1277,Vermont SOS 2024 August Primary Voter Turnout
+5000502875,Barnet,Caledonia,1429,315,0.2204,31,0.0984,Vermont SOS 2024 August Primary Voter Turnout
+5000510450,Burke,Caledonia,1246,154,0.1236,12,0.0779,Vermont SOS 2024 August Primary Voter Turnout
+5000517125,Danville,Caledonia,1872,348,0.1859,76,0.2184,Vermont SOS 2024 August Primary Voter Turnout
+5000530550,Groton,Caledonia,793,128,0.1614,26,0.2031,Vermont SOS 2024 August Primary Voter Turnout
+5000531825,Hardwick,Caledonia,2306,332,0.144,47,0.1416,Vermont SOS 2024 August Primary Voter Turnout
+5000537900,Kirby,Caledonia,418,44,0.1053,4,0.0909,Vermont SOS 2024 August Primary Voter Turnout
+5000541725,Lyndon,Caledonia,3703,441,0.1191,102,0.2313,Vermont SOS 2024 August Primary Voter Turnout
+5000547725,Newark,Caledonia,467,102,0.2184,28,0.2745,Vermont SOS 2024 August Primary Voter Turnout
+5000554400,Peacham,Caledonia,684,151,0.2208,23,0.1523,Vermont SOS 2024 August Primary Voter Turnout
+5000561525,Ryegate,Caledonia,902,121,0.1341,11,0.0909,Vermont SOS 2024 August Primary Voter Turnout
+5000564075,Sheffield,Caledonia,477,79,0.1656,8,0.1013,Vermont SOS 2024 August Primary Voter Turnout
+5000562200,St. Johnsbury,Caledonia,4770,936,0.1962,235,0.2511,Vermont SOS 2024 August Primary Voter Turnout
+5000569925,Stannard,Caledonia,170,34,0.2,1,0.0294,Vermont SOS 2024 August Primary Voter Turnout
+5000571575,Sutton,Caledonia,733,76,0.1037,12,0.1579,Vermont SOS 2024 August Primary Voter Turnout
+5000575700,Walden,Caledonia,764,161,0.2107,39,0.2422,Vermont SOS 2024 August Primary Voter Turnout
+5000577125,Waterford,Caledonia,1096,199,0.1816,31,0.1558,Vermont SOS 2024 August Primary Voter Turnout
+5000583500,Wheelock,Caledonia,593,104,0.1754,27,0.2596,Vermont SOS 2024 August Primary Voter Turnout
+5000706550,Bolton,Chittenden,1054,143,0.1357,18,0.1259,Vermont SOS 2024 August Primary Voter Turnout
+5000710675,Burlington,Chittenden,32315,5335,0.1651,1707,0.32,Vermont SOS 2024 August Primary Voter Turnout
+5000713300,Charlotte,Chittenden,3400,453,0.1332,139,0.3068,Vermont SOS 2024 August Primary Voter Turnout
+5000714875,Colchester,Chittenden,18305,1763,0.0963,882,0.5003,Vermont SOS 2024 August Primary Voter Turnout
+5000724175,Essex,Chittenden,17157,2610,0.1521,919,0.3521,Vermont SOS 2024 August Primary Voter Turnout
+5000733475,Hinesburg,Chittenden,4129,518,0.1255,113,0.2181,Vermont SOS 2024 August Primary Voter Turnout
+5000734600,Huntington,Chittenden,1720,354,0.2058,62,0.1751,Vermont SOS 2024 August Primary Voter Turnout
+5000736700,Jericho,Chittenden,4350,655,0.1506,222,0.3389,Vermont SOS 2024 August Primary Voter Turnout
+5000745250,Milton,Chittenden,8641,1342,0.1553,615,0.4583,Vermont SOS 2024 August Primary Voter Turnout
+5000759275,Richmond,Chittenden,3455,533,0.1543,219,0.4109,Vermont SOS 2024 August Primary Voter Turnout
+5000764300,Shelburne,Chittenden,6868,1744,0.2539,1015,0.582,Vermont SOS 2024 August Primary Voter Turnout
+5000766175,South Burlington,Chittenden,17005,2362,0.1389,986,0.4174,Vermont SOS 2024 August Primary Voter Turnout
+5000762050,St. George,Chittenden,628,87,0.1385,26,0.2989,Vermont SOS 2024 August Primary Voter Turnout
+5000773975,Underhill,Chittenden,2694,393,0.1459,112,0.285,Vermont SOS 2024 August Primary Voter Turnout
+5000780350,Westford,Chittenden,1810,287,0.1586,104,0.3624,Vermont SOS 2024 August Primary Voter Turnout
+5000784475,Williston,Chittenden,8640,1455,0.1684,595,0.4089,Vermont SOS 2024 August Primary Voter Turnout
+5000785150,Winooski,Chittenden,5710,806,0.1412,215,0.2667,Vermont SOS 2024 August Primary Voter Turnout
+5000906325,Bloomfield,Essex,166,23,0.1386,2,0.087,Vermont SOS 2024 August Primary Voter Turnout
+5000908725,Brighton,Essex,978,113,0.1155,6,0.0531,Vermont SOS 2024 August Primary Voter Turnout
+5000910075,Brunswick,Essex,74,11,0.1486,2,0.1818,Vermont SOS 2024 August Primary Voter Turnout
+5000911800,Canaan,Essex,717,134,0.1869,10,0.0746,Vermont SOS 2024 August Primary Voter Turnout
+5000915250,Concord,Essex,894,104,0.1163,25,0.2404,Vermont SOS 2024 August Primary Voter Turnout
+5000921250,East Haven,Essex,219,54,0.2466,13,0.2407,Vermont SOS 2024 August Primary Voter Turnout
+5000929125,Granby,Essex,59,12,0.2034,0,0.0,Vermont SOS 2024 August Primary Voter Turnout
+5000930775,Guildhall,Essex,231,34,0.1472,5,0.1471,Vermont SOS 2024 August Primary Voter Turnout
+5000939700,Lemington,Essex,62,11,0.1774,0,0.0,Vermont SOS 2024 August Primary Voter Turnout
+5000941425,Lunenburg,Essex,1200,100,0.0833,0,0.0,Vermont SOS 2024 August Primary Voter Turnout
+5000942475,Maidstone,Essex,166,33,0.1988,4,0.1212,Vermont SOS 2024 August Primary Voter Turnout
+5000952750,Norton,Essex,134,38,0.2836,4,0.1053,Vermont SOS 2024 August Primary Voter Turnout
+5000975175,Victory,Essex,65,37,0.5692,26,0.7027,Vermont SOS 2024 August Primary Voter Turnout
+5001102500,Bakersfield,Franklin,1018,101,0.0992,16,0.1584,Vermont SOS 2024 August Primary Voter Turnout
+5001105425,Berkshire,Franklin,1104,88,0.0797,30,0.3409,Vermont SOS 2024 August Primary Voter Turnout
+5001124050,Enosburgh,Franklin,2175,151,0.0694,31,0.2053,Vermont SOS 2024 August Primary Voter Turnout
+5001124925,Fairfax,Franklin,3960,491,0.124,131,0.2668,Vermont SOS 2024 August Primary Voter Turnout
+5001125225,Fairfield,Franklin,1521,140,0.092,12,0.0857,Vermont SOS 2024 August Primary Voter Turnout
+5001126500,Fletcher,Franklin,1112,147,0.1322,28,0.1905,Vermont SOS 2024 August Primary Voter Turnout
+5001127100,Franklin,Franklin,1110,133,0.1198,26,0.1955,Vermont SOS 2024 August Primary Voter Turnout
+5001127700,Georgia,Franklin,4023,358,0.089,143,0.3994,Vermont SOS 2024 August Primary Voter Turnout
+5001133025,Highgate,Franklin,2450,286,0.1167,122,0.4266,Vermont SOS 2024 August Primary Voter Turnout
+5001145850,Montgomery,Franklin,954,131,0.1373,22,0.1679,Vermont SOS 2024 August Primary Voter Turnout
+5001159125,Richford,Franklin,1771,102,0.0576,43,0.4216,Vermont SOS 2024 August Primary Voter Turnout
+5001164600,Sheldon,Franklin,1503,86,0.0572,23,0.2674,Vermont SOS 2024 August Primary Voter Turnout
+5001161675,St. Albans City,Franklin,5600,580,0.1036,104,0.1793,Vermont SOS 2024 August Primary Voter Turnout
+5001161750,St. Albans Town,Franklin,4828,503,0.1042,87,0.173,Vermont SOS 2024 August Primary Voter Turnout
+5001171725,Swanton,Franklin,4890,504,0.1031,239,0.4742,Vermont SOS 2024 August Primary Voter Turnout
+5001300860,Alburgh,Grand Isle,1555,177,0.1138,29,0.1638,Vermont SOS 2024 August Primary Voter Turnout
+5001329275,Grand Isle,Grand Isle,1858,332,0.1787,88,0.2651,Vermont SOS 2024 August Primary Voter Turnout
+5001335875,Isle La Motte,Grand Isle,492,91,0.185,42,0.4615,Vermont SOS 2024 August Primary Voter Turnout
+5001350650,North Hero,Grand Isle,930,234,0.2516,78,0.3333,Vermont SOS 2024 August Primary Voter Turnout
+5001367000,South Hero,Grand Isle,1653,405,0.245,119,0.2938,Vermont SOS 2024 August Primary Voter Turnout
+5001504375,Belvidere,Lamoille,275,32,0.1164,7,0.2188,Vermont SOS 2024 August Primary Voter Turnout
+5001511500,Cambridge,Lamoille,2869,386,0.1345,84,0.2176,Vermont SOS 2024 August Primary Voter Turnout
+5001523500,Eden,Lamoille,996,72,0.0723,16,0.2222,Vermont SOS 2024 August Primary Voter Turnout
+5001523725,Elmore,Lamoille,728,96,0.1319,8,0.0833,Vermont SOS 2024 August Primary Voter Turnout
+5001535050,Hyde Park,Lamoille,2306,333,0.1444,106,0.3183,Vermont SOS 2024 August Primary Voter Turnout
+5001537075,Johnson,Lamoille,2078,194,0.0934,48,0.2474,Vermont SOS 2024 August Primary Voter Turnout
+5001546675,Morristown,Lamoille,4287,468,0.1092,82,0.1752,Vermont SOS 2024 August Primary Voter Turnout
+5001570525,Stowe,Lamoille,4512,299,0.0663,75,0.2508,Vermont SOS 2024 August Primary Voter Turnout
+5001577425,Waterville,Lamoille,607,110,0.1812,7,0.0636,Vermont SOS 2024 August Primary Voter Turnout
+5001585375,Wolcott,Lamoille,1236,157,0.127,42,0.2675,Vermont SOS 2024 August Primary Voter Turnout
+5001707375,Bradford,Orange,1954,251,0.1285,17,0.0677,Vermont SOS 2024 August Primary Voter Turnout
+5001707600,Braintree,Orange,1024,124,0.1211,8,0.0645,Vermont SOS 2024 August Primary Voter Turnout
+5001709325,Brookfield,Orange,1145,147,0.1284,0,0.0,Vermont SOS 2024 August Primary Voter Turnout
+5001713525,Chelsea,Orange,995,107,0.1075,8,0.0748,Vermont SOS 2024 August Primary Voter Turnout
+5001715700,Corinth,Orange,1146,181,0.1579,23,0.1271,Vermont SOS 2024 August Primary Voter Turnout
+5001725675,Fairlee,Orange,769,110,0.143,9,0.0818,Vermont SOS 2024 August Primary Voter Turnout
+5001748175,Newbury,Orange,1590,223,0.1403,49,0.2197,Vermont SOS 2024 August Primary Voter Turnout
+5001753425,Orange,Orange,889,101,0.1136,11,0.1089,Vermont SOS 2024 August Primary Voter Turnout
+5001758075,Randolph,Orange,3746,441,0.1177,112,0.254,Vermont SOS 2024 August Primary Voter Turnout
+5001770675,Strafford,Orange,981,180,0.1835,25,0.1389,Vermont SOS 2024 August Primary Voter Turnout
+5001772400,Thetford,Orange,2316,454,0.196,139,0.3062,Vermont SOS 2024 August Primary Voter Turnout
+5001773075,Topsham,Orange,932,95,0.1019,17,0.1789,Vermont SOS 2024 August Primary Voter Turnout
+5001773675,Tunbridge,Orange,1147,154,0.1343,21,0.1364,Vermont SOS 2024 August Primary Voter Turnout
+5001774950,Vershire,Orange,582,91,0.1564,9,0.0989,Vermont SOS 2024 August Primary Voter Turnout
+5001776750,Washington,Orange,825,139,0.1685,29,0.2086,Vermont SOS 2024 August Primary Voter Turnout
+5001779975,West Fairlee,Orange,527,52,0.0987,7,0.1346,Vermont SOS 2024 August Primary Voter Turnout
+5001784175,Williamstown,Orange,2514,243,0.0967,56,0.2305,Vermont SOS 2024 August Primary Voter Turnout
+5001900475,Albany,Orleans,687,192,0.2795,19,0.099,Vermont SOS 2024 August Primary Voter Turnout
+5001903550,Barton,Orleans,2115,236,0.1116,60,0.2542,Vermont SOS 2024 August Primary Voter Turnout
+5001909850,Brownington,Orleans,742,95,0.128,1,0.0105,Vermont SOS 2024 August Primary Voter Turnout
+5001913150,Charleston,Orleans,724,92,0.1271,19,0.2065,Vermont SOS 2024 August Primary Voter Turnout
+5001916150,Coventry,Orleans,803,105,0.1308,21,0.2,Vermont SOS 2024 August Primary Voter Turnout
+5001916300,Craftsbury,Orleans,996,290,0.2912,64,0.2207,Vermont SOS 2024 August Primary Voter Turnout
+5001917350,Derby,Orleans,3647,365,0.1001,70,0.1918,Vermont SOS 2024 August Primary Voter Turnout
+5001928075,Glover,Orleans,884,252,0.2851,81,0.3214,Vermont SOS 2024 August Primary Voter Turnout
+5001930175,Greensboro,Orleans,671,242,0.3607,42,0.1736,Vermont SOS 2024 August Primary Voter Turnout
+5001933775,Holland,Orleans,476,76,0.1597,4,0.0526,Vermont SOS 2024 August Primary Voter Turnout
+5001935575,Irasburg,Orleans,905,162,0.179,14,0.0864,Vermont SOS 2024 August Primary Voter Turnout
+5001936325,Jay,Orleans,439,46,0.1048,6,0.1304,Vermont SOS 2024 August Primary Voter Turnout
+5001940525,Lowell,Orleans,774,90,0.1163,17,0.1889,Vermont SOS 2024 August Primary Voter Turnout
+5001946450,Morgan,Orleans,557,87,0.1562,12,0.1379,Vermont SOS 2024 August Primary Voter Turnout
+5001948850,Newport City,Orleans,3919,273,0.0697,40,0.1465,Vermont SOS 2024 August Primary Voter Turnout
+5001948925,Newport Town,Orleans,1167,147,0.126,14,0.0952,Vermont SOS 2024 August Primary Voter Turnout
+5001973525,Troy,Orleans,1235,171,0.1385,40,0.2339,Vermont SOS 2024 August Primary Voter Turnout
+5001980200,Westfield,Orleans,457,85,0.186,11,0.1294,Vermont SOS 2024 August Primary Voter Turnout
+5001981700,Westmore,Orleans,287,51,0.1777,5,0.098,Vermont SOS 2024 August Primary Voter Turnout
+5002105200,Benson,Rutland,831,120,0.1444,42,0.35,Vermont SOS 2024 August Primary Voter Turnout
+5002107750,Brandon,Rutland,3009,464,0.1542,115,0.2478,Vermont SOS 2024 August Primary Voter Turnout
+5002111950,Castleton,Rutland,2864,406,0.1418,163,0.4015,Vermont SOS 2024 August Primary Voter Turnout
+5002114350,Chittenden,Rutland,1045,158,0.1512,25,0.1582,Vermont SOS 2024 August Primary Voter Turnout
+5002114500,Clarendon,Rutland,1991,212,0.1065,41,0.1934,Vermont SOS 2024 August Primary Voter Turnout
+5002116825,Danby,Rutland,958,169,0.1764,68,0.4024,Vermont SOS 2024 August Primary Voter Turnout
+5002125375,Fair Haven,Rutland,1957,257,0.1313,55,0.214,Vermont SOS 2024 August Primary Voter Turnout
+5002134450,Hubbardton,Rutland,544,102,0.1875,44,0.4314,Vermont SOS 2024 August Primary Voter Turnout
+5002135425,Ira,Rutland,313,45,0.1438,8,0.1778,Vermont SOS 2024 August Primary Voter Turnout
+5002137685,Killington,Rutland,1067,122,0.1143,23,0.1885,Vermont SOS 2024 August Primary Voter Turnout
+5002144125,Mendon,Rutland,974,137,0.1407,19,0.1387,Vermont SOS 2024 August Primary Voter Turnout
+5002144800,Middletown Springs,Rutland,710,224,0.3155,72,0.3214,Vermont SOS 2024 August Primary Voter Turnout
+5002147200,Mount Holly,Rutland,1080,193,0.1787,26,0.1347,Vermont SOS 2024 August Primary Voter Turnout
+5002147425,Mount Tabor,Rutland,149,26,0.1745,1,0.0385,Vermont SOS 2024 August Primary Voter Turnout
+5002154250,Pawlet,Rutland,1219,254,0.2084,52,0.2047,Vermont SOS 2024 August Primary Voter Turnout
+5002155450,Pittsfield,Rutland,438,49,0.1119,4,0.0816,Vermont SOS 2024 August Primary Voter Turnout
+5002155600,Pittsford,Rutland,2273,251,0.1104,36,0.1434,Vermont SOS 2024 August Primary Voter Turnout
+5002156875,Poultney,Rutland,2280,254,0.1114,51,0.2008,Vermont SOS 2024 August Primary Voter Turnout
+5002157250,Proctor,Rutland,1216,100,0.0822,21,0.21,Vermont SOS 2024 August Primary Voter Turnout
+5002161225,Rutland City,Rutland,11321,1074,0.0949,275,0.2561,Vermont SOS 2024 August Primary Voter Turnout
+5002161300,Rutland Town,Rutland,3281,431,0.1314,101,0.2343,Vermont SOS 2024 August Primary Voter Turnout
+5002165275,Shrewsbury,Rutland,1007,169,0.1678,29,0.1716,Vermont SOS 2024 August Primary Voter Turnout
+5002171050,Sudbury,Rutland,471,66,0.1401,10,0.1515,Vermont SOS 2024 August Primary Voter Turnout
+5002172925,Tinmouth,Rutland,415,133,0.3205,32,0.2406,Vermont SOS 2024 August Primary Voter Turnout
+5002175925,Wallingford,Rutland,1589,196,0.1233,61,0.3112,Vermont SOS 2024 August Primary Voter Turnout
+5002177950,Wells,Rutland,988,147,0.1488,29,0.1973,Vermont SOS 2024 August Primary Voter Turnout
+5002180875,West Haven,Rutland,197,36,0.1827,4,0.1111,Vermont SOS 2024 August Primary Voter Turnout
+5002182300,West Rutland,Rutland,1693,141,0.0833,30,0.2128,Vermont SOS 2024 August Primary Voter Turnout
+5002303175,Barre City,Washington,6192,912,0.1473,443,0.4857,Vermont SOS 2024 August Primary Voter Turnout
+5002303250,Barre Town,Washington,6366,1101,0.173,677,0.6149,Vermont SOS 2024 August Primary Voter Turnout
+5002305650,Berlin,Washington,2189,319,0.1457,120,0.3762,Vermont SOS 2024 August Primary Voter Turnout
+5002311125,Cabot,Washington,1137,217,0.1909,34,0.1567,Vermont SOS 2024 August Primary Voter Turnout
+5002311350,Calais,Washington,1449,370,0.2553,164,0.4432,Vermont SOS 2024 August Primary Voter Turnout
+5002318550,Duxbury,Washington,1153,194,0.1683,31,0.1598,Vermont SOS 2024 August Primary Voter Turnout
+5002321925,East Montpelier,Washington,2150,329,0.153,101,0.307,Vermont SOS 2024 August Primary Voter Turnout
+5002325825,Fayston,Washington,1254,181,0.1443,44,0.2431,Vermont SOS 2024 August Primary Voter Turnout
+5002343600,Marshfield,Washington,1229,194,0.1579,60,0.3093,Vermont SOS 2024 August Primary Voter Turnout
+5002344500,Middlesex,Washington,1492,239,0.1602,61,0.2552,Vermont SOS 2024 August Primary Voter Turnout
+5002346000,Montpelier,Washington,6752,1181,0.1749,357,0.3023,Vermont SOS 2024 August Primary Voter Turnout
+5002346225,Moretown,Washington,1475,203,0.1376,60,0.2956,Vermont SOS 2024 August Primary Voter Turnout
+5002350275,Northfield,Washington,3480,380,0.1092,103,0.2711,Vermont SOS 2024 August Primary Voter Turnout
+5002355825,Plainfield,Washington,1100,253,0.23,59,0.2332,Vermont SOS 2024 August Primary Voter Turnout
+5002360625,Roxbury,Washington,593,89,0.1501,23,0.2584,Vermont SOS 2024 August Primary Voter Turnout
+5002375325,Waitsfield,Washington,1507,287,0.1904,39,0.1359,Vermont SOS 2024 August Primary Voter Turnout
+5002376525,Warren,Washington,1600,262,0.1638,66,0.2519,Vermont SOS 2024 August Primary Voter Turnout
+5002376975,Waterbury,Washington,4467,1389,0.3109,672,0.4838,Vermont SOS 2024 August Primary Voter Turnout
+5002385525,Woodbury,Washington,717,122,0.1702,4,0.0328,Vermont SOS 2024 August Primary Voter Turnout
+5002386125,Worcester,Washington,800,174,0.2175,64,0.3678,Vermont SOS 2024 August Primary Voter Turnout
+5002501900,Athens,Windham,311,51,0.164,8,0.1569,Vermont SOS 2024 August Primary Voter Turnout
+5002507900,Brattleboro,Windham,9026,2324,0.2575,1047,0.4505,Vermont SOS 2024 August Primary Voter Turnout
+5002509475,Brookline,Windham,470,82,0.1745,13,0.1585,Vermont SOS 2024 August Primary Voter Turnout
+5002517875,Dover,Windham,1367,112,0.0819,13,0.1161,Vermont SOS 2024 August Primary Voter Turnout
+5002518325,Dummerston,Windham,1583,312,0.1971,91,0.2917,Vermont SOS 2024 August Primary Voter Turnout
+5002528900,Grafton,Windham,583,82,0.1407,20,0.2439,Vermont SOS 2024 August Primary Voter Turnout
+5002530925,Guilford,Windham,1822,761,0.4177,250,0.3285,Vermont SOS 2024 August Primary Voter Turnout
+5002531150,Halifax,Windham,647,181,0.2798,28,0.1547,Vermont SOS 2024 August Primary Voter Turnout
+5002536175,Jamaica,Windham,799,60,0.0751,7,0.1167,Vermont SOS 2024 August Primary Voter Turnout
+5002540225,Londonderry,Windham,1634,192,0.1175,43,0.224,Vermont SOS 2024 August Primary Voter Turnout
+5002543375,Marlboro,Windham,720,152,0.2111,29,0.1908,Vermont SOS 2024 August Primary Voter Turnout
+5002548400,Newfane,Windham,1403,204,0.1454,36,0.1765,Vermont SOS 2024 August Primary Voter Turnout
+5002557700,Putney,Windham,1999,343,0.1716,75,0.2187,Vermont SOS 2024 August Primary Voter Turnout
+5002560250,Rockingham,Windham,3813,351,0.0921,57,0.1624,Vermont SOS 2024 August Primary Voter Turnout
+5002570750,Stratton,Windham,252,17,0.0675,1,0.0588,Vermont SOS 2024 August Primary Voter Turnout
+5002573300,Townshend,Windham,1128,111,0.0984,32,0.2883,Vermont SOS 2024 August Primary Voter Turnout
+5002574800,Vernon,Windham,1837,366,0.1992,93,0.2541,Vermont SOS 2024 August Primary Voter Turnout
+5002576225,Wardsboro,Windham,674,63,0.0935,22,0.3492,Vermont SOS 2024 August Primary Voter Turnout
+5002581400,Westminster,Windham,2629,332,0.1263,59,0.1777,Vermont SOS 2024 August Primary Voter Turnout
+5002583950,Whitingham,Windham,1031,142,0.1377,26,0.1831,Vermont SOS 2024 August Primary Voter Turnout
+5002584700,Wilmington,Windham,1665,188,0.1129,39,0.2074,Vermont SOS 2024 August Primary Voter Turnout
+5002584850,Windham,Windham,328,82,0.25,17,0.2073,Vermont SOS 2024 August Primary Voter Turnout
+5002701300,Andover,Windsor,401,130,0.3242,8,0.0615,Vermont SOS 2024 August Primary Voter Turnout
+5002702575,Baltimore,Windsor,196,27,0.1378,3,0.1111,Vermont SOS 2024 August Primary Voter Turnout
+5002702725,Barnard,Windsor,703,115,0.1636,8,0.0696,Vermont SOS 2024 August Primary Voter Turnout
+5002705800,Bethel,Windsor,1402,154,0.1098,20,0.1299,Vermont SOS 2024 August Primary Voter Turnout
+5002708275,Bridgewater,Windsor,708,139,0.1963,18,0.1295,Vermont SOS 2024 August Primary Voter Turnout
+5002712250,Cavendish,Windsor,1102,163,0.1479,30,0.184,Vermont SOS 2024 August Primary Voter Turnout
+5002713675,Chester,Windsor,2440,400,0.1639,74,0.185,Vermont SOS 2024 August Primary Voter Turnout
+5002732275,Hartford,Windsor,9423,1276,0.1354,707,0.5541,Vermont SOS 2024 August Primary Voter Turnout
+5002732425,Hartland,Windsor,3009,458,0.1522,93,0.2031,Vermont SOS 2024 August Primary Voter Turnout
+5002741275,Ludlow,Windsor,1694,206,0.1216,28,0.1359,Vermont SOS 2024 August Primary Voter Turnout
+5002752900,Norwich,Windsor,3113,801,0.2573,298,0.372,Vermont SOS 2024 August Primary Voter Turnout
+5002756050,Plymouth,Windsor,458,67,0.1463,10,0.1493,Vermont SOS 2024 August Primary Voter Turnout
+5002756350,Pomfret,Windsor,767,174,0.2269,82,0.4713,Vermont SOS 2024 August Primary Voter Turnout
+5002758375,Reading,Windsor,530,110,0.2075,30,0.2727,Vermont SOS 2024 August Primary Voter Turnout
+5002760100,Rochester,Windsor,957,180,0.1881,35,0.1944,Vermont SOS 2024 August Primary Voter Turnout
+5002760850,Royalton,Windsor,2079,277,0.1332,51,0.1841,Vermont SOS 2024 August Primary Voter Turnout
+5002763775,Sharon,Windsor,1241,140,0.1128,28,0.2,Vermont SOS 2024 August Primary Voter Turnout
+5002769550,Springfield,Windsor,6349,983,0.1548,510,0.5188,Vermont SOS 2024 August Primary Voter Turnout
+5002770375,Stockbridge,Windsor,602,86,0.1429,7,0.0814,Vermont SOS 2024 August Primary Voter Turnout
+5002777500,Weathersfield,Windsor,2519,339,0.1346,95,0.2802,Vermont SOS 2024 August Primary Voter Turnout
+5002783050,West Windsor,Windsor,1067,165,0.1546,19,0.1152,Vermont SOS 2024 August Primary Voter Turnout
+5002782000,Weston,Windsor,552,141,0.2554,37,0.2624,Vermont SOS 2024 August Primary Voter Turnout
+5002784925,Windsor,Windsor,2739,363,0.1325,68,0.1873,Vermont SOS 2024 August Primary Voter Turnout
+5002785975,Woodstock,Windsor,2874,352,0.1225,39,0.1108,Vermont SOS 2024 August Primary Voter Turnout
