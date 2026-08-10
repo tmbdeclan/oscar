@@ -8,10 +8,17 @@ __pycache__/
 
 # Local runtime data
 data/*.sqlite
+!data/campaign_finance.sqlite
 data/*.sqlite-shm
 data/*.sqlite-wal
 raw_json/*
 !raw_json/.gitkeep
+
+# Local/generated image experiments
+assets/IMG_9440.heic.png
+assets/oscar_baby_icon.png
+assets/oscar_baby_icon_hand_twotone.png
+assets/oscar_logo.svg
 
 # Generated exports
 output/
