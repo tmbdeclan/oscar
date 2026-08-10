@@ -1,0 +1,257 @@
+town_geoid,town,county,median_household_income_2024,median_household_income_moe_2024,acs_release,source
+5000100325,Addison,Addison,106667,7181,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000108575,Bridport,Addison,83214,17776,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000109025,Bristol,Addison,74620,8110,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000116000,Cornwall,Addison,114583,32017,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000126300,Ferrisburgh,Addison,106989,21771,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000128600,Goshen,Addison,56250,32508,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000129575,Granville,Addison,60500,20870,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000131525,Hancock,Addison,76250,33926,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000139325,Leicester,Addison,70417,30423,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000140075,Lincoln,Addison,96667,17954,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000144350,Middlebury,Addison,86169,15744,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000145550,Monkton,Addison,119688,27982,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000148700,New Haven,Addison,92321,16922,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000153725,Orwell,Addison,70417,22458,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000153950,Panton,Addison,86667,9614,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000159650,Ripton,Addison,112917,14750,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000162575,Salisbury,Addison,99688,21381,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000165050,Shoreham,Addison,93654,22931,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000170075,Starksboro,Addison,82188,15313,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000174650,Vergennes,Addison,76587,12755,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000176075,Waltham,Addison,97500,13819,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000183275,Weybridge,Addison,118083,18342,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000183800,Whiting,Addison,91250,37709,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000301450,Arlington,Bennington,102308,10759,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000304825,Bennington,Bennington,59446,7440,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000317725,Dorset,Bennington,111250,40453,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000327962,Glastenbury,Bennington,,,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000339025,Landgrove,Bennington,195938,166849,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000342850,Manchester,Bennington,94886,22757,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000355000,Peru,Bennington,151875,82732,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000357025,Pownal,Bennington,64163,21076,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000358600,Readsboro,Bennington,55268,12352,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000361000,Rupert,Bennington,88229,35873,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000362875,Sandgate,Bennington,69167,18993,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000363175,Searsburg,Bennington,61071,49326,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000363550,Shaftsbury,Bennington,86071,24478,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000369775,Stamford,Bennington,88646,9226,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000371425,Sunderland,Bennington,88523,15919,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000385075,Winhall,Bennington,95500,23228,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000385675,Woodford,Bennington,81250,20487,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000502875,Barnet,Caledonia,67386,15221,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000510450,Burke,Caledonia,87143,17233,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000517125,Danville,Caledonia,70946,7023,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000530550,Groton,Caledonia,77250,13883,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000531825,Hardwick,Caledonia,92297,17316,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000537900,Kirby,Caledonia,54792,21199,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000541725,Lyndon,Caledonia,68786,5785,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000547725,Newark,Caledonia,72929,6654,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000554400,Peacham,Caledonia,90000,28387,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000561525,Ryegate,Caledonia,66484,14558,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000564075,Sheffield,Caledonia,58333,26066,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000562200,St. Johnsbury,Caledonia,57738,9123,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000569925,Stannard,Caledonia,66979,30024,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000571575,Sutton,Caledonia,71250,17627,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000575700,Walden,Caledonia,88000,14593,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000577125,Waterford,Caledonia,109375,18521,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000583500,Wheelock,Caledonia,64792,19502,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000706550,Bolton,Chittenden,111125,17013,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000710300,Buels,Chittenden,71250,29215,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000710675,Burlington,Chittenden,71109,4193,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000713300,Charlotte,Chittenden,144375,27387,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000714875,Colchester,Chittenden,97891,8720,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000724175,Essex,Chittenden,110199,14119,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000724400,Essex Junction,Chittenden,89257,16233,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000733475,Hinesburg,Chittenden,112539,17526,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000734600,Huntington,Chittenden,94497,2859,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000736700,Jericho,Chittenden,116923,16162,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000745250,Milton,Chittenden,118977,9633,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000759275,Richmond,Chittenden,108235,23710,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000764300,Shelburne,Chittenden,115963,15767,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000766175,South Burlington,Chittenden,106667,12797,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000762050,St. George,Chittenden,109464,33858,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000773975,Underhill,Chittenden,92267,54188,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000780350,Westford,Chittenden,112750,12264,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000784475,Williston,Chittenden,106967,11875,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000785150,Winooski,Chittenden,79522,11330,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000902125,Averill,Essex,,,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000902162,Avery's,Essex,,,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000906325,Bloomfield,Essex,54375,17429,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000908725,Brighton,Essex,47375,21292,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000910075,Brunswick,Essex,128125,32976,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000911800,Canaan,Essex,55606,3733,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000915250,Concord,Essex,73304,9320,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000921250,East Haven,Essex,38438,31249,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000925975,Ferdinand,Essex,13849,172,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000929125,Granby,Essex,57083,51231,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000930775,Guildhall,Essex,115000,45985,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000939700,Lemington,Essex,55000,42437,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000939775,Lewis,Essex,,,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000941425,Lunenburg,Essex,53125,8642,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000942475,Maidstone,Essex,85833,31928,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000952750,Norton,Essex,65625,23493,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000975175,Victory,Essex,,,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000976337,Warner's,Essex,,,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5000976562,Warren's,Essex,,,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001102500,Bakersfield,Franklin,83462,18450,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001105425,Berkshire,Franklin,71406,21049,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001124050,Enosburgh,Franklin,63828,17162,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001124925,Fairfax,Franklin,128963,29451,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001125225,Fairfield,Franklin,87019,21892,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001126500,Fletcher,Franklin,105833,9059,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001127100,Franklin,Franklin,79917,20711,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001127700,Georgia,Franklin,105011,8635,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001133025,Highgate,Franklin,81017,14337,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001145850,Montgomery,Franklin,53289,24023,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001159125,Richford,Franklin,56853,12600,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001164600,Sheldon,Franklin,78533,24942,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001161675,St. Albans,Franklin,57980,7287,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001161750,St. Albans,Franklin,90060,18679,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001171725,Swanton,Franklin,81371,13820,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001300860,Alburgh,Grand Isle,76429,22453,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001329275,Grand Isle,Grand Isle,100846,22253,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001335875,Isle La Motte,Grand Isle,82500,17030,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001350650,North Hero,Grand Isle,102143,23525,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001367000,South Hero,Grand Isle,127434,15007,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001504375,Belvidere,Lamoille,81563,18037,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001511500,Cambridge,Lamoille,72344,19222,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001523500,Eden,Lamoille,83578,8097,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001523725,Elmore,Lamoille,98750,24182,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001535050,Hyde Park,Lamoille,84375,9346,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001537075,Johnson,Lamoille,55346,13623,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001546675,Morristown,Lamoille,66273,4629,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001570525,Stowe,Lamoille,93618,32786,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001577425,Waterville,Lamoille,71250,26670,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001585375,Wolcott,Lamoille,70259,9723,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001707375,Bradford,Orange,108162,14712,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001707600,Braintree,Orange,79803,4855,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001709325,Brookfield,Orange,98500,22893,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001713525,Chelsea,Orange,65913,13458,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001715700,Corinth,Orange,89167,28699,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001725675,Fairlee,Orange,74760,10174,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001748175,Newbury,Orange,62316,6493,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001753425,Orange,Orange,71302,12803,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001758075,Randolph,Orange,76758,5867,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001770675,Strafford,Orange,110833,18827,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001772400,Thetford,Orange,88045,16316,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001773075,Topsham,Orange,72308,60425,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001773675,Tunbridge,Orange,89464,25951,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001774950,Vershire,Orange,71618,12134,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001776750,Washington,Orange,66103,7803,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001779975,West Fairlee,Orange,76500,16290,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001784175,Williamstown,Orange,94418,10435,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001900475,Albany,Orleans,59167,13730,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001903550,Barton,Orleans,66250,15713,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001909850,Brownington,Orleans,75556,17399,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001913150,Charleston,Orleans,49286,16836,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001916150,Coventry,Orleans,59342,2936,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001916300,Craftsbury,Orleans,83672,15569,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001917350,Derby,Orleans,80250,7555,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001928075,Glover,Orleans,73839,17597,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001930175,Greensboro,Orleans,91750,18139,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001933775,Holland,Orleans,60729,16361,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001935575,Irasburg,Orleans,98534,12557,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001936325,Jay,Orleans,74792,24785,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001940525,Lowell,Orleans,57404,14569,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001946450,Morgan,Orleans,91250,24867,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001948850,Newport,Orleans,54646,11996,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001948925,Newport,Orleans,71202,10679,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001973525,Troy,Orleans,87938,11397,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001980200,Westfield,Orleans,72500,30413,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5001981700,Westmore,Orleans,87188,11376,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002105200,Benson,Rutland,78625,8146,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002107750,Brandon,Rutland,64180,12058,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002111950,Castleton,Rutland,73854,22842,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002114350,Chittenden,Rutland,106250,27864,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002114500,Clarendon,Rutland,59609,11945,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002116825,Danby,Rutland,77321,13471,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002125375,Fair Haven,Rutland,62404,15631,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002134450,Hubbardton,Rutland,102321,17794,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002135425,Ira,Rutland,71827,5034,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002137685,Killington,Rutland,81250,38998,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002144125,Mendon,Rutland,100524,22729,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002144800,Middletown Springs,Rutland,82000,11717,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002147200,Mount Holly,Rutland,78015,19089,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002147425,Mount Tabor,Rutland,,,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002154250,Pawlet,Rutland,62273,13726,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002155450,Pittsfield,Rutland,65852,11635,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002155600,Pittsford,Rutland,69705,6506,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002156875,Poultney,Rutland,72617,5782,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002157250,Proctor,Rutland,74167,11786,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002161225,Rutland,Rutland,57675,8240,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002161300,Rutland,Rutland,72099,16534,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002165275,Shrewsbury,Rutland,91250,23153,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002171050,Sudbury,Rutland,100208,32989,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002172925,Tinmouth,Rutland,79219,36627,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002175925,Wallingford,Rutland,80230,15356,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002177950,Wells,Rutland,75417,11001,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002180875,West Haven,Rutland,85250,28991,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002182300,West Rutland,Rutland,61161,27057,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002303175,Barre,Washington,65625,6517,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002303250,Barre,Washington,93210,8984,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002305650,Berlin,Washington,86691,20689,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002311125,Cabot,Washington,77031,16166,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002311350,Calais,Washington,100625,27461,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002318550,Duxbury,Washington,105208,24886,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002321925,East Montpelier,Washington,92778,20811,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002325825,Fayston,Washington,110250,27966,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002343600,Marshfield,Washington,60313,9504,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002344500,Middlesex,Washington,109632,13486,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002346000,Montpelier,Washington,81030,6037,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002346225,Moretown,Washington,104423,6875,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002350275,Northfield,Washington,71768,13486,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002355825,Plainfield,Washington,69250,31481,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002360625,Roxbury,Washington,73214,22349,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002375325,Waitsfield,Washington,84375,34128,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002376525,Warren,Washington,86905,16379,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002376975,Waterbury,Washington,103917,22843,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002385525,Woodbury,Washington,84545,16348,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002386125,Worcester,Washington,73833,18237,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002501900,Athens,Windham,68438,30472,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002507900,Brattleboro,Windham,58241,8266,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002509475,Brookline,Windham,80833,15948,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002517875,Dover,Windham,52313,6562,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002518325,Dummerston,Windham,101696,21365,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002528900,Grafton,Windham,76111,7381,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002530925,Guilford,Windham,75243,6268,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002531150,Halifax,Windham,63889,7124,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002536175,Jamaica,Windham,79219,19072,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002540225,Londonderry,Windham,85179,21356,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002543375,Marlboro,Windham,77135,10265,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002548400,Newfane,Windham,66719,20735,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002557700,Putney,Windham,79706,18362,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002560250,Rockingham,Windham,70857,16152,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002565762,Somerset,Windham,,,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002570750,Stratton,Windham,122708,33350,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002573300,Townshend,Windham,78750,28645,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002574800,Vernon,Windham,85682,9380,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002576225,Wardsboro,Windham,62000,6480,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002581400,Westminster,Windham,71491,3579,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002583950,Whitingham,Windham,70625,10782,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002584700,Wilmington,Windham,70000,22642,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002584850,Windham,Windham,94500,11966,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002701300,Andover,Windsor,102500,37746,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002702575,Baltimore,Windsor,107500,15622,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002702725,Barnard,Windsor,97581,19059,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002705800,Bethel,Windsor,75822,7137,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002708275,Bridgewater,Windsor,70272,3460,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002712250,Cavendish,Windsor,89063,28784,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002713675,Chester,Windsor,62125,7868,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002732275,Hartford,Windsor,78125,6517,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002732425,Hartland,Windsor,86136,22743,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002741275,Ludlow,Windsor,54885,14422,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002752900,Norwich,Windsor,140313,12023,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002756050,Plymouth,Windsor,87614,8132,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002756350,Pomfret,Windsor,84229,7929,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002758375,Reading,Windsor,85000,18958,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002760100,Rochester,Windsor,72676,8052,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002760850,Royalton,Windsor,103938,24252,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002763775,Sharon,Windsor,84375,16539,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002769550,Springfield,Windsor,66571,12881,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002770375,Stockbridge,Windsor,77109,11753,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002777500,Weathersfield,Windsor,83095,11951,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002783050,West Windsor,Windsor,108750,18461,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002782000,Weston,Windsor,115000,19696,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002784925,Windsor,Windsor,52484,10799,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013
+5002785975,Woodstock,Windsor,120938,29034,ACS 2024 5-year,Census Reporter ACS 2024 5-year B19013

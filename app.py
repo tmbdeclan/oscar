@@ -28,6 +28,7 @@ PO_BOX_INFERRED_PARCELS = (
 )
 TOWN_POPULATION_DENSITY = HERE / "data" / "vermont_town_population_density.csv"
 TOWN_PRIMARY_TURNOUT = HERE / "data" / "vermont_primary_turnout_2024.csv"
+TOWN_HOUSEHOLD_INCOME = HERE / "data" / "vermont_household_income_2024.csv"
 PO_BOX_RE = re.compile(
     r"(^|\b)(P\.?\s*O\.?|POST\s+OFFICE|PO)\s*BOX\b|^P\.?O\.?BOX\b",
     re.IGNORECASE,
@@ -327,6 +328,22 @@ def load_town_primary_turnout(path: str, modified_at: float):
         if col in turnout.columns:
             turnout[col] = pd.to_numeric(turnout[col], errors="coerce")
     return turnout
+
+
+@st.cache_data(show_spinner=False)
+def load_town_household_income(path: str, modified_at: float):
+    income_path = Path(path)
+    if not income_path.exists():
+        return pd.DataFrame()
+
+    income = pd.read_csv(income_path, dtype={"town_geoid": str}).fillna("")
+    for col in [
+        "median_household_income_2024",
+        "median_household_income_moe_2024",
+    ]:
+        if col in income.columns:
+            income[col] = pd.to_numeric(income[col], errors="coerce")
+    return income
 
 
 def attach_vermont_municipality(
@@ -654,6 +671,15 @@ else:
         str(TOWN_PRIMARY_TURNOUT),
         turnout_modified_at,
     )
+    income_modified_at = (
+        TOWN_HOUSEHOLD_INCOME.stat().st_mtime
+        if TOWN_HOUSEHOLD_INCOME.exists()
+        else 0.0
+    )
+    town_income = load_town_household_income(
+        str(TOWN_HOUSEHOLD_INCOME),
+        income_modified_at,
+    )
 
     vt = filtered[filtered["state"] == "VT"].copy()
     vt = attach_vermont_municipality(vt, valid_towns, aliases)
@@ -722,6 +748,20 @@ else:
         town_analysis["primary_turnout_pct_2024"] = 0
         town_analysis["primary_absentee_votes_2024"] = 0
         town_analysis["primary_absentee_pct_2024"] = 0
+    if not town_income.empty:
+        income_cols = [
+            "town_geoid",
+            "median_household_income_2024",
+            "median_household_income_moe_2024",
+        ]
+        town_analysis = town_analysis.merge(
+            town_income[income_cols],
+            on="town_geoid",
+            how="left",
+        )
+    else:
+        town_analysis["median_household_income_2024"] = 0
+        town_analysis["median_household_income_moe_2024"] = 0
     town_analysis[["amount", "records", "contributors"]] = (
         town_analysis[["amount", "records", "contributors"]].fillna(0)
     )
@@ -736,6 +776,8 @@ else:
         "primary_turnout_pct_2024",
         "primary_absentee_votes_2024",
         "primary_absentee_pct_2024",
+        "median_household_income_2024",
+        "median_household_income_moe_2024",
     ]:
         if col in town_analysis.columns:
             town_analysis[col] = town_analysis[col].fillna(0)
@@ -756,6 +798,17 @@ else:
         / town_analysis["primary_votes_cast_2024"]
         * 1000
     ).where(town_analysis["primary_votes_cast_2024"] > 0, 0)
+    town_analysis["primary_turnout_pct_display"] = (
+        town_analysis["primary_turnout_pct_2024"] * 100
+    )
+    town_analysis["primary_voter_money_share_of_income"] = (
+        town_analysis["contribution_dollars_per_primary_voter"]
+        / town_analysis["median_household_income_2024"]
+    ).where(town_analysis["median_household_income_2024"] > 0, 0)
+    town_analysis["per_capita_money_share_of_income"] = (
+        town_analysis["contribution_dollars_per_capita"]
+        / town_analysis["median_household_income_2024"]
+    ).where(town_analysis["median_household_income_2024"] > 0, 0)
     town_analysis["per_capita_rank"] = (
         town_analysis["contribution_dollars_per_capita"]
         .rank(method="dense", ascending=False)
@@ -857,6 +910,24 @@ else:
                     "hover_format": ":,",
                     "tick_format": ",",
                 },
+                "Median household income": {
+                    "column": "median_household_income_2024",
+                    "label": "Median household income",
+                    "hover_format": ":$,.0f",
+                    "tick_format": "$,.0f",
+                },
+                "Income estimate MOE": {
+                    "column": "median_household_income_moe_2024",
+                    "label": "Income MOE",
+                    "hover_format": ":$,.0f",
+                    "tick_format": "$,.0f",
+                },
+                "Primary-voter money share of income": {
+                    "column": "primary_voter_money_share_of_income",
+                    "label": "$ per primary voter / income",
+                    "hover_format": ":.2%",
+                    "tick_format": ".2%",
+                },
                 "Population density": {
                     "column": "population_density_sqmi",
                     "label": "People per sq mi",
@@ -896,6 +967,10 @@ else:
                 "primary_absentee_pct_2024": ":.1%",
                 "contribution_dollars_per_primary_voter": ":$,.2f",
                 "contribution_records_per_1k_primary_voters": ":,.1f",
+                "median_household_income_2024": ":$,.0f",
+                "median_household_income_moe_2024": ":$,.0f",
+                "primary_voter_money_share_of_income": ":.2%",
+                "per_capita_money_share_of_income": ":.2%",
                 "per_capita_rank": ":,",
                 "per_primary_voter_rank": ":,",
                 "town_geoid": False,
@@ -1556,294 +1631,37 @@ else:
                     point_fig.update_layout(scatter_fig.layout)
                 st.plotly_chart(point_fig, width="stretch")
 
-                st.dataframe(
-                    combined_points[
-                        [
-                            "location_type",
-                            "display_address",
-                            "municipality",
-                            "amount",
-                            "records",
-                            "contributors",
-                            "contributor_names",
-                            "candidates",
-                            "candidate_names",
-                            "matched_address",
-                        ]
-                    ].rename(
-                        columns={
-                            "location_type": "Location type",
-                            "display_address": "Filed address",
-                            "municipality": "Municipality",
-                            "amount": "Amount",
-                            "records": "Records",
-                            "contributors": "Named contributors",
-                            "contributor_names": "Contributor names",
-                            "candidates": "Candidates",
-                            "candidate_names": "Candidate names",
-                            "matched_address": "Geocoder match",
-                        }
-                    ),
-                    width="stretch",
-                    hide_index=True,
-                    column_config={
-                        "Amount":
-                            st.column_config.NumberColumn(format="$%.2f"),
-                    },
-                )
-            else:
-                st.info("No mapped Windsor point locations match the filters.")
-
-            if not inferred_points.empty:
-                st.markdown("#### Inferred P.O. box parcel matches")
-                i1, i2, i3 = st.columns(3)
-                i1.metric(
-                    "Inferred P.O. box dollars",
-                    f"${inferred_points['amount'].sum():,.0f}",
-                )
-                i2.metric(
-                    "Inferred P.O. box groups",
-                    f"{len(inferred_points):,}",
-                )
-                i3.metric(
-                    "Source",
-                    "VTrans parcels",
-                )
-
-                if len(inferred_points):
-                    inferred_points = inferred_points.sort_values(
-                        "amount",
-                        ascending=False,
-                    )
-                    if color_by_candidate and selected_point_candidates:
-                        candidate_po_box_records = po_box_records[
-                            po_box_records["roster_name"].isin(
-                                selected_point_candidates
-                            )
-                        ].copy()
-                        candidate_po_box_summary = (
-                            candidate_po_box_records.groupby(
-                                ["po_box_key", "roster_name"],
-                                as_index=False,
-                            )
-                            .agg(
-                                amount=("amount", "sum"),
-                                records=("amount", "size"),
-                                name=("name", "first"),
-                                filed_po_box=("address_line1", "first"),
-                                city=("city", "first"),
-                                state=("state", "first"),
-                                zip=("zip", "first"),
-                                municipality=("municipality", "first"),
-                            )
-                        )
-                        candidate_inferred_points = (
-                            candidate_po_box_summary.merge(
-                                inferred_cache[
-                                    [
-                                        "po_box_key",
-                                        "match_status",
-                                        "match_confidence",
-                                        "parcel_location",
-                                        "owner1",
-                                        "owner2",
-                                        "latitude",
-                                        "longitude",
-                                    ]
-                                ],
-                                on="po_box_key",
-                                how="left",
-                            )
-                        )
-                        candidate_inferred_points = (
-                            candidate_inferred_points[
-                                (
-                                    candidate_inferred_points["match_status"]
-                                    == "matched"
-                                )
-                                & (
-                                    candidate_inferred_points[
-                                        "match_confidence"
-                                    ]
-                                    == "high"
-                                )
-                                & candidate_inferred_points[
-                                    "latitude"
-                                ].notna()
-                                & candidate_inferred_points[
-                                    "longitude"
-                                ].notna()
-                            ]
-                            .copy()
-                        )
-
-                        inferred_fig = go.Figure()
-                        for candidate_name in selected_point_candidates:
-                            candidate_points_for_trace = (
-                                candidate_inferred_points[
-                                    candidate_inferred_points["roster_name"]
-                                    == candidate_name
-                                ]
-                                .copy()
-                            )
-                            if not len(candidate_points_for_trace):
-                                continue
-                            start, end = candidate_palette[candidate_name]
-                            candidate_points_for_trace["marker_color"] = (
-                                gradient_values(
-                                    candidate_points_for_trace["amount"],
-                                    start,
-                                    end,
-                                )
-                            )
-                            customdata = candidate_points_for_trace[
-                                [
-                                    "roster_name",
-                                    "name",
-                                    "filed_po_box",
-                                    "municipality",
-                                    "parcel_location",
-                                    "owner1",
-                                    "owner2",
-                                    "amount",
-                                    "records",
-                                ]
-                            ].to_numpy()
-                            inferred_fig.add_trace(
-                                go.Scattermap(
-                                    lat=candidate_points_for_trace[
-                                        "latitude"
-                                    ],
-                                    lon=candidate_points_for_trace[
-                                        "longitude"
-                                    ],
-                                    mode="markers",
-                                    name=candidate_name,
-                                    customdata=customdata,
-                                    marker={
-                                        "size": scale_marker_sizes(
-                                            candidate_points_for_trace[
-                                                "amount"
-                                            ],
-                                            minimum=12,
-                                            maximum=32,
-                                        ),
-                                        "color": candidate_points_for_trace[
-                                            "marker_color"
-                                        ],
-                                        "opacity": 0.88,
-                                    },
-                                    hovertemplate=(
-                                        "<b>%{customdata[0]}</b><br>"
-                                        "Contributor: %{customdata[1]}<br>"
-                                        "Filed P.O. box: %{customdata[2]}<br>"
-                                        "Municipality: %{customdata[3]}<br>"
-                                        "Inferred parcel: %{customdata[4]}<br>"
-                                        "Grand-list owner 1: "
-                                        "%{customdata[5]}<br>"
-                                        "Grand-list owner 2: "
-                                        "%{customdata[6]}<br>"
-                                        "Amount: $%{customdata[7]:,.0f}<br>"
-                                        "Records: %{customdata[8]:,}"
-                                        "<extra></extra>"
-                                    ),
-                                )
-                            )
-                        inferred_fig.update_layout(
-                            height=520,
-                            margin=dict(l=0, r=0, t=10, b=0),
-                            map={
-                                "style": "carto-positron",
-                                "center": {"lat": 43.55, "lon": -72.55},
-                                "zoom": 8.15,
-                            },
-                            legend=dict(
-                                title="Candidate",
-                                orientation="h",
-                                yanchor="bottom",
-                                y=0.01,
-                                xanchor="left",
-                                x=0.01,
-                            ),
-                        )
-                    else:
-                        inferred_fig = px.scatter_map(
-                            inferred_points,
-                            lat="latitude",
-                            lon="longitude",
-                            size="amount",
-                            color="amount",
-                            color_continuous_scale=[
-                                [0.0, "#d0bfff"],
-                                [0.35, "#9d7de8"],
-                                [0.72, "#7048c8"],
-                                [1.0, "#3b1d8f"],
-                            ],
-                            hover_name="name",
-                            hover_data={
-                                "filed_po_box": True,
-                                "municipality": True,
-                                "parcel_location": True,
-                                "owner1": True,
-                                "owner2": True,
-                                "amount": ":$,.0f",
-                                "records": ":,",
-                                "candidates": ":,",
-                                "candidate_names": True,
-                                "latitude": False,
-                                "longitude": False,
-                            },
-                            labels={
-                                "amount": "Contribution dollars",
-                                "filed_po_box": "Filed P.O. box",
-                                "municipality": "Municipality",
-                                "parcel_location": "Inferred parcel location",
-                                "owner1": "Grand-list owner 1",
-                                "owner2": "Grand-list owner 2",
-                                "records": "Records",
-                                "candidates": "Candidates",
-                                "candidate_names": "Candidate names",
-                            },
-                            map_style="carto-positron",
-                            center={"lat": 43.55, "lon": -72.55},
-                            zoom=8.15,
-                            size_max=32,
-                            height=520,
-                        )
-                        inferred_fig.update_traces(marker={"opacity": 0.86})
-                        inferred_fig.update_layout(
-                            margin=dict(l=0, r=0, t=10, b=0),
-                            coloraxis_colorbar=dict(
-                                title="Inferred dollars",
-                                tickformat="$,.0f",
-                            ),
-                        )
-                    st.plotly_chart(inferred_fig, width="stretch")
-
+                with st.expander(
+                    f"Mapped Windsor point table "
+                    f"({len(combined_points):,} locations)",
+                    expanded=False,
+                ):
                     st.dataframe(
-                        inferred_points[
+                        combined_points[
                             [
-                                "name",
-                                "filed_po_box",
+                                "location_type",
+                                "display_address",
                                 "municipality",
                                 "amount",
                                 "records",
+                                "contributors",
+                                "contributor_names",
+                                "candidates",
                                 "candidate_names",
-                                "parcel_location",
-                                "owner1",
-                                "owner2",
+                                "matched_address",
                             ]
                         ].rename(
                             columns={
-                                "name": "Contributor",
-                                "filed_po_box": "Filed P.O. box",
+                                "location_type": "Location type",
+                                "display_address": "Filed address",
                                 "municipality": "Municipality",
                                 "amount": "Amount",
                                 "records": "Records",
+                                "contributors": "Named contributors",
+                                "contributor_names": "Contributor names",
+                                "candidates": "Candidates",
                                 "candidate_names": "Candidate names",
-                                "parcel_location": "Inferred parcel location",
-                                "owner1": "Grand-list owner 1",
-                                "owner2": "Grand-list owner 2",
+                                "matched_address": "Geocoder match",
                             }
                         ),
                         width="stretch",
@@ -1853,11 +1671,8 @@ else:
                                 st.column_config.NumberColumn(format="$%.2f"),
                         },
                     )
-                else:
-                    st.info(
-                        "No high-confidence inferred P.O. box parcel matches "
-                        "match the current filters."
-                    )
+            else:
+                st.info("No mapped Windsor point locations match the filters.")
 
             with st.expander(
                 f"Unplaced Windsor physical addresses "
@@ -1947,7 +1762,7 @@ else:
             with a1:
                 st.markdown("##### Higher per-capita money")
                 st.dataframe(
-                    ranked_windsor_per_capita.head(12)[
+                    ranked_windsor_per_capita[
                         [
                             "municipality",
                             "amount",
@@ -1981,7 +1796,7 @@ else:
             with a2:
                 st.markdown("##### Lower per-capita money")
                 st.dataframe(
-                    lower_activity.head(12)[
+                    lower_activity[
                         [
                             "municipality",
                             "amount",
@@ -2076,7 +1891,7 @@ else:
                 "amount",
                 "primary_votes_cast_2024",
                 "registered_voters_2024_primary",
-                "primary_turnout_pct_2024",
+                "primary_turnout_pct_display",
                 "contribution_dollars_per_primary_voter",
                 "records",
                 "contribution_records_per_1k_primary_voters",
@@ -2086,7 +1901,7 @@ else:
                 "amount": "Amount",
                 "primary_votes_cast_2024": "2024 primary votes",
                 "registered_voters_2024_primary": "Registered voters",
-                "primary_turnout_pct_2024": "Primary turnout",
+                "primary_turnout_pct_display": "Primary turnout",
                 "contribution_dollars_per_primary_voter":
                     "$ per primary voter",
                 "records": "Records",
@@ -2096,7 +1911,7 @@ else:
             primary_config = {
                 "Amount": st.column_config.NumberColumn(format="$%.2f"),
                 "Primary turnout":
-                    st.column_config.NumberColumn(format="%.1%%"),
+                    st.column_config.NumberColumn(format="%.1f%%"),
                 "$ per primary voter":
                     st.column_config.NumberColumn(format="$%.2f"),
                 "Records per 1k primary voters":
@@ -2105,7 +1920,7 @@ else:
             with p1:
                 st.markdown("##### Higher money per primary voter")
                 st.dataframe(
-                    ranked_primary_money.head(12)[primary_columns].rename(
+                    ranked_primary_money[primary_columns].rename(
                         columns=primary_rename
                     ),
                     width="stretch",
@@ -2115,12 +1930,77 @@ else:
             with p2:
                 st.markdown("##### Lower money per primary voter")
                 st.dataframe(
-                    lower_primary_money.head(12)[primary_columns].rename(
+                    lower_primary_money[primary_columns].rename(
                         columns=primary_rename
                     ),
                     width="stretch",
                     hide_index=True,
                     column_config=primary_config,
+                )
+
+            st.markdown("#### Town household income context")
+            windsor_income = windsor_per_capita[
+                windsor_per_capita["median_household_income_2024"] > 0
+            ].copy()
+            if len(windsor_income):
+                highest_income = windsor_income.sort_values(
+                    "median_household_income_2024",
+                    ascending=False,
+                ).iloc[0]
+                lowest_income = windsor_income.sort_values(
+                    "median_household_income_2024",
+                    ascending=True,
+                ).iloc[0]
+                st.caption(
+                    f"ACS 2024 5-year median household income ranges from "
+                    f"USD {lowest_income['median_household_income_2024']:,.0f} "
+                    f"in {lowest_income['municipality'].title()} to USD "
+                    f"{highest_income['median_household_income_2024']:,.0f} "
+                    f"in {highest_income['municipality'].title()}. "
+                    f"MOE is the ACS margin of error for the income estimate."
+                )
+
+                income_columns = [
+                    "municipality",
+                    "median_household_income_2024",
+                    "median_household_income_moe_2024",
+                    "population_2020",
+                    "amount",
+                    "contribution_dollars_per_primary_voter",
+                    "primary_turnout_pct_display",
+                ]
+                income_rename = {
+                    "municipality": "Town",
+                    "median_household_income_2024": "Median household income",
+                    "median_household_income_moe_2024": "Income MOE",
+                    "population_2020": "2020 population",
+                    "amount": "Amount",
+                    "contribution_dollars_per_primary_voter":
+                        "$ per primary voter",
+                    "primary_turnout_pct_display": "Primary turnout",
+                }
+                income_config = {
+                    "Median household income":
+                        st.column_config.NumberColumn(format="$%.0f"),
+                    "Income MOE":
+                        st.column_config.NumberColumn(format="$%.0f"),
+                    "2020 population":
+                        st.column_config.NumberColumn(format="%.0f"),
+                    "Amount":
+                        st.column_config.NumberColumn(format="$%.2f"),
+                    "$ per primary voter":
+                        st.column_config.NumberColumn(format="$%.2f"),
+                    "Primary turnout":
+                        st.column_config.NumberColumn(format="%.1f%%"),
+                }
+                st.markdown("##### Windsor County towns")
+                st.dataframe(
+                    windsor_income.sort_values("municipality")[
+                        income_columns
+                    ].rename(columns=income_rename),
+                    width="stretch",
+                    hide_index=True,
+                    column_config=income_config,
                 )
 
     if selected_town != "All towns":
@@ -2187,11 +2067,13 @@ else:
                 "contribution_records_per_1k": "Records per 1k",
                 "registered_voters_2024_primary": "Registered voters",
                 "primary_votes_cast_2024": "2024 primary votes",
-                "primary_turnout_pct_2024": "2024 primary turnout",
+                "primary_turnout_pct_display": "2024 primary turnout",
                 "contribution_dollars_per_primary_voter":
                     "$ per primary voter",
                 "contribution_records_per_1k_primary_voters":
                     "Records per 1k primary voters",
+                "median_household_income_2024": "Median household income",
+                "median_household_income_moe_2024": "Income MOE",
             }
         )[
             [
@@ -2205,6 +2087,8 @@ else:
                 "2024 primary votes",
                 "Registered voters",
                 "2024 primary turnout",
+                "Median household income",
+                "Income MOE",
                 "2020 population",
                 "People per sq mi",
                 "Share of mapped VT",
@@ -2231,7 +2115,11 @@ else:
                 "$ per capita":
                     st.column_config.NumberColumn(format="$%.2f"),
                 "2024 primary turnout":
-                    st.column_config.NumberColumn(format="%.1%%"),
+                    st.column_config.NumberColumn(format="%.1f%%"),
+                "Median household income":
+                    st.column_config.NumberColumn(format="$%.0f"),
+                "Income MOE":
+                    st.column_config.NumberColumn(format="$%.0f"),
                 "People per sq mi":
                     st.column_config.NumberColumn(format="%.0f"),
                 "Share of mapped VT":
