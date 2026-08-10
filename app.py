@@ -3,6 +3,7 @@ from __future__ import annotations
 import io
 import json
 import hashlib
+import base64
 import re
 import sqlite3
 from pathlib import Path
@@ -29,6 +30,7 @@ PO_BOX_INFERRED_PARCELS = (
 TOWN_POPULATION_DENSITY = HERE / "data" / "vermont_town_population_density.csv"
 TOWN_PRIMARY_TURNOUT = HERE / "data" / "vermont_primary_turnout_2024.csv"
 TOWN_HOUSEHOLD_INCOME = HERE / "data" / "vermont_household_income_2024.csv"
+OSCAR_ICON = HERE / "assets" / "oscar_baby_icon_rose_crop.png"
 PO_BOX_RE = re.compile(
     r"(^|\b)(P\.?\s*O\.?|POST\s+OFFICE|PO)\s*BOX\b|^P\.?O\.?BOX\b",
     re.IGNORECASE,
@@ -45,12 +47,34 @@ CANDIDATE_GRADIENTS = [
 ]
 
 st.set_page_config(
-    page_title="Windsor County Campaign Finance",
-    page_icon="🗳️",
+    page_title="OSCAR - Windsor County Campaign Finance",
+    page_icon=str(OSCAR_ICON),
     layout="wide",
 )
 
-st.title("2026 Windsor County Campaign Finance")
+encoded_icon = base64.b64encode(OSCAR_ICON.read_bytes()).decode("ascii")
+st.markdown(
+    f"""
+    <div style="
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin: 0 0 0.75rem 0;
+    ">
+        <img src="data:image/png;base64,{encoded_icon}" alt="OSCAR baby icon"
+            style="width: 96px; height: 96px; border-radius: 14px; flex: 0 0 auto;">
+        <div style="min-width: 0;">
+            <h1 style="margin: 0 0 0.25rem 0;">
+                2026 Windsor County Campaign Finance
+            </h1>
+            <div style="color: rgba(250, 250, 250, 0.72); font-size: 0.95rem;">
+                Open-Source Campaign Analytics for Representation
+            </div>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 st.caption(
     "Reported contributions to Vermont House and Senate candidates in districts touching Windsor County."
 )
