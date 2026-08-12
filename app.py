@@ -29,6 +29,8 @@ PO_BOX_INFERRED_PARCELS = (
 )
 TOWN_POPULATION_DENSITY = HERE / "data" / "vermont_town_population_density.csv"
 TOWN_PRIMARY_TURNOUT = HERE / "data" / "vermont_primary_turnout_2024.csv"
+TOWN_PRIMARY_TURNOUT_2026 = HERE / "data" / "vermont_primary_turnout_2026.csv"
+TOWN_PRIMARY_RESULTS_2026 = HERE / "data" / "vermont_primary_results_2026.csv"
 TOWN_HOUSEHOLD_INCOME = HERE / "data" / "vermont_household_income_2024.csv"
 OSCAR_ICON = HERE / "assets" / "oscar_baby_icon_rose_crop.png"
 PO_BOX_RE = re.compile(
@@ -355,6 +357,118 @@ def load_town_primary_turnout(path: str, modified_at: float):
 
 
 @st.cache_data(show_spinner=False)
+def load_town_primary_turnout_2026(path: str, modified_at: float):
+    turnout_path = Path(path)
+    if not turnout_path.exists():
+        return pd.DataFrame()
+
+    turnout = pd.read_csv(turnout_path, dtype={"town_geoid": str}).fillna("")
+    turnout.columns = [
+        normalize_place(col).lower().replace(" ", "_")
+        for col in turnout.columns
+    ]
+    for col in [
+        "registered_voters_2026_primary",
+        "primary_votes_cast_2026",
+        "primary_turnout_pct_2026",
+        "primary_absentee_votes_2026",
+        "districts_reporting_2026",
+        "districts_total_2026",
+    ]:
+        if col in turnout.columns:
+            turnout[col] = pd.to_numeric(turnout[col], errors="coerce")
+    return turnout
+
+
+@st.cache_data(show_spinner=False)
+def load_town_primary_results_2026(path: str, modified_at: float):
+    results_path = Path(path)
+    if not results_path.exists():
+        return pd.DataFrame()
+
+    results = pd.read_csv(results_path, dtype={"town_geoid": str}).fillna("")
+    results.columns = [
+        normalize_place(col).lower().replace(" ", "_")
+        for col in results.columns
+    ]
+    if "municipality" not in results.columns and "town" in results.columns:
+        results["municipality"] = results["town"]
+    if "votes" in results.columns:
+        results["votes"] = pd.to_numeric(results["votes"], errors="coerce")
+    else:
+        results["votes"] = 0
+    if "town_geoid" not in results.columns:
+        results["town_geoid"] = ""
+    if "municipality" not in results.columns:
+        results["municipality"] = ""
+    if "candidate" not in results.columns:
+        results["candidate"] = ""
+    if "office" not in results.columns:
+        results["office"] = ""
+    if "district" not in results.columns:
+        results["district"] = ""
+    if "party" not in results.columns:
+        results["party"] = ""
+
+    results["municipality"] = results["municipality"].map(normalize_place)
+    results["town_geoid"] = results["town_geoid"].astype(str)
+    return results
+
+
+def summarize_2026_primary_results(
+    results: pd.DataFrame,
+    town_geoids: pd.DataFrame,
+) -> pd.DataFrame:
+    if results.empty:
+        return pd.DataFrame()
+
+    prepared = results.copy()
+    missing_geoids = prepared["town_geoid"].fillna("").eq("")
+    if missing_geoids.any() and "municipality" in prepared.columns:
+        prepared = prepared.merge(
+            town_geoids,
+            on="municipality",
+            how="left",
+            suffixes=("", "_from_town"),
+        )
+        prepared["town_geoid"] = prepared["town_geoid"].where(
+            prepared["town_geoid"].fillna("").ne(""),
+            prepared["town_geoid_from_town"].fillna(""),
+        )
+        prepared = prepared.drop(
+            columns=["town_geoid_from_town"],
+            errors="ignore",
+        )
+
+    prepared = prepared[prepared["town_geoid"].fillna("").ne("")].copy()
+    if prepared.empty:
+        return pd.DataFrame()
+
+    town_result_totals = (
+        prepared.groupby("town_geoid", as_index=False)["votes"]
+        .sum()
+        .rename(columns={"votes": "result_vote_rows_2026"})
+    )
+    candidate_totals = (
+        prepared
+        .groupby(["town_geoid", "candidate"], as_index=False)["votes"]
+        .sum()
+        .sort_values(["town_geoid", "votes"], ascending=[True, False])
+    )
+    leaders = candidate_totals.drop_duplicates("town_geoid").rename(
+        columns={
+            "candidate": "top_2026_primary_candidate",
+            "votes": "top_2026_primary_votes",
+        }
+    )
+    summary = town_result_totals.merge(leaders, on="town_geoid", how="left")
+    summary["top_2026_primary_share"] = (
+        summary["top_2026_primary_votes"] / summary["result_vote_rows_2026"]
+    ).where(summary["result_vote_rows_2026"] > 0, 0)
+    return summary
+
+
+@st.cache_data(show_spinner=False)
 def load_town_household_income(path: str, modified_at: float):
     income_path = Path(path)
     if not income_path.exists():
@@ -574,6 +688,7 @@ geo_mode = st.radio(
     "Map view",
     [
         "Windsor address points",
+        "Windsor town map",
         "Interactive Vermont map",
         "By state",
         "Vermont town table",
@@ -695,6 +810,24 @@ else:
         str(TOWN_PRIMARY_TURNOUT),
         turnout_modified_at,
     )
+    turnout_2026_modified_at = (
+        TOWN_PRIMARY_TURNOUT_2026.stat().st_mtime
+        if TOWN_PRIMARY_TURNOUT_2026.exists()
+        else 0.0
+    )
+    town_turnout_2026 = load_town_primary_turnout_2026(
+        str(TOWN_PRIMARY_TURNOUT_2026),
+        turnout_2026_modified_at,
+    )
+    results_2026_modified_at = (
+        TOWN_PRIMARY_RESULTS_2026.stat().st_mtime
+        if TOWN_PRIMARY_RESULTS_2026.exists()
+        else 0.0
+    )
+    town_primary_results_2026 = load_town_primary_results_2026(
+        str(TOWN_PRIMARY_RESULTS_2026),
+        results_2026_modified_at,
+    )
     income_modified_at = (
         TOWN_HOUSEHOLD_INCOME.stat().st_mtime
         if TOWN_HOUSEHOLD_INCOME.exists()
@@ -772,6 +905,43 @@ else:
         town_analysis["primary_turnout_pct_2024"] = 0
         town_analysis["primary_absentee_votes_2024"] = 0
         town_analysis["primary_absentee_pct_2024"] = 0
+    if not town_turnout_2026.empty:
+        turnout_2026_cols = [
+            "town_geoid",
+            "registered_voters_2026_primary",
+            "primary_votes_cast_2026",
+            "primary_turnout_pct_2026",
+            "primary_absentee_votes_2026",
+            "districts_reporting_2026",
+            "districts_total_2026",
+        ]
+        town_analysis = town_analysis.merge(
+            town_turnout_2026[turnout_2026_cols],
+            on="town_geoid",
+            how="left",
+        )
+    else:
+        town_analysis["registered_voters_2026_primary"] = 0
+        town_analysis["primary_votes_cast_2026"] = 0
+        town_analysis["primary_turnout_pct_2026"] = 0
+        town_analysis["primary_absentee_votes_2026"] = 0
+        town_analysis["districts_reporting_2026"] = 0
+        town_analysis["districts_total_2026"] = 0
+    primary_results_2026_summary = summarize_2026_primary_results(
+        town_primary_results_2026,
+        town_geoids,
+    )
+    if not primary_results_2026_summary.empty:
+        town_analysis = town_analysis.merge(
+            primary_results_2026_summary,
+            on="town_geoid",
+            how="left",
+        )
+    else:
+        town_analysis["result_vote_rows_2026"] = 0
+        town_analysis["top_2026_primary_candidate"] = ""
+        town_analysis["top_2026_primary_votes"] = 0
+        town_analysis["top_2026_primary_share"] = 0
     if not town_income.empty:
         income_cols = [
             "town_geoid",
@@ -800,11 +970,23 @@ else:
         "primary_turnout_pct_2024",
         "primary_absentee_votes_2024",
         "primary_absentee_pct_2024",
+        "registered_voters_2026_primary",
+        "primary_votes_cast_2026",
+        "primary_turnout_pct_2026",
+        "primary_absentee_votes_2026",
+        "districts_reporting_2026",
+        "districts_total_2026",
+        "result_vote_rows_2026",
+        "top_2026_primary_votes",
+        "top_2026_primary_share",
         "median_household_income_2024",
         "median_household_income_moe_2024",
     ]:
         if col in town_analysis.columns:
             town_analysis[col] = town_analysis[col].fillna(0)
+    for col in ["top_2026_primary_candidate"]:
+        if col in town_analysis.columns:
+            town_analysis[col] = town_analysis[col].fillna("")
     town_analysis["amount_rank"] = (
         town_analysis["amount_rank"].fillna(0).astype(int)
     )
@@ -868,6 +1050,246 @@ else:
                 "records."
             ),
         )
+
+    if geo_mode == "Windsor town map":
+        windsor_map_data = town_analysis[
+            town_analysis["town_geoid"].isin(windsor_town_geoids)
+        ].copy()
+        has_2026_results = (
+            not town_primary_results_2026.empty
+            and windsor_map_data["result_vote_rows_2026"].sum() > 0
+        )
+        has_2026_turnout = (
+            not town_turnout_2026.empty
+            and windsor_map_data["primary_votes_cast_2026"].sum() > 0
+        )
+
+        if len(windsor_map_data) and vt_geojson.get("features"):
+            st.markdown("#### Windsor County town map")
+            metric_options = {
+                "Population density": {
+                    "column": "population_density_sqmi",
+                    "label": "People per sq mi",
+                    "hover_format": ":,.0f",
+                    "tick_format": ",.0f",
+                },
+                "Total contribution dollars": {
+                    "column": "amount",
+                    "label": "Contribution dollars",
+                    "hover_format": ":$,.0f",
+                    "tick_format": "$,.0f",
+                },
+                "Contribution dollars per capita": {
+                    "column": "contribution_dollars_per_capita",
+                    "label": "Dollars per capita",
+                    "hover_format": ":$,.2f",
+                    "tick_format": "$,.2f",
+                },
+                "2024 primary turnout": {
+                    "column": "primary_turnout_pct_2024",
+                    "label": "2024 primary turnout",
+                    "hover_format": ":.1%",
+                    "tick_format": ".1%",
+                },
+                "2024 primary voters": {
+                    "column": "primary_votes_cast_2024",
+                    "label": "2024 primary votes",
+                    "hover_format": ":,",
+                    "tick_format": ",",
+                },
+            }
+            if has_2026_turnout:
+                metric_options.update(
+                    {
+                        "2026 primary turnout": {
+                            "column": "primary_turnout_pct_2026",
+                            "label": "2026 primary turnout",
+                            "hover_format": ":.1%",
+                            "tick_format": ".1%",
+                        },
+                        "2026 primary voters": {
+                            "column": "primary_votes_cast_2026",
+                            "label": "2026 primary votes",
+                            "hover_format": ":,",
+                            "tick_format": ",",
+                        },
+                    }
+                )
+            if has_2026_results:
+                metric_options.update(
+                    {
+                        "2026 result vote rows": {
+                            "column": "result_vote_rows_2026",
+                            "label": "2026 result vote rows",
+                            "hover_format": ":,",
+                            "tick_format": ",",
+                        },
+                        "2026 leading-candidate share": {
+                            "column": "top_2026_primary_share",
+                            "label": "Top candidate share",
+                            "hover_format": ":.1%",
+                            "tick_format": ".1%",
+                        },
+                    }
+                )
+
+            wm1, wm2 = st.columns([1, 1])
+            with wm1:
+                town_fill_metric = st.selectbox(
+                    "Town fill",
+                    list(metric_options),
+                    index=0,
+                )
+            with wm2:
+                show_result_table = st.toggle(
+                    "Show town result/detail table",
+                    value=True,
+                )
+
+            metric_config = metric_options[town_fill_metric]
+            color_column = metric_config["column"]
+            hover_data = {
+                "amount": ":$,.0f",
+                "records": ":,",
+                "contributors": ":,",
+                "population_2020": ":,",
+                "land_sqmi": ":,.1f",
+                "population_density_sqmi": ":,.0f",
+                "contribution_dollars_per_capita": ":$,.2f",
+                "primary_votes_cast_2024": ":,",
+                "primary_turnout_pct_2024": ":.1%",
+                "registered_voters_2026_primary": ":,",
+                "primary_votes_cast_2026": ":,",
+                "primary_turnout_pct_2026": ":.1%",
+                "result_vote_rows_2026": ":,",
+                "top_2026_primary_candidate": True,
+                "top_2026_primary_votes": ":,",
+                "top_2026_primary_share": ":.1%",
+                "town_geoid": False,
+                "municipality": False,
+            }
+            hover_data[color_column] = metric_config["hover_format"]
+
+            fig = px.choropleth_map(
+                windsor_map_data,
+                geojson=vt_geojson,
+                locations="town_geoid",
+                featureidkey="properties.TOWNGEOID",
+                color=color_column,
+                color_continuous_scale=[
+                    [0.0, "#f6f7f4"],
+                    [0.2, "#dce8d9"],
+                    [0.45, "#a9ccb0"],
+                    [0.72, "#6fa287"],
+                    [1.0, "#336b61"],
+                ],
+                hover_name="municipality",
+                hover_data=hover_data,
+                labels={color_column: metric_config["label"]},
+                map_style="carto-positron",
+                center={"lat": 43.55, "lon": -72.55},
+                zoom=8.05,
+                opacity=0.72,
+                height=760,
+            )
+            fig.update_traces(
+                marker_line_color="rgba(27, 38, 44, 0.95)",
+                marker_line_width=1.35,
+            )
+            fig.update_layout(
+                margin=dict(l=0, r=0, t=10, b=0),
+                coloraxis_colorbar=dict(
+                    title=metric_config["label"],
+                    tickformat=metric_config["tick_format"],
+                ),
+            )
+            st.plotly_chart(fig, width="stretch")
+
+            if not has_2026_results and not has_2026_turnout:
+                st.info(
+                    "2026 primary results are not loaded yet. Add "
+                    "`data/vermont_primary_results_2026.csv` with columns "
+                    "`town_geoid` or `municipality`, plus `candidate`, "
+                    "`office`, `district`, `party`, and `votes`, or run "
+                    "`python scripts/fetch_vermont_primary_2026.py`; this "
+                    "map will expose 2026 result metrics automatically."
+                )
+
+            if show_result_table:
+                result_columns = [
+                    "municipality",
+                    "population_2020",
+                    "population_density_sqmi",
+                    "amount",
+                    "contribution_dollars_per_capita",
+                    "primary_votes_cast_2024",
+                    "primary_turnout_pct_2024",
+                    "registered_voters_2026_primary",
+                    "primary_votes_cast_2026",
+                    "primary_turnout_pct_2026",
+                    "result_vote_rows_2026",
+                    "top_2026_primary_candidate",
+                    "top_2026_primary_votes",
+                    "top_2026_primary_share",
+                ]
+                st.dataframe(
+                    windsor_map_data.sort_values("municipality")[
+                        result_columns
+                    ].rename(
+                        columns={
+                            "municipality": "Town",
+                            "population_2020": "2020 population",
+                            "population_density_sqmi": "People per sq mi",
+                            "amount": "Contribution dollars",
+                            "contribution_dollars_per_capita":
+                                "$ per capita",
+                            "primary_votes_cast_2024": "2024 primary votes",
+                            "primary_turnout_pct_2024":
+                                "2024 primary turnout",
+                            "registered_voters_2026_primary":
+                                "2026 registered voters",
+                            "primary_votes_cast_2026": "2026 primary votes",
+                            "primary_turnout_pct_2026":
+                                "2026 primary turnout",
+                            "result_vote_rows_2026":
+                                "2026 result vote rows",
+                            "top_2026_primary_candidate":
+                                "2026 top candidate",
+                            "top_2026_primary_votes": "2026 top votes",
+                            "top_2026_primary_share": "2026 top share",
+                        }
+                    ),
+                    width="stretch",
+                    hide_index=True,
+                    column_config={
+                        "2020 population":
+                            st.column_config.NumberColumn(format="%.0f"),
+                        "People per sq mi":
+                            st.column_config.NumberColumn(format="%.0f"),
+                        "Contribution dollars":
+                            st.column_config.NumberColumn(format="$%.2f"),
+                        "$ per capita":
+                            st.column_config.NumberColumn(format="$%.2f"),
+                        "2024 primary votes":
+                            st.column_config.NumberColumn(format="%.0f"),
+                        "2024 primary turnout":
+                            st.column_config.NumberColumn(format="%.1%%"),
+                        "2026 primary votes":
+                            st.column_config.NumberColumn(format="%.0f"),
+                        "2026 primary turnout":
+                            st.column_config.NumberColumn(format="%.1%%"),
+                        "2026 registered voters":
+                            st.column_config.NumberColumn(format="%.0f"),
+                        "2026 result vote rows":
+                            st.column_config.NumberColumn(format="%.0f"),
+                        "2026 top votes":
+                            st.column_config.NumberColumn(format="%.0f"),
+                        "2026 top share":
+                            st.column_config.NumberColumn(format="%.1%%"),
+                    },
+                )
+        else:
+            st.info("No Windsor town boundary data is available.")
 
     if geo_mode == "Interactive Vermont map":
         if len(municipal) and vt_geojson.get("features"):

@@ -71,6 +71,38 @@ This Phase 1 bundle includes:
 No Streamlit secrets are currently required. The app uses local public-data
 caches plus live public VCGI town boundaries.
 
+## 2026 primary results
+
+The Windsor town map can incorporate town-level 2026 primary results from the
+Vermont Election Night Results site. Refresh the local CSV caches with:
+
+```bash
+python scripts/fetch_vermont_primary_2026.py
+```
+
+The script writes candidate result rows to:
+
+```text
+data/vermont_primary_results_2026.csv
+```
+
+Expected columns:
+
+```csv
+town_geoid,municipality,office,district,party,candidate,votes
+```
+
+It also writes town turnout rows to:
+
+```text
+data/vermont_primary_turnout_2026.csv
+```
+
+`town_geoid` is preferred in any manually prepared file. If it is blank, the
+app will try to match the `municipality` value to the VCGI town name. The map
+uses the turnout file for actual 2026 primary voters and turnout percentage,
+and uses the candidate result file for leading candidate/result-row context.
+
 ## GitHub setup
 
 From inside the project folder:
