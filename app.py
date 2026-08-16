@@ -907,7 +907,7 @@ def build_windsor_senate_rollout_html(vt_geojson: dict) -> str:
       }
     }
   </style>
-  <p class="title">Windsor Senate Results Rollout</p>
+  <p class="title">Windsor Senate Election Night Rollout</p>
   <p class="subtitle">
     Drag either chart cursor or move the slider. Towns color in as their results
     first appear; candidate totals and third-seat pressure stay on the same
@@ -1550,11 +1550,12 @@ geo_mode = st.radio(
     [
         "Windsor address points",
         "Windsor town map",
-        "Windsor Senate rollout",
+        "Windsor Senate election night",
         "Interactive Vermont map",
         "By state",
         "Vermont town table",
     ],
+    index=2,
     horizontal=True,
 )
 
@@ -1893,7 +1894,10 @@ else:
     vt_amount = float(vt["amount"].sum())
 
     selected_town = "All towns"
-    if geo_mode not in ["Windsor address points", "Windsor Senate rollout"]:
+    if geo_mode not in [
+        "Windsor address points",
+        "Windsor Senate election night",
+    ]:
         m1, m2, m3 = st.columns(3)
         m1.metric("Mapped Vermont dollars", f"${mapped_amount:,.0f}")
         m2.metric("Unmatched Vermont dollars", f"${unmatched_amount:,.0f}")
@@ -1913,7 +1917,7 @@ else:
             ),
         )
 
-    if geo_mode == "Windsor Senate rollout":
+    if geo_mode == "Windsor Senate election night":
         missing_towns = sorted(
             WINDSOR_SENATE_TOWNS
             - {
