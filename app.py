@@ -14,6 +14,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 import streamlit as st
+import streamlit.components.v1 as components
 
 HERE = Path(__file__).resolve().parent
 DB = HERE / "data" / "campaign_finance.sqlite"
@@ -48,8 +49,478 @@ CANDIDATE_GRADIENTS = [
     ("#e6e6e6", "#4b5563"),
 ]
 
+APP_NAME = "Open-Source Campaign Analytics"
+APP_SHORT_NAME = "OSCA"
+WINDSOR_SENATE_TOWNS = {
+    "ANDOVER",
+    "BALTIMORE",
+    "BARNARD",
+    "BETHEL",
+    "BRIDGEWATER",
+    "CAVENDISH",
+    "CHESTER",
+    "HARTFORD",
+    "HARTLAND",
+    "LUDLOW",
+    "NORWICH",
+    "PITTSFIELD",
+    "PLYMOUTH",
+    "POMFRET",
+    "READING",
+    "ROYALTON",
+    "SHARON",
+    "SPRINGFIELD",
+    "STOCKBRIDGE",
+    "THETFORD",
+    "WEATHERSFIELD",
+    "WEST WINDSOR",
+    "WESTON",
+    "WINDSOR",
+    "WOODSTOCK",
+}
+WINDSOR_SENATE_ROLLOUT = [
+    {
+        "label": "7:51 PM",
+        "source": "SOS static feed cache",
+        "towns": ["WOODSTOCK"],
+        "current": ["WOODSTOCK"],
+        "totals": {
+            "Brickner": 530,
+            "Burrows": 150,
+            "Chase": 190,
+            "Dube": 61,
+            "Major": 388,
+            "White": 436,
+        },
+    },
+    {
+        "label": "8:23 PM",
+        "source": "first export",
+        "towns": [
+            "WOODSTOCK",
+            "BALTIMORE",
+            "BRIDGEWATER",
+            "CHESTER",
+            "LUDLOW",
+            "SPRINGFIELD",
+            "WESTON",
+        ],
+        "current": [
+            "BALTIMORE",
+            "BRIDGEWATER",
+            "CHESTER",
+            "LUDLOW",
+            "SPRINGFIELD",
+            "WESTON",
+        ],
+        "totals": {
+            "Brickner": 1129,
+            "Burrows": 898,
+            "Chase": 1494,
+            "Dube": 268,
+            "Major": 1095,
+            "White": 1520,
+        },
+    },
+    {
+        "label": "8:28 PM",
+        "source": "export (2)",
+        "towns": [
+            "WOODSTOCK",
+            "BALTIMORE",
+            "BRIDGEWATER",
+            "CHESTER",
+            "LUDLOW",
+            "SPRINGFIELD",
+            "WESTON",
+            "NORWICH",
+        ],
+        "current": ["NORWICH"],
+        "totals": {
+            "Brickner": 1541,
+            "Burrows": 1327,
+            "Chase": 1839,
+            "Dube": 394,
+            "Major": 1723,
+            "White": 2409,
+        },
+    },
+    {
+        "label": "8:35 PM",
+        "source": "export (5)",
+        "towns": [
+            "WOODSTOCK",
+            "BALTIMORE",
+            "BRIDGEWATER",
+            "CHESTER",
+            "LUDLOW",
+            "SPRINGFIELD",
+            "WESTON",
+            "NORWICH",
+            "THETFORD",
+            "WINDSOR",
+        ],
+        "current": ["THETFORD", "WINDSOR"],
+        "totals": {
+            "Brickner": 1930,
+            "Burrows": 1848,
+            "Chase": 2205,
+            "Dube": 552,
+            "Major": 2241,
+            "White": 3199,
+        },
+    },
+    {
+        "label": "8:40 PM",
+        "source": "export (7)",
+        "towns": [
+            "WOODSTOCK",
+            "BALTIMORE",
+            "BRIDGEWATER",
+            "CHESTER",
+            "LUDLOW",
+            "SPRINGFIELD",
+            "WESTON",
+            "NORWICH",
+            "THETFORD",
+            "WINDSOR",
+            "POMFRET",
+        ],
+        "current": ["POMFRET"],
+        "totals": {
+            "Brickner": 2129,
+            "Burrows": 1903,
+            "Chase": 2276,
+            "Dube": 572,
+            "Major": 2374,
+            "White": 3343,
+        },
+    },
+    {
+        "label": "8:43 PM",
+        "source": "export (8)",
+        "towns": [
+            "WOODSTOCK",
+            "BALTIMORE",
+            "BRIDGEWATER",
+            "CHESTER",
+            "LUDLOW",
+            "SPRINGFIELD",
+            "WESTON",
+            "NORWICH",
+            "THETFORD",
+            "WINDSOR",
+            "POMFRET",
+            "ANDOVER",
+            "READING",
+        ],
+        "current": ["ANDOVER", "READING"],
+        "totals": {
+            "Brickner": 2227,
+            "Burrows": 1993,
+            "Chase": 2380,
+            "Dube": 592,
+            "Major": 2480,
+            "White": 3466,
+        },
+    },
+    {
+        "label": "8:55 PM",
+        "source": "export (10)",
+        "towns": [
+            "WOODSTOCK",
+            "BALTIMORE",
+            "BRIDGEWATER",
+            "CHESTER",
+            "LUDLOW",
+            "SPRINGFIELD",
+            "WESTON",
+            "NORWICH",
+            "THETFORD",
+            "WINDSOR",
+            "POMFRET",
+            "ANDOVER",
+            "READING",
+            "BETHEL",
+            "PITTSFIELD",
+            "STOCKBRIDGE",
+        ],
+        "current": ["BETHEL", "PITTSFIELD", "STOCKBRIDGE"],
+        "totals": {
+            "Brickner": 2389,
+            "Burrows": 2145,
+            "Chase": 2508,
+            "Dube": 653,
+            "Major": 2628,
+            "White": 3714,
+        },
+    },
+    {
+        "label": "9:03 PM",
+        "source": "export (11)",
+        "towns": [
+            "WOODSTOCK",
+            "BALTIMORE",
+            "BRIDGEWATER",
+            "CHESTER",
+            "LUDLOW",
+            "SPRINGFIELD",
+            "WESTON",
+            "NORWICH",
+            "THETFORD",
+            "WINDSOR",
+            "POMFRET",
+            "ANDOVER",
+            "READING",
+            "BETHEL",
+            "PITTSFIELD",
+            "STOCKBRIDGE",
+            "CAVENDISH",
+            "HARTFORD",
+            "SHARON",
+        ],
+        "current": ["CAVENDISH", "HARTFORD", "SHARON"],
+        "totals": {
+            "Brickner": 2585,
+            "Burrows": 2382,
+            "Chase": 2731,
+            "Dube": 752,
+            "Major": 2901,
+            "White": 4115,
+        },
+    },
+    {
+        "label": "9:28 PM",
+        "source": "export (13)",
+        "towns": [
+            "WOODSTOCK",
+            "BALTIMORE",
+            "BRIDGEWATER",
+            "CHESTER",
+            "LUDLOW",
+            "SPRINGFIELD",
+            "WESTON",
+            "NORWICH",
+            "THETFORD",
+            "WINDSOR",
+            "POMFRET",
+            "ANDOVER",
+            "READING",
+            "BETHEL",
+            "PITTSFIELD",
+            "STOCKBRIDGE",
+            "CAVENDISH",
+            "HARTFORD",
+            "SHARON",
+            "HARTLAND",
+        ],
+        "current": ["HARTLAND", "HARTFORD"],
+        "totals": {
+            "Brickner": 3099,
+            "Burrows": 3252,
+            "Chase": 3243,
+            "Dube": 1185,
+            "Major": 4046,
+            "White": 5470,
+        },
+    },
+    {
+        "label": "9:31 PM",
+        "source": "export (14)",
+        "towns": [
+            "WOODSTOCK",
+            "BALTIMORE",
+            "BRIDGEWATER",
+            "CHESTER",
+            "LUDLOW",
+            "SPRINGFIELD",
+            "WESTON",
+            "NORWICH",
+            "THETFORD",
+            "WINDSOR",
+            "POMFRET",
+            "ANDOVER",
+            "READING",
+            "BETHEL",
+            "PITTSFIELD",
+            "STOCKBRIDGE",
+            "CAVENDISH",
+            "HARTFORD",
+            "SHARON",
+            "HARTLAND",
+            "WEST WINDSOR",
+        ],
+        "current": ["WEST WINDSOR"],
+        "totals": {
+            "Brickner": 3165,
+            "Burrows": 3455,
+            "Chase": 3315,
+            "Dube": 1237,
+            "Major": 4185,
+            "White": 5673,
+        },
+    },
+    {
+        "label": "9:46 PM",
+        "source": "export (15)",
+        "towns": [
+            "WOODSTOCK",
+            "BALTIMORE",
+            "BRIDGEWATER",
+            "CHESTER",
+            "LUDLOW",
+            "SPRINGFIELD",
+            "WESTON",
+            "NORWICH",
+            "THETFORD",
+            "WINDSOR",
+            "POMFRET",
+            "ANDOVER",
+            "READING",
+            "BETHEL",
+            "PITTSFIELD",
+            "STOCKBRIDGE",
+            "CAVENDISH",
+            "HARTFORD",
+            "SHARON",
+            "HARTLAND",
+            "WEST WINDSOR",
+            "BARNARD",
+            "ROYALTON",
+        ],
+        "current": ["BARNARD", "ROYALTON"],
+        "totals": {
+            "Brickner": 3403,
+            "Burrows": 3646,
+            "Chase": 3496,
+            "Dube": 1346,
+            "Major": 4415,
+            "White": 6007,
+        },
+    },
+    {
+        "label": "10:28 PM",
+        "source": "export (17)",
+        "towns": [
+            "WOODSTOCK",
+            "BALTIMORE",
+            "BRIDGEWATER",
+            "CHESTER",
+            "LUDLOW",
+            "SPRINGFIELD",
+            "WESTON",
+            "NORWICH",
+            "THETFORD",
+            "WINDSOR",
+            "POMFRET",
+            "ANDOVER",
+            "READING",
+            "BETHEL",
+            "PITTSFIELD",
+            "STOCKBRIDGE",
+            "CAVENDISH",
+            "HARTFORD",
+            "SHARON",
+            "HARTLAND",
+            "WEST WINDSOR",
+            "BARNARD",
+            "ROYALTON",
+            "PLYMOUTH",
+        ],
+        "current": ["PLYMOUTH"],
+        "totals": {
+            "Brickner": 3428,
+            "Burrows": 3673,
+            "Chase": 3520,
+            "Dube": 1360,
+            "Major": 4448,
+            "White": 6053,
+        },
+    },
+    {
+        "label": "10:34 PM",
+        "source": "final workbook (18)",
+        "towns": [
+            "WOODSTOCK",
+            "BALTIMORE",
+            "BRIDGEWATER",
+            "CHESTER",
+            "LUDLOW",
+            "SPRINGFIELD",
+            "WESTON",
+            "NORWICH",
+            "THETFORD",
+            "WINDSOR",
+            "POMFRET",
+            "ANDOVER",
+            "READING",
+            "BETHEL",
+            "PITTSFIELD",
+            "STOCKBRIDGE",
+            "CAVENDISH",
+            "HARTFORD",
+            "SHARON",
+            "HARTLAND",
+            "WEST WINDSOR",
+            "BARNARD",
+            "ROYALTON",
+            "PLYMOUTH",
+            "WEATHERSFIELD",
+        ],
+        "current": ["WEATHERSFIELD"],
+        "totals": {
+            "Brickner": 3547,
+            "Burrows": 3843,
+            "Chase": 3700,
+            "Dube": 1414,
+            "Major": 4607,
+            "White": 6267,
+        },
+    },
+    {
+        "label": "Aug 12 10:16 AM",
+        "source": "official feed",
+        "towns": [
+            "WOODSTOCK",
+            "BALTIMORE",
+            "BRIDGEWATER",
+            "CHESTER",
+            "LUDLOW",
+            "SPRINGFIELD",
+            "WESTON",
+            "NORWICH",
+            "THETFORD",
+            "WINDSOR",
+            "POMFRET",
+            "ANDOVER",
+            "READING",
+            "BETHEL",
+            "PITTSFIELD",
+            "STOCKBRIDGE",
+            "CAVENDISH",
+            "HARTFORD",
+            "SHARON",
+            "HARTLAND",
+            "WEST WINDSOR",
+            "BARNARD",
+            "ROYALTON",
+            "PLYMOUTH",
+            "WEATHERSFIELD",
+        ],
+        "current": [],
+        "totals": {
+            "Brickner": 3551,
+            "Burrows": 3846,
+            "Chase": 3700,
+            "Dube": 1414,
+            "Major": 4610,
+            "White": 6267,
+        },
+    },
+]
+
 st.set_page_config(
-    page_title="OSCAR - Windsor County Campaign Finance",
+    page_title=f"{APP_SHORT_NAME} - {APP_NAME}",
     page_icon=str(OSCAR_ICON),
     layout="wide",
 )
@@ -67,10 +538,10 @@ st.markdown(
             style="width: 96px; height: 96px; border-radius: 14px; flex: 0 0 auto;">
         <div style="min-width: 0;">
             <h1 style="margin: 0 0 0.25rem 0;">
-                2026 Windsor County Campaign Finance
+                {APP_NAME}
             </h1>
-            <div style="color: rgba(250, 250, 250, 0.72); font-size: 0.95rem;">
-                Open-Source Campaign Analytics for Representation
+            <div style="color: #68737d; font-size: 0.95rem;">
+                {APP_SHORT_NAME} · 2026 Windsor County Campaign Finance
             </div>
         </div>
     </div>
@@ -280,6 +751,396 @@ def add_population_density_overlay(
             },
             showscale=show_scale,
         )
+    )
+
+
+def build_windsor_senate_rollout_html(vt_geojson: dict) -> str:
+    district_geojson = {
+        "type": "FeatureCollection",
+        "features": [
+            feature
+            for feature in vt_geojson.get("features", [])
+            if normalize_place(
+                feature.get("properties", {}).get("JOIN_NAME")
+                or feature.get("properties", {}).get("TOWNNAME")
+            )
+            in WINDSOR_SENATE_TOWNS
+        ],
+    }
+    geojson_payload = json.dumps(district_geojson, separators=(",", ":"))
+    rollout_payload = json.dumps(WINDSOR_SENATE_ROLLOUT, separators=(",", ":"))
+
+    html = """
+<div id="osca-windsor-rollout">
+  <style>
+    #osca-windsor-rollout {
+      background: #0f1419;
+      border: 1px solid #2a3440;
+      border-radius: 8px;
+      color: #eef4f8;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 18px 18px 14px;
+    }
+    #osca-windsor-rollout .title {
+      font-size: 22px;
+      font-weight: 760;
+      margin: 0 0 3px;
+    }
+    #osca-windsor-rollout .subtitle {
+      color: #b7c3cc;
+      font-size: 13px;
+      line-height: 1.35;
+      margin: 0 0 12px;
+    }
+    #osca-windsor-rollout .controls {
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      margin: 8px 0 14px;
+    }
+    #osca-windsor-rollout input[type="range"] {
+      width: 100%;
+      accent-color: #64d68b;
+    }
+    #osca-windsor-rollout .snapshot {
+      color: #eef4f8;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    #osca-windsor-rollout .layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 365px) 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    #osca-windsor-rollout .section-title {
+      font-size: 14px;
+      font-weight: 740;
+      margin: 0 0 6px;
+    }
+    #osca-windsor-rollout svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      overflow: visible;
+    }
+    #osca-windsor-rollout text {
+      fill: #eef4f8;
+      font-size: 12px;
+    }
+    #osca-windsor-rollout .town {
+      stroke: #27323d;
+      stroke-width: 0.9;
+    }
+    #osca-windsor-rollout .town.active {
+      stroke: #f7fbff;
+      stroke-width: 1.45;
+    }
+    #osca-windsor-rollout .axis text {
+      fill: #b7c3cc;
+    }
+    #osca-windsor-rollout .axis path,
+    #osca-windsor-rollout .axis line,
+    #osca-windsor-rollout .frame {
+      stroke: #33414d;
+      stroke-width: 1;
+      fill: none;
+    }
+    #osca-windsor-rollout .grid line {
+      stroke: #202a33;
+    }
+    #osca-windsor-rollout .cursor {
+      stroke: #f7fbff;
+      stroke-width: 1.5;
+      stroke-dasharray: 4 4;
+      pointer-events: none;
+    }
+    #osca-windsor-rollout .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      font-size: 12px;
+      margin: 10px 0 0;
+    }
+    #osca-windsor-rollout .swatch {
+      border: 1px solid #455260;
+      display: inline-block;
+      height: 10px;
+      margin-right: 5px;
+      vertical-align: -1px;
+      width: 14px;
+    }
+    #osca-windsor-rollout .town-list {
+      color: #dce6ec;
+      font-size: 12px;
+      line-height: 1.35;
+      margin: 12px 0 0;
+    }
+    #osca-windsor-rollout .charts {
+      display: grid;
+      gap: 6px;
+    }
+    #osca-windsor-rollout .tooltip {
+      background: #111a22;
+      border: 1px solid #455260;
+      box-shadow: 0 8px 24px rgb(0 0 0 / 38%);
+      color: #eef4f8;
+      display: none;
+      font-size: 12px;
+      line-height: 1.35;
+      max-width: 280px;
+      padding: 8px 10px;
+      pointer-events: none;
+      position: absolute;
+      z-index: 10;
+    }
+    @media (max-width: 780px) {
+      #osca-windsor-rollout .layout,
+      #osca-windsor-rollout .controls {
+        grid-template-columns: 1fr;
+      }
+      #osca-windsor-rollout .snapshot {
+        white-space: normal;
+      }
+    }
+  </style>
+  <p class="title">Windsor Senate Results Rollout</p>
+  <p class="subtitle">
+    Drag either chart cursor or move the slider. Towns color in as their results
+    first appear; candidate totals and third-seat pressure stay on the same
+    reporting snapshot.
+  </p>
+  <div class="controls">
+    <input type="range" min="0" max="13" step="1" value="13" data-slider aria-label="Reporting snapshot">
+    <div class="snapshot" data-snapshot></div>
+  </div>
+  <div class="layout">
+    <div>
+      <p class="section-title">Senate district reporting map</p>
+      <svg data-map role="img" aria-label="Windsor Senate district towns colored by reporting wave"></svg>
+      <div class="legend">
+        <span><span class="swatch" style="background:#62c985"></span>Reported by selected time</span>
+        <span><span class="swatch" style="background:#ff9a4d"></span>New or revised at selected time</span>
+        <span><span class="swatch" style="background:#1d2630"></span>Not yet reported</span>
+      </div>
+      <p class="town-list" data-town-list></p>
+    </div>
+    <div class="charts">
+      <div>
+        <p class="section-title">Candidate totals</p>
+        <svg data-chart="votes" role="img" aria-label="Candidate totals over time"></svg>
+      </div>
+      <div>
+        <p class="section-title">Third-seat pressure</p>
+        <svg data-chart="pressure" role="img" aria-label="Burrows margins over Chase and Brickner over time"></svg>
+      </div>
+    </div>
+  </div>
+  <div class="tooltip" role="tooltip" data-tooltip></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script>
+(() => {
+  const root = document.getElementById("osca-windsor-rollout");
+  const geojson = __GEOJSON__;
+  const snapshots = __ROLLOUT__;
+  const tooltip = root.querySelector("[data-tooltip]");
+  const slider = root.querySelector("[data-slider]");
+  const snapshotLabel = root.querySelector("[data-snapshot]");
+  const townList = root.querySelector("[data-town-list]");
+  const candidates = [
+    {key:"White", label:"Rebecca White", color:"#62a8ff"},
+    {key:"Major", label:"Joe Major", color:"#ff9a4d"},
+    {key:"Burrows", label:"Elizabeth Burrows", color:"#64d68b"},
+    {key:"Chase", label:"Heather Chase", color:"#ff82bd"},
+    {key:"Brickner", label:"Ben Brickner", color:"#b59cff"},
+    {key:"Dube", label:"Chris Dube", color:"#4ddbd2"}
+  ];
+  let selected = snapshots.length - 1;
+  const fmt = d3.format(",d");
+  const signed = d3.format("+,d");
+
+  function townName(feature) {
+    const props = feature.properties || {};
+    return props.JOIN_NAME || props.TOWNNAME || props.TOWNNAMEMC || "";
+  }
+
+  function setSelected(index) {
+    selected = Math.max(0, Math.min(snapshots.length - 1, index));
+    slider.value = selected;
+    draw();
+  }
+
+  function setupDrag(svg, x, left, right, height) {
+    svg.append("rect")
+      .attr("x", left)
+      .attr("y", 0)
+      .attr("width", right - left)
+      .attr("height", height)
+      .attr("fill", "transparent")
+      .style("cursor", "ew-resize")
+      .on("pointerdown", event => {
+        event.currentTarget.setPointerCapture(event.pointerId);
+        updateFromPointer(event);
+      })
+      .on("pointermove", event => {
+        if (event.buttons) updateFromPointer(event);
+      });
+    function updateFromPointer(event) {
+      const [mx] = d3.pointer(event);
+      setSelected(Math.round(x.invert(mx)));
+    }
+  }
+
+  function drawMap() {
+    const element = root.querySelector("[data-map]");
+    const svg = d3.select(element);
+    const width = Math.max(280, element.clientWidth || 350);
+    const height = 390;
+    const snap = snapshots[selected];
+    const reported = new Set(snap.towns);
+    const current = new Set(snap.current);
+    svg.attr("viewBox", [0, 0, width, height].join(" "));
+    svg.selectAll("*").remove();
+    const projection = d3.geoMercator()
+      .fitExtent([[8, 8], [width - 8, height - 8]], geojson);
+    const path = d3.geoPath(projection);
+    svg.selectAll("path.town")
+      .data(geojson.features)
+      .join("path")
+      .attr("class", d => `town ${current.has(townName(d)) ? "active" : ""}`)
+      .attr("d", path)
+      .attr("fill", d => {
+        const name = townName(d);
+        if (current.has(name)) return "#ff9a4d";
+        if (reported.has(name)) return "#62c985";
+        return "#1d2630";
+      })
+      .on("mousemove", (event, d) => {
+        const name = townName(d);
+        const first = snapshots.find(s => s.towns.includes(name));
+        tooltip.style.display = "block";
+        tooltip.style.left = `${event.clientX - root.getBoundingClientRect().left + 12}px`;
+        tooltip.style.top = `${event.clientY - root.getBoundingClientRect().top + 12}px`;
+        tooltip.innerHTML = `<strong>${name}</strong><br>${first ? `First represented: ${first.label}` : "Not represented"}`;
+      })
+      .on("mouseleave", () => tooltip.style.display = "none");
+    const labelTowns = new Set(["WOODSTOCK", "HARTLAND", "HARTFORD", "WEST WINDSOR", "WEATHERSFIELD"]);
+    svg.selectAll("text.label")
+      .data(geojson.features.filter(d => labelTowns.has(townName(d))))
+      .join("text")
+      .attr("x", d => path.centroid(d)[0])
+      .attr("y", d => path.centroid(d)[1])
+      .attr("text-anchor", "middle")
+      .attr("paint-order", "stroke")
+      .attr("stroke", "#0f1419")
+      .attr("stroke-width", 3)
+      .text(d => townName(d).replace("WEST ", "W. "));
+  }
+
+  function chartSize(selector, tall) {
+    const element = root.querySelector(selector);
+    const width = Math.max(320, element.clientWidth || 720);
+    const height = width < 560 ? tall - 30 : tall;
+    return {element, width, height};
+  }
+
+  function drawVotes() {
+    const {element, width, height} = chartSize('[data-chart="votes"]', 310);
+    const svg = d3.select(element);
+    svg.attr("viewBox", [0, 0, width, height].join(" "));
+    svg.selectAll("*").remove();
+    const margin = {top: 12, right: width < 600 ? 22 : 104, bottom: 42, left: 64};
+    const x = d3.scaleLinear().domain([0, snapshots.length - 1]).range([margin.left, width - margin.right]);
+    const y = d3.scaleLinear().domain([0, 6600]).nice().range([height - margin.bottom, margin.top]);
+    const plotWidth = width - margin.left - margin.right;
+    svg.append("rect").attr("class", "frame").attr("x", margin.left).attr("y", margin.top).attr("width", plotWidth).attr("height", height - margin.top - margin.bottom);
+    svg.append("g").attr("class", "grid").attr("transform", `translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-plotWidth).tickFormat("")).call(g => g.select(".domain").remove());
+    svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x).tickValues(snapshots.map((_, i) => i).filter((_, i) => width < 560 ? i % 3 === 0 : i % 2 === 0)).tickFormat(i => snapshots[i].label));
+    svg.append("g").attr("class", "axis").attr("transform", `translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(d3.format(",")));
+    const line = d3.line().x((d, i) => x(i)).y(d => y(d.value)).curve(d3.curveMonotoneX);
+    const labels = [];
+    candidates.forEach(candidate => {
+      const values = snapshots.map(snapshot => ({value: snapshot.totals[candidate.key]}));
+      svg.append("path").datum(values).attr("fill", "none").attr("stroke", candidate.color).attr("stroke-width", 2.2).attr("d", line);
+      const selectedValue = values[selected].value;
+      svg.append("circle").attr("cx", x(selected)).attr("cy", y(selectedValue)).attr("r", 4.6).attr("fill", candidate.color);
+      labels.push({
+        y: y(selectedValue),
+        color: candidate.color,
+        text: candidate.key === "Burrows" ? `${candidate.label} ${fmt(selectedValue)}` : fmt(selectedValue)
+      });
+    });
+    if (width >= 600) {
+      labels.sort((a, b) => a.y - b.y);
+      let last = margin.top;
+      labels.forEach(label => {
+        label.labelY = Math.max(label.y + 4, last + 14);
+        last = label.labelY;
+      });
+      const overflow = last - (height - margin.bottom - 8);
+      if (overflow > 0) labels.forEach(label => label.labelY -= overflow);
+      labels.forEach(label => {
+        svg.append("text").attr("x", x(selected) + 8).attr("y", label.labelY).attr("fill", label.color).text(label.text);
+      });
+    }
+    svg.append("line").attr("class", "cursor").attr("x1", x(selected)).attr("x2", x(selected)).attr("y1", margin.top).attr("y2", height - margin.bottom);
+    setupDrag(svg, x, margin.left, width - margin.right, height);
+  }
+
+  function drawPressure() {
+    const {element, width, height} = chartSize('[data-chart="pressure"]', 260);
+    const svg = d3.select(element);
+    svg.attr("viewBox", [0, 0, width, height].join(" "));
+    svg.selectAll("*").remove();
+    const margin = {top: 12, right: width < 600 ? 22 : 140, bottom: 42, left: 64};
+    const x = d3.scaleLinear().domain([0, snapshots.length - 1]).range([margin.left, width - margin.right]);
+    const series = [
+      {label: "Burrows over Chase", color: "#64d68b", values: snapshots.map(s => s.totals.Burrows - s.totals.Chase)},
+      {label: "Burrows over Brickner", color: "#b59cff", values: snapshots.map(s => s.totals.Burrows - s.totals.Brickner)}
+    ];
+    const extent = d3.extent(series.flatMap(s => s.values));
+    const y = d3.scaleLinear().domain([extent[0] - 80, extent[1] + 80]).nice().range([height - margin.bottom, margin.top]);
+    const plotWidth = width - margin.left - margin.right;
+    svg.append("rect").attr("class", "frame").attr("x", margin.left).attr("y", margin.top).attr("width", plotWidth).attr("height", height - margin.top - margin.bottom);
+    svg.append("g").attr("class", "grid").attr("transform", `translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-plotWidth).tickFormat("")).call(g => g.select(".domain").remove());
+    svg.append("line").attr("x1", margin.left).attr("x2", width - margin.right).attr("y1", y(0)).attr("y2", y(0)).attr("stroke", "#94a3ad").attr("stroke-dasharray", "4 4");
+    svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x).tickValues(snapshots.map((_, i) => i).filter((_, i) => width < 560 ? i % 3 === 0 : i % 2 === 0)).tickFormat(i => snapshots[i].label));
+    svg.append("g").attr("class", "axis").attr("transform", `translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(d3.format("+,")));
+    const line = d3.line().x((d, i) => x(i)).y(d => y(d)).curve(d3.curveMonotoneX);
+    series.forEach(item => {
+      svg.append("path").datum(item.values).attr("fill", "none").attr("stroke", item.color).attr("stroke-width", 2.4).attr("d", line);
+      svg.append("circle").attr("cx", x(selected)).attr("cy", y(item.values[selected])).attr("r", 4.8).attr("fill", item.color);
+      if (width >= 600) {
+        svg.append("text").attr("x", x(selected) + 8).attr("y", y(item.values[selected]) + 4).attr("fill", item.color).text(`${item.label}: ${signed(item.values[selected])}`);
+      }
+    });
+    svg.append("line").attr("class", "cursor").attr("x1", x(selected)).attr("x2", x(selected)).attr("y1", margin.top).attr("y2", height - margin.bottom);
+    setupDrag(svg, x, margin.left, width - margin.right, height);
+  }
+
+  function draw() {
+    const snap = snapshots[selected];
+    snapshotLabel.textContent = `${snap.label} · ${snap.source} · ${snap.towns.length} towns/splits represented`;
+    townList.textContent = `New at this point: ${snap.current.length ? snap.current.join(", ") : "No newly added town; feed reconciliation only"}. Represented: ${snap.towns.join(", ")}.`;
+    drawMap();
+    drawVotes();
+    drawPressure();
+  }
+
+  slider.addEventListener("input", event => setSelected(Number(event.target.value)));
+  new ResizeObserver(draw).observe(root);
+  draw();
+})();
+</script>
+"""
+    return (
+        html
+        .replace("__GEOJSON__", geojson_payload)
+        .replace("__ROLLOUT__", rollout_payload)
     )
 
 
@@ -683,12 +1544,13 @@ c4.metric("Vermont share", f"{vt_share:.0%}")
 c5.metric("Candidates represented", f"{candidate_count:,}")
 
 # ---------- Geography ----------
-st.subheader("Windsor contribution point map")
+st.subheader("Maps and election context")
 geo_mode = st.radio(
     "Map view",
     [
         "Windsor address points",
         "Windsor town map",
+        "Windsor Senate rollout",
         "Interactive Vermont map",
         "By state",
         "Vermont town table",
@@ -1031,7 +1893,7 @@ else:
     vt_amount = float(vt["amount"].sum())
 
     selected_town = "All towns"
-    if geo_mode != "Windsor address points":
+    if geo_mode not in ["Windsor address points", "Windsor Senate rollout"]:
         m1, m2, m3 = st.columns(3)
         m1.metric("Mapped Vermont dollars", f"${mapped_amount:,.0f}")
         m2.metric("Unmatched Vermont dollars", f"${unmatched_amount:,.0f}")
@@ -1049,6 +1911,28 @@ else:
                 "optional alias table. Select a municipality to inspect its "
                 "records."
             ),
+        )
+
+    if geo_mode == "Windsor Senate rollout":
+        missing_towns = sorted(
+            WINDSOR_SENATE_TOWNS
+            - {
+                normalize_place(
+                    feature.get("properties", {}).get("JOIN_NAME")
+                    or feature.get("properties", {}).get("TOWNNAME")
+                )
+                for feature in vt_geojson.get("features", [])
+            }
+        )
+        if missing_towns:
+            st.warning(
+                "Some Windsor Senate towns were not found in the boundary "
+                f"layer: {', '.join(missing_towns)}"
+            )
+        components.html(
+            build_windsor_senate_rollout_html(vt_geojson),
+            height=900,
+            scrolling=True,
         )
 
     if geo_mode == "Windsor town map":

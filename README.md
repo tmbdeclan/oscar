@@ -1,7 +1,7 @@
-# OSCAR Vermont Campaign Finance Explorer
+# Open-Source Campaign Analytics
 
-OSCAR is an Open-Source Campaign Analytics for Representation app for 2026
-Vermont House and Senate campaign-finance data in districts touching Windsor
+Open-Source Campaign Analytics (OSCA) is a 2026 Vermont House and Senate
+campaign-finance and election-context app for districts touching Windsor
 County.
 
 ## Project layout
@@ -66,7 +66,7 @@ This Phase 1 bundle includes:
   used by the app at startup.
 - Generated CSV caches for population density, 2024 primary turnout, household
   income, Windsor street-address geocodes, and inferred P.O. box parcel matches.
-- The OSCAR baby icon used for the app header and browser icon.
+- The OSCA icon used for the app header and browser icon.
 
 No Streamlit secrets are currently required. The app uses local public-data
 caches plus live public VCGI town boundaries.
@@ -102,6 +102,11 @@ data/vermont_primary_turnout_2026.csv
 app will try to match the `municipality` value to the VCGI town name. The map
 uses the turnout file for actual 2026 primary voters and turnout percentage,
 and uses the candidate result file for leading candidate/result-row context.
+
+The app also includes a Windsor Senate rollout view with a district map and
+linked candidate-total and third-seat-pressure charts. It uses the archived
+download/export sequence to show when each town first appeared in public result
+snapshots.
 
 ## GitHub setup
 
