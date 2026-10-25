@@ -1,0 +1,520 @@
+{
+  "source_file": "Legacy app.py, repository revision 41184df9e968f47e86fab4dd112dcf3db8072044",
+  "source_sha256": "3104659be68c2f4da14e89704d18a999fe29ab22f6eef0bfdb888b45eb07702e",
+  "election": "2026-08-11 Democratic primary",
+  "evidence_boundary": "Times recorded in the existing OSCA replay. First appearance in sampled snapshots, not exact submission times; exports not independently revalidated.",
+  "snapshots": [
+    {
+      "label": "7:51 PM",
+      "source": "SOS static feed cache",
+      "towns": [
+        "WOODSTOCK"
+      ],
+      "current": [
+        "WOODSTOCK"
+      ]
+    },
+    {
+      "label": "8:23 PM",
+      "source": "first export",
+      "towns": [
+        "WOODSTOCK",
+        "BALTIMORE",
+        "BRIDGEWATER",
+        "CHESTER",
+        "LUDLOW",
+        "SPRINGFIELD",
+        "WESTON"
+      ],
+      "current": [
+        "BALTIMORE",
+        "BRIDGEWATER",
+        "CHESTER",
+        "LUDLOW",
+        "SPRINGFIELD",
+        "WESTON"
+      ]
+    },
+    {
+      "label": "8:28 PM",
+      "source": "export (2)",
+      "towns": [
+        "WOODSTOCK",
+        "BALTIMORE",
+        "BRIDGEWATER",
+        "CHESTER",
+        "LUDLOW",
+        "SPRINGFIELD",
+        "WESTON",
+        "NORWICH"
+      ],
+      "current": [
+        "NORWICH"
+      ]
+    },
+    {
+      "label": "8:35 PM",
+      "source": "export (5)",
+      "towns": [
+        "WOODSTOCK",
+        "BALTIMORE",
+        "BRIDGEWATER",
+        "CHESTER",
+        "LUDLOW",
+        "SPRINGFIELD",
+        "WESTON",
+        "NORWICH",
+        "THETFORD",
+        "WINDSOR"
+      ],
+      "current": [
+        "THETFORD",
+        "WINDSOR"
+      ]
+    },
+    {
+      "label": "8:40 PM",
+      "source": "export (7)",
+      "towns": [
+        "WOODSTOCK",
+        "BALTIMORE",
+        "BRIDGEWATER",
+        "CHESTER",
+        "LUDLOW",
+        "SPRINGFIELD",
+        "WESTON",
+        "NORWICH",
+        "THETFORD",
+        "WINDSOR",
+        "POMFRET"
+      ],
+      "current": [
+        "POMFRET"
+      ]
+    },
+    {
+      "label": "8:43 PM",
+      "source": "export (8)",
+      "towns": [
+        "WOODSTOCK",
+        "BALTIMORE",
+        "BRIDGEWATER",
+        "CHESTER",
+        "LUDLOW",
+        "SPRINGFIELD",
+        "WESTON",
+        "NORWICH",
+        "THETFORD",
+        "WINDSOR",
+        "POMFRET",
+        "ANDOVER",
+        "READING"
+      ],
+      "current": [
+        "ANDOVER",
+        "READING"
+      ]
+    },
+    {
+      "label": "8:55 PM",
+      "source": "export (10)",
+      "towns": [
+        "WOODSTOCK",
+        "BALTIMORE",
+        "BRIDGEWATER",
+        "CHESTER",
+        "LUDLOW",
+        "SPRINGFIELD",
+        "WESTON",
+        "NORWICH",
+        "THETFORD",
+        "WINDSOR",
+        "POMFRET",
+        "ANDOVER",
+        "READING",
+        "BETHEL",
+        "PITTSFIELD",
+        "STOCKBRIDGE"
+      ],
+      "current": [
+        "BETHEL",
+        "PITTSFIELD",
+        "STOCKBRIDGE"
+      ]
+    },
+    {
+      "label": "9:03 PM",
+      "source": "export (11)",
+      "towns": [
+        "WOODSTOCK",
+        "BALTIMORE",
+        "BRIDGEWATER",
+        "CHESTER",
+        "LUDLOW",
+        "SPRINGFIELD",
+        "WESTON",
+        "NORWICH",
+        "THETFORD",
+        "WINDSOR",
+        "POMFRET",
+        "ANDOVER",
+        "READING",
+        "BETHEL",
+        "PITTSFIELD",
+        "STOCKBRIDGE",
+        "CAVENDISH",
+        "HARTFORD",
+        "SHARON"
+      ],
+      "current": [
+        "CAVENDISH",
+        "HARTFORD",
+        "SHARON"
+      ]
+    },
+    {
+      "label": "9:28 PM",
+      "source": "export (13)",
+      "towns": [
+        "WOODSTOCK",
+        "BALTIMORE",
+        "BRIDGEWATER",
+        "CHESTER",
+        "LUDLOW",
+        "SPRINGFIELD",
+        "WESTON",
+        "NORWICH",
+        "THETFORD",
+        "WINDSOR",
+        "POMFRET",
+        "ANDOVER",
+        "READING",
+        "BETHEL",
+        "PITTSFIELD",
+        "STOCKBRIDGE",
+        "CAVENDISH",
+        "HARTFORD",
+        "SHARON",
+        "HARTLAND"
+      ],
+      "current": [
+        "HARTLAND",
+        "HARTFORD"
+      ]
+    },
+    {
+      "label": "9:31 PM",
+      "source": "export (14)",
+      "towns": [
+        "WOODSTOCK",
+        "BALTIMORE",
+        "BRIDGEWATER",
+        "CHESTER",
+        "LUDLOW",
+        "SPRINGFIELD",
+        "WESTON",
+        "NORWICH",
+        "THETFORD",
+        "WINDSOR",
+        "POMFRET",
+        "ANDOVER",
+        "READING",
+        "BETHEL",
+        "PITTSFIELD",
+        "STOCKBRIDGE",
+        "CAVENDISH",
+        "HARTFORD",
+        "SHARON",
+        "HARTLAND",
+        "WEST WINDSOR"
+      ],
+      "current": [
+        "WEST WINDSOR"
+      ]
+    },
+    {
+      "label": "9:46 PM",
+      "source": "export (15)",
+      "towns": [
+        "WOODSTOCK",
+        "BALTIMORE",
+        "BRIDGEWATER",
+        "CHESTER",
+        "LUDLOW",
+        "SPRINGFIELD",
+        "WESTON",
+        "NORWICH",
+        "THETFORD",
+        "WINDSOR",
+        "POMFRET",
+        "ANDOVER",
+        "READING",
+        "BETHEL",
+        "PITTSFIELD",
+        "STOCKBRIDGE",
+        "CAVENDISH",
+        "HARTFORD",
+        "SHARON",
+        "HARTLAND",
+        "WEST WINDSOR",
+        "BARNARD",
+        "ROYALTON"
+      ],
+      "current": [
+        "BARNARD",
+        "ROYALTON"
+      ]
+    },
+    {
+      "label": "10:28 PM",
+      "source": "export (17)",
+      "towns": [
+        "WOODSTOCK",
+        "BALTIMORE",
+        "BRIDGEWATER",
+        "CHESTER",
+        "LUDLOW",
+        "SPRINGFIELD",
+        "WESTON",
+        "NORWICH",
+        "THETFORD",
+        "WINDSOR",
+        "POMFRET",
+        "ANDOVER",
+        "READING",
+        "BETHEL",
+        "PITTSFIELD",
+        "STOCKBRIDGE",
+        "CAVENDISH",
+        "HARTFORD",
+        "SHARON",
+        "HARTLAND",
+        "WEST WINDSOR",
+        "BARNARD",
+        "ROYALTON",
+        "PLYMOUTH"
+      ],
+      "current": [
+        "PLYMOUTH"
+      ]
+    },
+    {
+      "label": "10:34 PM",
+      "source": "final workbook (18)",
+      "towns": [
+        "WOODSTOCK",
+        "BALTIMORE",
+        "BRIDGEWATER",
+        "CHESTER",
+        "LUDLOW",
+        "SPRINGFIELD",
+        "WESTON",
+        "NORWICH",
+        "THETFORD",
+        "WINDSOR",
+        "POMFRET",
+        "ANDOVER",
+        "READING",
+        "BETHEL",
+        "PITTSFIELD",
+        "STOCKBRIDGE",
+        "CAVENDISH",
+        "HARTFORD",
+        "SHARON",
+        "HARTLAND",
+        "WEST WINDSOR",
+        "BARNARD",
+        "ROYALTON",
+        "PLYMOUTH",
+        "WEATHERSFIELD"
+      ],
+      "current": [
+        "WEATHERSFIELD"
+      ]
+    },
+    {
+      "label": "Aug 12 10:16 AM",
+      "source": "official feed",
+      "towns": [
+        "WOODSTOCK",
+        "BALTIMORE",
+        "BRIDGEWATER",
+        "CHESTER",
+        "LUDLOW",
+        "SPRINGFIELD",
+        "WESTON",
+        "NORWICH",
+        "THETFORD",
+        "WINDSOR",
+        "POMFRET",
+        "ANDOVER",
+        "READING",
+        "BETHEL",
+        "PITTSFIELD",
+        "STOCKBRIDGE",
+        "CAVENDISH",
+        "HARTFORD",
+        "SHARON",
+        "HARTLAND",
+        "WEST WINDSOR",
+        "BARNARD",
+        "ROYALTON",
+        "PLYMOUTH",
+        "WEATHERSFIELD"
+      ],
+      "current": []
+    }
+  ],
+  "towns": [
+    {
+      "town": "WOODSTOCK",
+      "first_observed_primary": "7:51 PM",
+      "snapshot_index": 0,
+      "source_label": "SOS static feed cache"
+    },
+    {
+      "town": "BALTIMORE",
+      "first_observed_primary": "8:23 PM",
+      "snapshot_index": 1,
+      "source_label": "first export"
+    },
+    {
+      "town": "BRIDGEWATER",
+      "first_observed_primary": "8:23 PM",
+      "snapshot_index": 1,
+      "source_label": "first export"
+    },
+    {
+      "town": "CHESTER",
+      "first_observed_primary": "8:23 PM",
+      "snapshot_index": 1,
+      "source_label": "first export"
+    },
+    {
+      "town": "LUDLOW",
+      "first_observed_primary": "8:23 PM",
+      "snapshot_index": 1,
+      "source_label": "first export"
+    },
+    {
+      "town": "SPRINGFIELD",
+      "first_observed_primary": "8:23 PM",
+      "snapshot_index": 1,
+      "source_label": "first export"
+    },
+    {
+      "town": "WESTON",
+      "first_observed_primary": "8:23 PM",
+      "snapshot_index": 1,
+      "source_label": "first export"
+    },
+    {
+      "town": "NORWICH",
+      "first_observed_primary": "8:28 PM",
+      "snapshot_index": 2,
+      "source_label": "export (2)"
+    },
+    {
+      "town": "THETFORD",
+      "first_observed_primary": "8:35 PM",
+      "snapshot_index": 3,
+      "source_label": "export (5)"
+    },
+    {
+      "town": "WINDSOR",
+      "first_observed_primary": "8:35 PM",
+      "snapshot_index": 3,
+      "source_label": "export (5)"
+    },
+    {
+      "town": "POMFRET",
+      "first_observed_primary": "8:40 PM",
+      "snapshot_index": 4,
+      "source_label": "export (7)"
+    },
+    {
+      "town": "ANDOVER",
+      "first_observed_primary": "8:43 PM",
+      "snapshot_index": 5,
+      "source_label": "export (8)"
+    },
+    {
+      "town": "READING",
+      "first_observed_primary": "8:43 PM",
+      "snapshot_index": 5,
+      "source_label": "export (8)"
+    },
+    {
+      "town": "BETHEL",
+      "first_observed_primary": "8:55 PM",
+      "snapshot_index": 6,
+      "source_label": "export (10)"
+    },
+    {
+      "town": "PITTSFIELD",
+      "first_observed_primary": "8:55 PM",
+      "snapshot_index": 6,
+      "source_label": "export (10)"
+    },
+    {
+      "town": "STOCKBRIDGE",
+      "first_observed_primary": "8:55 PM",
+      "snapshot_index": 6,
+      "source_label": "export (10)"
+    },
+    {
+      "town": "CAVENDISH",
+      "first_observed_primary": "9:03 PM",
+      "snapshot_index": 7,
+      "source_label": "export (11)"
+    },
+    {
+      "town": "HARTFORD",
+      "first_observed_primary": "9:03 PM",
+      "snapshot_index": 7,
+      "source_label": "export (11)"
+    },
+    {
+      "town": "SHARON",
+      "first_observed_primary": "9:03 PM",
+      "snapshot_index": 7,
+      "source_label": "export (11)"
+    },
+    {
+      "town": "HARTLAND",
+      "first_observed_primary": "9:28 PM",
+      "snapshot_index": 8,
+      "source_label": "export (13)"
+    },
+    {
+      "town": "WEST WINDSOR",
+      "first_observed_primary": "9:31 PM",
+      "snapshot_index": 9,
+      "source_label": "export (14)"
+    },
+    {
+      "town": "BARNARD",
+      "first_observed_primary": "9:46 PM",
+      "snapshot_index": 10,
+      "source_label": "export (15)"
+    },
+    {
+      "town": "ROYALTON",
+      "first_observed_primary": "9:46 PM",
+      "snapshot_index": 10,
+      "source_label": "export (15)"
+    },
+    {
+      "town": "PLYMOUTH",
+      "first_observed_primary": "10:28 PM",
+      "snapshot_index": 11,
+      "source_label": "export (17)"
+    },
+    {
+      "town": "WEATHERSFIELD",
+      "first_observed_primary": "10:34 PM",
+      "snapshot_index": 12,
+      "source_label": "final workbook (18)"
+    }
+  ]
+}

@@ -1,182 +1,58 @@
-# Open-Source Campaign Analytics
+# Open-Source Campaign Analytics — OSCA
 
-Open-Source Campaign Analytics (OSCA) is a 2026 Vermont House and Senate
-campaign-finance and election-context app for districts touching Windsor
-County.
+Branded Windsor Senate election-night workspace, deployed through Streamlit.
 
-## Project layout
+## Run
 
-```text
-vt-campaign-finance/
-├── app.py
-├── candidates.csv
-├── ingest/
-│   ├── api.py
-│   ├── db.py
-│   ├── run.py
-│   └── verify.py
-├── scripts/
-│   ├── run_app.command
-│   └── refresh_data.command
-├── data/
-├── raw_json/
-├── requirements.txt
-├── .gitignore
-└── README.md
+```sh
+pip install -r requirements.txt
+streamlit run app.py
 ```
 
-## Run locally
+The entrypoint mounts the versioned `election_night/frontend` custom component.
+Its SOS button communicates with the Python adapter using Streamlit's components-v1
+protocol; no external API server or secrets are needed. Public SOS requests are
+cached for 45 seconds. Browser polling is optional at 60-second intervals.
 
-```bash
-cd ~/Documents/Projects
-chmod +x scripts/run_app.command scripts/refresh_data.command
-xattr -d com.apple.quarantine scripts/run_app.command 2>/dev/null || true
-xattr -d com.apple.quarantine scripts/refresh_data.command 2>/dev/null || true
-./scripts/run_app.command
-```
+Open `?demo=1` or select **Try election-night simulation** for the synthetic replay.
+Return to live mode to enter actual preliminary results or fetch SOS. The simulation
+uses OSCA's recorded 2026 primary reporting chronology, not verified submission
+times. Its votes remain synthetic. Simulation and live session imports cannot mix.
 
-Streamlit normally opens at:
+## Interface
 
-```text
-http://localhost:8501
-```
+- District reporting map and linked candidate-total / third-seat-margin charts.
+- Official 2024 general-election overlay for the same reporting footprint.
+- Preliminary town entry; manual town overrides survive SOS refreshes.
+- Browser-local immutable snapshots, JSON export/import, and source notes.
+- 2024-turnout reweighting scenario for entered results.
+- Separate, explicit hypothetical crossover sensitivity and historical-multiplier model.
+- Dotted switching-model chart overlay, with no winner call or probability.
 
-## Refresh the data
+Comparator defaults: Burrows → Joe Major; Major → Alison H. Clarkson; Izzo → Marc
+Nemeth. They affect historical comparisons, not projected vote calculations.
 
-```bash
-./scripts/refresh_data.command
-```
+## Evidence and model boundaries
 
-Then reload the Streamlit page.
+Data files under `election_night/frontend/data` retain official source URLs,
+normalization metadata and calibration inputs. The SOS adapter excludes district
+summary rows and combines Hartford reporting splits to avoid double counting.
+Zero reports, unavailable data, partial reports, and certified/official flags are
+separate states. Browser state is not a shared or durable results database; export
+sessions for backup. Refresh errors retain prior successful results.
 
-## Phase 1 private sharing
+The historical conversion model uses pooled 2024 factors: D 52,586 / 11,617 =
+4.526642; R 33,882 / 3,815 = 8.881258. Estimated switchers' D selections are removed
+proportionally to town primary selection rates before multiplication; each assumed
+switcher adds exactly one general vote to each R nominee after multiplication.
+Ordinary district totals are allocated by remaining 2024 turnout weights only for
+chart timing, not as a prediction of candidate geography. A single presidential
+election cycle does not validate a midterm forecast. Independents and write-ins
+are not modeled in this six-nominee scenario.
 
-The app is ready to deploy as a private Streamlit Community Cloud app from a
-GitHub repository.
+This deployment replaces the former campaign-finance interface. The previous
+implementation remains recoverable in Git history (last prior revision:
+`41184df9e968f47e86fab4dd112dcf3db8072044`). Existing finance data and ingestion
+scripts remain in the repository but are not used by the new interface.
 
-1. Create a private GitHub repository.
-2. Push this repository to GitHub.
-3. In Streamlit Community Cloud, choose **Create app**.
-4. Select the GitHub repo, branch, and `app.py` as the entrypoint.
-5. Keep the app private while validating the data and presentation.
-
-This Phase 1 bundle includes:
-
-- `data/campaign_finance.sqlite`, the local public campaign-finance database
-  used by the app at startup.
-- Generated CSV caches for population density, 2024 primary turnout, household
-  income, Windsor street-address geocodes, and inferred P.O. box parcel matches.
-- The OSCA icon used for the app header and browser icon.
-
-No Streamlit secrets are currently required. The app uses local public-data
-caches plus live public VCGI town boundaries.
-
-## 2026 primary results
-
-The Windsor town map can incorporate town-level 2026 primary results from the
-Vermont Election Night Results site. Refresh the local CSV caches with:
-
-```bash
-python scripts/fetch_vermont_primary_2026.py
-```
-
-The script writes candidate result rows to:
-
-```text
-data/vermont_primary_results_2026.csv
-```
-
-Expected columns:
-
-```csv
-town_geoid,municipality,office,district,party,candidate,votes
-```
-
-It also writes town turnout rows to:
-
-```text
-data/vermont_primary_turnout_2026.csv
-```
-
-`town_geoid` is preferred in any manually prepared file. If it is blank, the
-app will try to match the `municipality` value to the VCGI town name. The map
-uses the turnout file for actual 2026 primary voters and turnout percentage,
-and uses the candidate result file for leading candidate/result-row context.
-
-The app also includes a Windsor Senate rollout view with a district map and
-linked candidate-total and third-seat-pressure charts. It uses the archived
-download/export sequence to show when each town first appeared in public result
-snapshots.
-
-## GitHub setup
-
-From inside the project folder:
-
-```bash
-git init
-git add .
-git commit -m "Initial Vermont campaign finance explorer"
-```
-
-Check the repository:
-
-```bash
-git status
-git log --oneline
-```
-
-Create an empty private repository on GitHub, then run the commands GitHub gives
-you. They will look roughly like:
-
-```bash
-git branch -M main
-git remote add origin <YOUR-PRIVATE-REPOSITORY-URL>
-git push -u origin main
-```
-
-Do not paste credentials or tokens into source files.
-
-## Data handling
-
-The main SQLite database is intentionally tracked for the Phase 1 private
-Streamlit deployment. SQLite runtime sidecar files (`*.sqlite-shm` and
-`*.sqlite-wal`) and raw API downloads remain ignored.
-
-The app displays contributor city/state/ZIP from public campaign-finance
-filings. The Windsor address map also displays filed street-address geocodes
-and high-confidence inferred P.O. box parcel locations when available.
-
-## Current limitations
-
-- Expenditures are intentionally not ingested until the correct public Vermont
-  API endpoint has been captured.
-- Candidates without confirmed GUIDs may still use name fallback.
-- Mike Schmitt remains marked as having no profile/GUID found rather than being
-  treated as a verified zero.
-
-
-## Interactive Vermont municipality map
-
-The app can now load Vermont town polygons directly from the official VCGI
-BNDHASH Town Boundaries feature service and render contribution dollars as a
-municipal choropleth.
-
-The join is deliberately conservative:
-
-1. A reported Vermont `city` is normalized.
-2. If it exactly matches an official town name, it is mapped.
-3. Otherwise the label remains **unmatched** rather than being silently guessed.
-4. You can explicitly resolve postal/place-name differences in `town_aliases.csv`.
-
-Example:
-
-```csv
-reported_city,municipality
-BROWNSVILLE,WEST WINDSOR
-WHITE RIVER JUNCTION,HARTFORD
-```
-
-Only add aliases you are comfortable treating as a municipality mapping.
-
-The source boundary dataset is VCGI's BNDHASH town layer. VCGI notes that it is
-intended for general mapping and is not a legally definitive boundary dataset.
+D3 7.9.0 is vendored with its license in `election_night/frontend/vendor`.

@@ -1,0 +1,30 @@
+{
+  "year": 2024,
+  "method": "Pooled general votes divided by pooled primary votes for the three nominees in each party; excludes unsuccessful primary candidates and independents.",
+  "parties": {
+    "D": {
+      "primary_votes": 11617,
+      "general_votes": 52586,
+      "multiplier": 4.526641990186795,
+      "nominees": [
+        "Alison H. Clarkson",
+        "Joe Major",
+        "Rebecca White"
+      ]
+    },
+    "R": {
+      "primary_votes": 3815,
+      "general_votes": 33882,
+      "multiplier": 8.881258191349934,
+      "nominees": [
+        "Andrea Murray",
+        "Jonathan Gleason",
+        "Jack Williams"
+      ]
+    }
+  },
+  "sources": [
+    "https://static.electionresults.vermont.gov/elections/cb61715f-d720-4c64-864c-d445756dd667-sn-20260511151012.json",
+    "https://electionarchive.vermont.gov/contest/161112"
+  ]
+}

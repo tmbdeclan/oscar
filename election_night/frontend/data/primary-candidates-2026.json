@@ -1,0 +1,572 @@
+{
+  "election": "2026-08-11 Windsor Senate primary",
+  "towns": [
+    {
+      "town": "THETFORD",
+      "D": {
+        "ballots": 628,
+        "votes": {
+          "Benjamin Brickner": 257,
+          "Elizabeth Burrows": 219,
+          "Heather Chase": 203,
+          "Christopher M. Dube": 69,
+          "Joe Major": 307,
+          "Rebecca White": 473
+        }
+      },
+      "R": {
+        "ballots": 54,
+        "votes": {
+          "Andrea Murray": 46,
+          "Jonathan Gleason": 34,
+          "Jack Williams": 36
+        }
+      }
+    },
+    {
+      "town": "PITTSFIELD",
+      "D": {
+        "ballots": 60,
+        "votes": {
+          "Benjamin Brickner": 26,
+          "Elizabeth Burrows": 20,
+          "Heather Chase": 23,
+          "Christopher M. Dube": 4,
+          "Joe Major": 9,
+          "Rebecca White": 25
+        }
+      },
+      "R": {
+        "ballots": 26,
+        "votes": {
+          "Andrea Murray": 18,
+          "Jonathan Gleason": 18,
+          "Jack Williams": 18
+        }
+      }
+    },
+    {
+      "town": "LUDLOW",
+      "D": {
+        "ballots": 225,
+        "votes": {
+          "Benjamin Brickner": 65,
+          "Elizabeth Burrows": 68,
+          "Heather Chase": 149,
+          "Christopher M. Dube": 26,
+          "Joe Major": 89,
+          "Rebecca White": 118
+        }
+      },
+      "R": {
+        "ballots": 103,
+        "votes": {
+          "Andrea Murray": 66,
+          "Jonathan Gleason": 78,
+          "Jack Williams": 62
+        }
+      }
+    },
+    {
+      "town": "ANDOVER",
+      "D": {
+        "ballots": 84,
+        "votes": {
+          "Benjamin Brickner": 27,
+          "Elizabeth Burrows": 34,
+          "Heather Chase": 64,
+          "Christopher M. Dube": 9,
+          "Joe Major": 31,
+          "Rebecca White": 45
+        }
+      },
+      "R": {
+        "ballots": 50,
+        "votes": {
+          "Andrea Murray": 37,
+          "Jonathan Gleason": 38,
+          "Jack Williams": 33
+        }
+      }
+    },
+    {
+      "town": "WESTON",
+      "D": {
+        "ballots": 157,
+        "votes": {
+          "Benjamin Brickner": 42,
+          "Elizabeth Burrows": 53,
+          "Heather Chase": 114,
+          "Christopher M. Dube": 14,
+          "Joe Major": 60,
+          "Rebecca White": 96
+        }
+      },
+      "R": {
+        "ballots": 26,
+        "votes": {
+          "Andrea Murray": 13,
+          "Jonathan Gleason": 14,
+          "Jack Williams": 11
+        }
+      }
+    },
+    {
+      "town": "STOCKBRIDGE",
+      "D": {
+        "ballots": 95,
+        "votes": {
+          "Benjamin Brickner": 38,
+          "Elizabeth Burrows": 42,
+          "Heather Chase": 37,
+          "Christopher M. Dube": 17,
+          "Joe Major": 33,
+          "Rebecca White": 63
+        }
+      },
+      "R": {
+        "ballots": 28,
+        "votes": {
+          "Andrea Murray": 24,
+          "Jonathan Gleason": 22,
+          "Jack Williams": 20
+        }
+      }
+    },
+    {
+      "town": "BETHEL",
+      "D": {
+        "ballots": 224,
+        "votes": {
+          "Benjamin Brickner": 98,
+          "Elizabeth Burrows": 90,
+          "Heather Chase": 68,
+          "Christopher M. Dube": 26,
+          "Joe Major": 96,
+          "Rebecca White": 158
+        }
+      },
+      "R": {
+        "ballots": 44,
+        "votes": {
+          "Andrea Murray": 22,
+          "Jonathan Gleason": 22,
+          "Jack Williams": 18
+        }
+      }
+    },
+    {
+      "town": "ROYALTON",
+      "D": {
+        "ballots": 299,
+        "votes": {
+          "Benjamin Brickner": 120,
+          "Elizabeth Burrows": 132,
+          "Heather Chase": 108,
+          "Christopher M. Dube": 49,
+          "Joe Major": 133,
+          "Rebecca White": 220
+        }
+      },
+      "R": {
+        "ballots": 111,
+        "votes": {
+          "Andrea Murray": 65,
+          "Jonathan Gleason": 59,
+          "Jack Williams": 64
+        }
+      }
+    },
+    {
+      "town": "SHARON",
+      "D": {
+        "ballots": 253,
+        "votes": {
+          "Benjamin Brickner": 100,
+          "Elizabeth Burrows": 102,
+          "Heather Chase": 76,
+          "Christopher M. Dube": 30,
+          "Joe Major": 110,
+          "Rebecca White": 185
+        }
+      },
+      "R": {
+        "ballots": 51,
+        "votes": {
+          "Andrea Murray": 32,
+          "Jonathan Gleason": 33,
+          "Jack Williams": 36
+        }
+      }
+    },
+    {
+      "town": "NORWICH",
+      "D": {
+        "ballots": 1119,
+        "votes": {
+          "Benjamin Brickner": 412,
+          "Elizabeth Burrows": 429,
+          "Heather Chase": 345,
+          "Christopher M. Dube": 126,
+          "Joe Major": 628,
+          "Rebecca White": 889
+        }
+      },
+      "R": {
+        "ballots": 44,
+        "votes": {
+          "Andrea Murray": 35,
+          "Jonathan Gleason": 28,
+          "Jack Williams": 31
+        }
+      }
+    },
+    {
+      "town": "CHESTER",
+      "D": {
+        "ballots": 427,
+        "votes": {
+          "Benjamin Brickner": 111,
+          "Elizabeth Burrows": 153,
+          "Heather Chase": 330,
+          "Christopher M. Dube": 54,
+          "Joe Major": 145,
+          "Rebecca White": 217
+        }
+      },
+      "R": {
+        "ballots": 150,
+        "votes": {
+          "Andrea Murray": 105,
+          "Jonathan Gleason": 107,
+          "Jack Williams": 111
+        }
+      }
+    },
+    {
+      "town": "HARTLAND",
+      "D": {
+        "ballots": 627,
+        "votes": {
+          "Benjamin Brickner": 184,
+          "Elizabeth Burrows": 380,
+          "Heather Chase": 147,
+          "Christopher M. Dube": 136,
+          "Joe Major": 340,
+          "Rebecca White": 439
+        }
+      },
+      "R": {
+        "ballots": 104,
+        "votes": {
+          "Andrea Murray": 71,
+          "Jonathan Gleason": 58,
+          "Jack Williams": 76
+        }
+      }
+    },
+    {
+      "town": "WEST WINDSOR",
+      "D": {
+        "ballots": 280,
+        "votes": {
+          "Benjamin Brickner": 66,
+          "Elizabeth Burrows": 203,
+          "Heather Chase": 72,
+          "Christopher M. Dube": 41,
+          "Joe Major": 135,
+          "Rebecca White": 170
+        }
+      },
+      "R": {
+        "ballots": 49,
+        "votes": {
+          "Andrea Murray": 38,
+          "Jonathan Gleason": 27,
+          "Jack Williams": 35
+        }
+      }
+    },
+    {
+      "town": "WINDSOR",
+      "D": {
+        "ballots": 483,
+        "votes": {
+          "Benjamin Brickner": 132,
+          "Elizabeth Burrows": 302,
+          "Heather Chase": 163,
+          "Christopher M. Dube": 89,
+          "Joe Major": 211,
+          "Rebecca White": 317
+        }
+      },
+      "R": {
+        "ballots": 94,
+        "votes": {
+          "Andrea Murray": 71,
+          "Jonathan Gleason": 53,
+          "Jack Williams": 66
+        }
+      }
+    },
+    {
+      "town": "WEATHERSFIELD",
+      "D": {
+        "ballots": 363,
+        "votes": {
+          "Benjamin Brickner": 119,
+          "Elizabeth Burrows": 170,
+          "Heather Chase": 180,
+          "Christopher M. Dube": 54,
+          "Joe Major": 159,
+          "Rebecca White": 214
+        }
+      },
+      "R": {
+        "ballots": 200,
+        "votes": {
+          "Andrea Murray": 153,
+          "Jonathan Gleason": 80,
+          "Jack Williams": 117
+        }
+      }
+    },
+    {
+      "town": "CAVENDISH",
+      "D": {
+        "ballots": 146,
+        "votes": {
+          "Benjamin Brickner": 39,
+          "Elizabeth Burrows": 72,
+          "Heather Chase": 103,
+          "Christopher M. Dube": 26,
+          "Joe Major": 45,
+          "Rebecca White": 73
+        }
+      },
+      "R": {
+        "ballots": 88,
+        "votes": {
+          "Andrea Murray": 66,
+          "Jonathan Gleason": 61,
+          "Jack Williams": 56
+        }
+      }
+    },
+    {
+      "town": "BALTIMORE",
+      "D": {
+        "ballots": 25,
+        "votes": {
+          "Benjamin Brickner": 8,
+          "Elizabeth Burrows": 10,
+          "Heather Chase": 14,
+          "Christopher M. Dube": 4,
+          "Joe Major": 6,
+          "Rebecca White": 9
+        }
+      },
+      "R": {
+        "ballots": 17,
+        "votes": {
+          "Andrea Murray": 13,
+          "Jonathan Gleason": 12,
+          "Jack Williams": 12
+        }
+      }
+    },
+    {
+      "town": "SPRINGFIELD",
+      "D": {
+        "ballots": 959,
+        "votes": {
+          "Benjamin Brickner": 286,
+          "Elizabeth Burrows": 424,
+          "Heather Chase": 662,
+          "Christopher M. Dube": 114,
+          "Joe Major": 357,
+          "Rebecca White": 569
+        }
+      },
+      "R": {
+        "ballots": 420,
+        "votes": {
+          "Andrea Murray": 326,
+          "Jonathan Gleason": 276,
+          "Jack Williams": 307
+        }
+      }
+    },
+    {
+      "town": "POMFRET",
+      "D": {
+        "ballots": 249,
+        "votes": {
+          "Benjamin Brickner": 203,
+          "Elizabeth Burrows": 58,
+          "Heather Chase": 71,
+          "Christopher M. Dube": 20,
+          "Joe Major": 136,
+          "Rebecca White": 144
+        }
+      },
+      "R": {
+        "ballots": 27,
+        "votes": {
+          "Andrea Murray": 18,
+          "Jonathan Gleason": 17,
+          "Jack Williams": 17
+        }
+      }
+    },
+    {
+      "town": "BARNARD",
+      "D": {
+        "ballots": 188,
+        "votes": {
+          "Benjamin Brickner": 118,
+          "Elizabeth Burrows": 59,
+          "Heather Chase": 73,
+          "Christopher M. Dube": 12,
+          "Joe Major": 97,
+          "Rebecca White": 114
+        }
+      },
+      "R": {
+        "ballots": 29,
+        "votes": {
+          "Andrea Murray": 21,
+          "Jonathan Gleason": 14,
+          "Jack Williams": 17
+        }
+      }
+    },
+    {
+      "town": "BRIDGEWATER",
+      "D": {
+        "ballots": 133,
+        "votes": {
+          "Benjamin Brickner": 87,
+          "Elizabeth Burrows": 40,
+          "Heather Chase": 35,
+          "Christopher M. Dube": 9,
+          "Joe Major": 60,
+          "Rebecca White": 77
+        }
+      },
+      "R": {
+        "ballots": 33,
+        "votes": {
+          "Andrea Murray": 17,
+          "Jonathan Gleason": 21,
+          "Jack Williams": 19
+        }
+      }
+    },
+    {
+      "town": "HARTFORD",
+      "D": {
+        "ballots": 1391,
+        "votes": {
+          "Benjamin Brickner": 387,
+          "Elizabeth Burrows": 553,
+          "Heather Chase": 409,
+          "Christopher M. Dube": 399,
+          "Joe Major": 927,
+          "Rebecca White": 1092
+        }
+      },
+      "R": {
+        "ballots": 202,
+        "votes": {
+          "Andrea Murray": 145,
+          "Jonathan Gleason": 127,
+          "Jack Williams": 141
+        }
+      }
+    },
+    {
+      "town": "READING",
+      "D": {
+        "ballots": 131,
+        "votes": {
+          "Benjamin Brickner": 71,
+          "Elizabeth Burrows": 56,
+          "Heather Chase": 40,
+          "Christopher M. Dube": 11,
+          "Joe Major": 75,
+          "Rebecca White": 78
+        }
+      },
+      "R": {
+        "ballots": 34,
+        "votes": {
+          "Andrea Murray": 28,
+          "Jonathan Gleason": 20,
+          "Jack Williams": 24
+        }
+      }
+    },
+    {
+      "town": "PLYMOUTH",
+      "D": {
+        "ballots": 71,
+        "votes": {
+          "Benjamin Brickner": 25,
+          "Elizabeth Burrows": 27,
+          "Heather Chase": 24,
+          "Christopher M. Dube": 14,
+          "Joe Major": 33,
+          "Rebecca White": 46
+        }
+      },
+      "R": {
+        "ballots": 31,
+        "votes": {
+          "Andrea Murray": 18,
+          "Jonathan Gleason": 19,
+          "Jack Williams": 16
+        }
+      }
+    },
+    {
+      "town": "WOODSTOCK",
+      "D": {
+        "ballots": 736,
+        "votes": {
+          "Benjamin Brickner": 530,
+          "Elizabeth Burrows": 150,
+          "Heather Chase": 190,
+          "Christopher M. Dube": 61,
+          "Joe Major": 388,
+          "Rebecca White": 436
+        }
+      },
+      "R": {
+        "ballots": 139,
+        "votes": {
+          "Andrea Murray": 83,
+          "Jonathan Gleason": 56,
+          "Jack Williams": 47
+        }
+      }
+    }
+  ],
+  "totals": {
+    "D": {
+      "Benjamin Brickner": 3551,
+      "Elizabeth Burrows": 3846,
+      "Heather Chase": 3700,
+      "Christopher M. Dube": 1414,
+      "Joe Major": 4610,
+      "Rebecca White": 6267
+    },
+    "R": {
+      "Andrea Murray": 1531,
+      "Jonathan Gleason": 1294,
+      "Jack Williams": 1390
+    }
+  },
+  "source": "https://static.electionresults.vermont.gov/elections/a18f77e0-89f8-4a01-8d97-61a7c75ba200-sn-20261009195709.json",
+  "sha256": "fdad142050a6dd7d8fb9d583d53590080592a1d5ae2667b225a45587f0e5e6f8"
+}
