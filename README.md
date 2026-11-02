@@ -32,6 +32,20 @@ times. Its votes remain synthetic. Simulation and live session imports cannot mi
 Comparator defaults: Burrows → Joe Major; Major → Alison H. Clarkson; Izzo → Marc
 Nemeth. They affect historical comparisons, not projected vote calculations.
 
+Support indicators beside reported totals and saved town candidate counts compare
+current votes per ballot with the selected comparator's 2024 town support rate.
+Expected votes = current town ballots × comparator's 2024 votes / 2024 town ballots.
+Single arrows indicate a 2 to under 5 percentage-point difference; double arrows
+indicate 5 points or more. No arrow appears below 2 points or without valid data.
+Only complete validated towns with a known comparator baseline are eligible.
+District indicators sum actual and expected votes in the same eligible towns and
+divide their difference by current ballots; reported totals still include partial
+returns. Tooltips identify the comparator, difference, expected votes and coverage.
+Unsaved row edits hide town indicators until saved. These are descriptive historical
+comparisons, not significance tests or changes to either projection model.
+
+Run calculation checks with `node election_night/tests/model.test.cjs`.
+
 ## Evidence and model boundaries
 
 Data files under `election_night/frontend/data` retain official source URLs,

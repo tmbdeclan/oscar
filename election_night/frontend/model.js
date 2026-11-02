@@ -30,6 +30,23 @@
   }
   function totals(rows,keys){return Object.fromEntries(keys.map(k=>[k,rows.filter(r=>r.status!=='unreported').reduce((s,r)=>s+(r.votes[k]||0),0)]));}
   function margin(votes,key){const other=Object.entries(votes).filter(([k])=>k!==key).map(([,v])=>v).sort((a,b)=>b-a);return (votes[key]||0)-(other[2]||0);}
-  const api={validate,scenario,totals,margin};
+  // Compare only complete, valid rows against their own historical support rates.
+  // Candidate support is votes per ballot, not share of all candidate selections.
+  function performance(rows,baseline,keys,candidate,comparator){
+    if(!comparator)return null;
+    const bases=new Map(baseline.map(r=>[r.town,r]));
+    let ballots=0,actual=0,expected=0,towns=0;
+    for(const row of rows){
+      const b=bases.get(row.town),v=b?.votes?.[comparator];
+      if(row.status!=='complete'||validate(row,keys).length||!Number.isSafeInteger(b?.ballots)||b.ballots<=0||!Number.isSafeInteger(v)||v<0||v>b.ballots)continue;
+      if(!Number.isSafeInteger(row.votes[candidate]))continue;
+      ballots+=row.ballots;actual+=row.votes[candidate];expected+=row.ballots*v/b.ballots;towns++;
+    }
+    if(!ballots)return null;
+    const points=(actual-expected)/ballots*100,magnitude=Math.abs(points);
+    const level=magnitude+1e-9>=5?2:magnitude+1e-9>=2?1:0;
+    return {ballots,actual,expected,towns,points,level,direction:points>=0?'higher':'lower'};
+  }
+  const api={validate,scenario,totals,margin,performance};
   if(typeof module!=='undefined')module.exports=api;else root.OSCAModel=api;
 })(typeof window!=='undefined'?window:globalThis);

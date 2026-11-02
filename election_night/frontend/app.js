@@ -38,6 +38,23 @@ for(const c of candidates)option($('#focus'),c.key,c.name);$('#focus').value='Bu
 for(const c of candidates){const item=el('span',null,$('#candidateLegend'));const dot=el('i',null,item);dot.className='swatch';dot.style.background=c.color;el('span',c.name,item);}
 for(const [name,color] of [['2024 only: Alison H. Clarkson','#cfb886'],['2024 only: Marc Nemeth','#8094ac']]){const item=el('span',null,$('#candidateLegend'));const dot=el('i',null,item);dot.className='swatch';dot.style.background=color;dot.style.borderStyle='dashed';el('span',name,item);}
 function input(type,value,label){const n=document.createElement('input');n.type=type;n.value=value??'';n.setAttribute('aria-label',label);if(type==='number'){n.min=0;n.step=1;}return n;}
+function performanceBadge(parent,rows,c,aggregate=false){
+ const comparator=state.comparators[c.key],result=M.performance(rows,base.rows,keys,c.key,comparator);
+ if(!result?.level)return;
+ const name=base.candidates.find(b=>b.key===comparator).name;
+ const degree=result.level===2?'Much':'Somewhat',arrow=result.direction==='higher'?'↑':'↓';
+ const text=`${c.name}: ${degree.toLowerCase()} ${result.direction} versus ${name}’s 2024 support. ${Math.abs(result.points).toFixed(1)} percentage points ${result.direction==='higher'?'above':'below'}; ${fmt(result.actual)} reported versus ${fmt(result.expected)} expected across ${fmt(result.ballots)} ballots in ${result.towns} complete town${result.towns===1?'':'s'}.`+(aggregate?' Indicator excludes partial and unreported towns; the reported total includes all reported towns.':'');
+ const badge=el('span',arrow.repeat(result.level),parent);badge.className='performance-badge '+result.direction;badge.title=text;badge.setAttribute('aria-label',text);badge.setAttribute('role','img');badge.tabIndex=0;
+}
+function updateEntryIndicators(){
+ const rows=isDemo?state.history[selected].rows:merged();
+ for(const tr of document.querySelectorAll('#entryTable tbody tr')){
+  tr.querySelectorAll('.performance-badge').forEach(b=>b.remove());
+  if(tr.dataset.edited)continue;
+  const row=rows.find(r=>r.town===tr.dataset.town);
+  for(const c of candidates)performanceBadge(tr.querySelector(`[data-candidate="${c.key}"]`).parentElement,[row],c);
+ }
+}
 function renderEntry(){
  const head=$('#entryTable thead'),body=$('#entryTable tbody');head.replaceChildren();body.replaceChildren();const tr=el('tr',null,head);
  ['Town / source','Status','Ballots',...keys,'Source note',''].forEach(h=>el('th',h,tr));
@@ -50,12 +67,12 @@ function renderEntry(){
   const release=el('button','Use SOS',el('td',null,tr));release.disabled=!state.manual[row.town];release.addEventListener('click',()=>{if(dirty&&!confirm('Discard unsaved table edits before releasing this town?'))return;delete state.manual[row.town];dirty=false;snapshot('Manual override released: '+row.town);renderEntry();});
  }
  if(isDemo)for(const control of body.querySelectorAll('input,select,button'))control.disabled=true;
- filter();
+ updateEntryIndicators();filter();
 }
 function filter(){const term=$('#filter').value.toUpperCase();document.querySelectorAll('#entryTable tbody tr').forEach(tr=>tr.hidden=!tr.dataset.town.includes(term));}
 $('#filter').addEventListener('input',filter);
-$('#entryTable').addEventListener('input',()=>{dirty=true;$('#saveStatus').textContent='Unsaved edits—save a snapshot to update charts';});
-$('#entryTable').addEventListener('change',()=>{dirty=true;$('#saveStatus').textContent='Unsaved edits—save a snapshot to update charts';});
+$('#entryTable').addEventListener('input',e=>{const tr=e.target.closest('tr');if(tr){tr.dataset.edited='1';tr.querySelectorAll('.performance-badge').forEach(b=>b.remove());}dirty=true;$('#saveStatus').textContent='Unsaved edits—save a snapshot to update charts';});
+$('#entryTable').addEventListener('change',e=>{const tr=e.target.closest('tr');if(tr){tr.dataset.edited='1';tr.querySelectorAll('.performance-badge').forEach(b=>b.remove());}dirty=true;$('#saveStatus').textContent='Unsaved edits—save a snapshot to update charts';});
 $('#save').addEventListener('click',()=>{
  const errors=[],pending={},previous=merged();
  for(const tr of document.querySelectorAll('#entryTable tbody tr')){
@@ -67,7 +84,7 @@ $('#save').addEventListener('click',()=>{
   if(JSON.stringify([row.status,row.ballots,row.votes,row.note])!==JSON.stringify([prior.status,prior.ballots,prior.votes,prior.note||'']))pending[town]=row;
  }
  $('#errors').replaceChildren();if(errors.length){for(const e of errors)el('p',e,$('#errors'));return;}
- if(!Object.keys(pending).length){$('#saveStatus').textContent='No changed rows';dirty=false;return;}
+ if(!Object.keys(pending).length){dirty=false;renderEntry();$('#saveStatus').textContent='No changed rows';return;}
  Object.assign(state.manual,pending);dirty=false;snapshot('Manual preliminary entry');renderEntry();
 });
 function townInfo(town){const r=state.history[selected].rows.find(r=>r.town===town),b=base.rows.find(r=>r.town===town);$('#townDetails').textContent=`${town}: ${r.status} · ${r.ballots===null?'unknown ballots':fmt(r.ballots)+' ballots'} · 2024: ${fmt(b.ballots)} ballots. `+candidates.map(c=>`${c.key}: ${r.votes[c.key]==null?'—':fmt(r.votes[c.key])}`).join(' · ');}
@@ -123,8 +140,8 @@ function drawModel(){
  const rows=state.history[selected].rows,scale=Number($('#scale').value),model=M.scenario(rows,base.rows,keys,scale/100),totals=M.totals(rows,keys),body=$('#modelTable tbody');body.replaceChildren();
  $('#modelStatus').textContent=!Number.isFinite(scale)||scale<1||scale>300?'Enter a turnout scale from 1% to 300%.':model?`Scenario only · ${model.complete}/25 complete towns · ${(model.coverage*100).toFixed(1)}% historical ballot coverage · ${fmt(36121*scale/100)} hypothetical district ballots. Remaining towns use pooled support from completed towns.`:'Awaiting at least one complete town with ballots and all candidate counts. No projection is inferred from missing results.';
  const valid=model&&scale>=1&&scale<=300,ranked=valid?[...candidates].sort((a,b)=>model.votes[b.key]-model.votes[a.key]):candidates;
- for(const c of ranked){const tr=el('tr',null,body);el('td',c.name,tr).style.color=c.color;el('td',fmt(totals[c.key]),tr);el('td',valid?fmt(model.votes[c.key]):'—',tr);el('td',valid?String(1+candidates.filter(o=>model.votes[o.key]>model.votes[c.key]).length):'—',tr);
-  const sel=el('select',null,el('td',null,tr));sel.setAttribute('aria-label',c.name+' 2024 comparator');option(sel,'','No comparator');for(const b of base.candidates)option(sel,b.key,b.name);sel.value=state.comparators[c.key];sel.addEventListener('change',()=>{state.comparators[c.key]=sel.value;persist();drawCharts();});
+ for(const c of ranked){const tr=el('tr',null,body);el('td',c.name,tr).style.color=c.color;const reported=el('td',fmt(totals[c.key]),tr);performanceBadge(reported,rows,c,true);el('td',valid?fmt(model.votes[c.key]):'—',tr);el('td',valid?String(1+candidates.filter(o=>model.votes[o.key]>model.votes[c.key]).length):'—',tr);
+  const sel=el('select',null,el('td',null,tr));sel.setAttribute('aria-label',c.name+' 2024 comparator');option(sel,'','No comparator');for(const b of base.candidates)option(sel,b.key,b.name);sel.value=state.comparators[c.key];sel.addEventListener('change',()=>{state.comparators[c.key]=sel.value;persist();drawCharts();drawModel();updateEntryIndicators();});
  }
 }
 function draw(){
