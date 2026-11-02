@@ -57,12 +57,12 @@ function updateEntryIndicators(){
 }
 function renderEntry(){
  const head=$('#entryTable thead'),body=$('#entryTable tbody');head.replaceChildren();body.replaceChildren();const tr=el('tr',null,head);
- ['Town / source','Status','Ballots',...keys,'Source note',''].forEach(h=>el('th',h,tr));
+ ['Town / source','Status','Ballots',...keys,'Source note',''].forEach(h=>{const th=el('th',h,tr);if(keys.includes(h))th.className='vote-heading';});
  for(const row of (isDemo?state.history[selected].rows:merged())){
   const tr=el('tr',null,body);tr.dataset.town=row.town;const cell=el('td',null,tr);el('div',row.town,cell);el('div',row.source,cell).className='source';
   const status=el('select',null,el('td',null,tr));status.setAttribute('aria-label',row.town+' status');for(const s of ['unreported','partial','complete'])option(status,s,s);status.value=row.status;status.dataset.field='status';
   const ballots=input('number',row.ballots,row.town+' ballots');ballots.dataset.field='ballots';el('td',null,tr).append(ballots);
-  for(const c of candidates){const field=input('number',row.votes[c.key],row.town+' '+c.name+' votes');field.dataset.candidate=c.key;el('td',null,tr).append(field);}
+  for(const c of candidates){const field=input('number',row.votes[c.key],row.town+' '+c.name+' votes');field.dataset.candidate=c.key;const cell=el('td',null,tr);cell.className='vote-cell';cell.append(field);}
   const note=input('text',row.note||'',row.town+' source note');note.dataset.field='note';note.maxLength=300;el('td',null,tr).append(note);
   const release=el('button','Use SOS',el('td',null,tr));release.disabled=!state.manual[row.town];release.addEventListener('click',()=>{if(dirty&&!confirm('Discard unsaved table edits before releasing this town?'))return;delete state.manual[row.town];dirty=false;snapshot('Manual override released: '+row.town);renderEntry();});
  }
@@ -140,7 +140,7 @@ function drawModel(){
  const rows=state.history[selected].rows,scale=Number($('#scale').value),model=M.scenario(rows,base.rows,keys,scale/100),totals=M.totals(rows,keys),body=$('#modelTable tbody');body.replaceChildren();
  $('#modelStatus').textContent=!Number.isFinite(scale)||scale<1||scale>300?'Enter a turnout scale from 1% to 300%.':model?`Scenario only · ${model.complete}/25 complete towns · ${(model.coverage*100).toFixed(1)}% historical ballot coverage · ${fmt(36121*scale/100)} hypothetical district ballots. Remaining towns use pooled support from completed towns.`:'Awaiting at least one complete town with ballots and all candidate counts. No projection is inferred from missing results.';
  const valid=model&&scale>=1&&scale<=300,ranked=valid?[...candidates].sort((a,b)=>model.votes[b.key]-model.votes[a.key]):candidates;
- for(const c of ranked){const tr=el('tr',null,body);el('td',c.name,tr).style.color=c.color;const reported=el('td',fmt(totals[c.key]),tr);performanceBadge(reported,rows,c,true);el('td',valid?fmt(model.votes[c.key]):'—',tr);el('td',valid?String(1+candidates.filter(o=>model.votes[o.key]>model.votes[c.key]).length):'—',tr);
+ for(const c of ranked){const tr=el('tr',null,body);el('td',c.name,tr).style.color=c.color;const reported=el('td',fmt(totals[c.key]),tr);reported.className='vote-cell';performanceBadge(reported,rows,c,true);el('td',valid?fmt(model.votes[c.key]):'—',tr);el('td',valid?String(1+candidates.filter(o=>model.votes[o.key]>model.votes[c.key]).length):'—',tr);
   const sel=el('select',null,el('td',null,tr));sel.setAttribute('aria-label',c.name+' 2024 comparator');option(sel,'','No comparator');for(const b of base.candidates)option(sel,b.key,b.name);sel.value=state.comparators[c.key];sel.addEventListener('change',()=>{state.comparators[c.key]=sel.value;persist();drawCharts();drawModel();updateEntryIndicators();});
  }
 }

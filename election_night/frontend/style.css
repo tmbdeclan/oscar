@@ -6,4 +6,11 @@
 .osca-brand{display:flex;gap:20px;align-items:center;margin-bottom:26px;padding-bottom:24px;border-bottom:1px solid var(--line)}.osca-brand img{width:88px;height:88px;border-radius:14px;object-fit:cover}.osca-brand h1{font-size:28px;margin:0 0 5px}.osca-brand p{margin:0;font-size:13px}@media(max-width:600px){.osca-brand{gap:12px}.osca-brand img{width:64px;height:64px}.osca-brand h1{font-size:21px}}
 
 /* Support relative to the selected historical comparator, independent of party colors. */
-.performance-badge{display:inline-block;margin-left:7px;font-size:15px;font-weight:800;letter-spacing:-2px;cursor:help;line-height:1;padding:3px 4px;border:1px solid currentColor;border-radius:4px}.higher{color:#83e2ae}.lower{color:#ffb39b}.performance-badge:focus-visible{outline:2px solid #fff;outline-offset:2px}.performance-legend{max-width:1100px;font-size:12px}#entryTable td:has(.performance-badge){min-width:119px}
+.performance-badge{display:inline-block;margin-left:7px;font-size:15px;font-weight:800;letter-spacing:-2px;cursor:help;line-height:1;padding:3px 4px;border:1px solid currentColor;border-radius:4px}.higher{color:#83e2ae}.lower{color:#ffb39b}.performance-badge:focus-visible{outline:2px solid #fff;outline-offset:2px}.performance-legend{max-width:1100px;font-size:12px}
+
+/* Keep a permanent indicator gutter, including rows with no indicator. */
+.vote-cell{position:relative;padding-right:47px;font-variant-numeric:tabular-nums}
+th.vote-heading{padding-right:47px}
+.vote-cell .performance-badge{position:absolute;right:9px;top:50%;transform:translateY(-50%);width:29px;margin:0;text-align:center}
+#entryTable td.vote-cell{min-width:136px}
+#entryTable td.vote-cell input[type=number]{text-align:right;font-variant-numeric:tabular-nums}
