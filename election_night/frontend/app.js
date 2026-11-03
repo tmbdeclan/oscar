@@ -5,6 +5,8 @@ const hostArgs=await window.OSCABridge.ready;
 const $=s=>document.querySelector(s), M=OSCAModel, H=OSCAHouse, fmt=n=>Math.round(n).toLocaleString('en-US'), signed=n=>(n>=0?'+':'−')+fmt(Math.abs(n));
 const [base,geo,primaryTiming,crossData,primaryCandidates,partyCalibration,houseCatalog,houseGeo]=await Promise.all(['data/baseline.json','data/towns.geojson','data/primary-timing.json','data/crossballot.json','data/primary-candidates-2026.json','data/party-multipliers-2024.json','data/house-races.json','data/house-towns.geojson'].map(u=>fetch(u).then(r=>{if(!r.ok)throw Error('Missing local data');return r.json();})));
 const config=[['White','Rebecca White','#62a8ff'],['Major','Joe Major','#ff9a4d'],['Burrows','Elizabeth Burrows','#64d68b'],['Murray','Andrea Murray','#ff82bd'],['Williams','Jack Williams','#b59cff'],['Gleason','Jonathan Gleason','#4ddbd2'],['Izzo','Joe Izzo','#c4cbd1']];
+// Portrait failure must never block election data or result entry.
+const portraits=await fetch('data/candidate-portraits.json').then(r=>r.ok?r.json():{}).catch(()=>({}));
 const isDemo=window.OSCABridge.embedded?Boolean(hostArgs.demo):new URLSearchParams(location.search).get('demo')==='1';
 const isDisplay=window.OSCABridge.embedded?Boolean(hostArgs.display):new URLSearchParams(location.search).get('display')==='1';
 if(isDisplay){document.body.classList.add('results-display');document.title='OSCA · Results display';document.querySelector('.layout').append(document.querySelector('.scenario'));document.querySelector('.performance-legend').textContent='Arrows versus the selected 2024 comparator: ↑ / ↓ 2–<5 percentage points; ↑↑ / ↓↓ 5 points or more. Complete towns only. No arrow near baseline or without data. Hover for the calculation.';}
@@ -53,6 +55,20 @@ function snapshot(source,meta={}){
 }
 if(!state.history.length)state.history.push({time:new Date().toISOString(),source:'No results entered',rows:merged()});selected=isDemo?Math.floor(state.history.length/2):state.history.length-1;
 function el(tag,text,parent){const n=document.createElement(tag);if(text!=null)n.textContent=text;if(parent)parent.append(n);return n;}
+function candidateIdentity(parent,c,id,color){
+ const wrap=el('div',null,parent);wrap.className='candidate-identity';
+ if(isDisplay){
+  const portrait=portraits[id],verified=portrait?.candidateName===c.name&&portrait.status==='verified-source'&&/^assets\/candidates\/[a-z0-9-]+\.(jpg|png|webp|avif)$/.test(portrait.path);
+  const avatar=el(verified?'a':'span',null,wrap);avatar.className='candidate-avatar';
+  const initials=c.name.replace(/"[^\"]*"/g,'').trim().split(/\s+/).filter(Boolean);el('span',(initials[0]?.[0]||'')+(initials.length>1?initials.at(-1)[0]:''),avatar).className='candidate-initials';
+  if(verified){
+   avatar.href=portrait.sourcePage;avatar.target='_blank';avatar.rel='noopener noreferrer';avatar.title='Photo source: '+portrait.sourcePage;avatar.setAttribute('aria-label','Photo source for '+c.name);
+   const img=el('img',null,avatar);img.alt='';img.width=36;img.height=36;img.loading='lazy';img.decoding='async';if(portrait.objectPosition)img.style.objectPosition=portrait.objectPosition;if(portrait.zoom)img.style.transform=`scale(${portrait.zoom})`;
+   img.addEventListener('error',()=>{img.remove();avatar.title='Photo unavailable for '+c.name;avatar.setAttribute('aria-label','Photo unavailable for '+c.name);},{once:true});img.src=portrait.path;
+  }else{avatar.title='Photo unavailable for '+c.name;avatar.setAttribute('aria-hidden','true');}
+ }
+ const text=el('div',null,wrap);text.className='candidate-name-text';el('div',c.name,text).style.color=color;return text;
+}
 function option(select,value,text){const o=el('option',text,select);o.value=value;}
 for(const c of candidates)option($('#focus'),c.key,c.name);$('#focus').value='Burrows';
 for(const c of candidates){const item=el('span',null,$('#candidateLegend'));const dot=el('i',null,item);dot.className='swatch';dot.style.background=c.color;el('span',c.name,item);}
@@ -173,7 +189,7 @@ function drawModel(){
  $('#modelStatus').textContent=!Number.isFinite(scale)||scale<1||scale>300?'Enter a turnout scale from 1% to 300%.':model?`Scenario only · ${model.complete}/25 complete towns · ${(model.coverage*100).toFixed(1)}% historical ballot coverage · ${fmt(36121*scale/100)} hypothetical district ballots. Remaining towns use pooled support from completed towns.`:'Awaiting at least one complete town with ballots and all candidate counts. No projection is inferred from missing results.';
  if(isDisplay)$('#modelStatus').textContent=model?`${model.complete}/25 complete towns · ${scale}% of 2024 turnout · hypothetical scenario`:'Awaiting complete town returns';
  const valid=model&&scale>=1&&scale<=300,ranked=valid?[...candidates].sort((a,b)=>model.votes[b.key]-model.votes[a.key]):candidates;
- for(const c of ranked){const tr=el('tr',null,body);el('td',c.name,tr).style.color=c.color;const reported=el('td',fmt(totals[c.key]),tr);reported.className='vote-cell';performanceBadge(reported,rows,c,true);el('td',valid?fmt(model.votes[c.key]):'—',tr);el('td',valid?String(1+candidates.filter(o=>model.votes[o.key]>model.votes[c.key]).length):'—',tr);
+ for(const c of ranked){const tr=el('tr',null,body);candidateIdentity(el('td',null,tr),c,'senate:'+c.key,c.color);const reported=el('td',fmt(totals[c.key]),tr);reported.className='vote-cell';performanceBadge(reported,rows,c,true);el('td',valid?fmt(model.votes[c.key]):'—',tr);el('td',valid?String(1+candidates.filter(o=>model.votes[o.key]>model.votes[c.key]).length):'—',tr);
   if(isDisplay){const comparator=base.candidates.find(b=>b.key===state.comparators[c.key])?.name||'No comparator';tr.firstChild.title='2024 comparator: '+comparator;el('td',comparator,tr);continue;}
   const sel=el('select',null,el('td',null,tr));sel.setAttribute('aria-label',c.name+' 2024 comparator');option(sel,'','No comparator');for(const b of base.candidates)option(sel,b.key,b.name);sel.value=state.comparators[c.key];sel.addEventListener('change',()=>{state.comparators[c.key]=sel.value;persist();drawCharts();drawModel();updateEntryIndicators();});
  }
@@ -215,7 +231,7 @@ function drawHouse(){
   chart('#'+id+'-margin',[{color:'#64d68b',short:focusName||'Final seat',values:margins}],150,true);
   if(!margins.some(v=>v!==null))d3.select('#'+id+'-margin').append('text').attr('x','50%').attr('y','45%').attr('text-anchor','middle').attr('fill','#a2b0bc').attr('font-size',11).text(race.candidates.length<=race.seats?'No named challenger for final seat':'Awaiting House returns');
   const summary=el('div',null,layout);summary.className='house-summary';el('h3','Reported House votes',summary);const table=el('table',null,summary);table.className='house-totals';const th=el('tr',null,el('thead',null,table));['Candidate','Votes'].forEach(v=>el('th',v,th));const tb=el('tbody',null,table),totals=H.totals(race);
-  for(const c of [...race.candidates].sort((a,b)=>totals[b.key]-totals[a.key]||a.name.localeCompare(b.name))){const tr=el('tr',null,tb),name=el('td',null,tr);el('div',c.name,name).style.color=colors.get(c.key);el('div',c.party+(c.writeIn?' · named write-in':''),name).className='house-party';el('td',bundle?fmt(totals[c.key]):'—',tr);}
+  for(const c of [...race.candidates].sort((a,b)=>totals[b.key]-totals[a.key]||a.name.localeCompare(b.name))){const tr=el('tr',null,tb),name=candidateIdentity(el('td',null,tr),c,'house:'+c.key,colors.get(c.key));el('div',c.party+(c.writeIn?' · named write-in':''),name).className='house-party';el('td',bundle?fmt(totals[c.key]):'—',tr);}
   const gap=H.seatGap(totals,race.seats),nameOf=key=>race.candidates.find(c=>c.key===key)?.name;
   el('p',gap?`Final-seat gap: ${fmt(gap.value)} votes · ${nameOf(gap.inside)} over ${nameOf(gap.outside)}${gap.value===0?' (tied)':''}.`:!Object.values(totals).some(v=>v>0)?'Awaiting reported House votes.':'No named challenger for the final seat; no competitive margin calculated.',summary).className='house-gap';
   const writeIns=race.rows.filter(r=>r.status!=='unreported').reduce((n,r)=>n+(r.otherWriteIns||0),0);el('p',`Other / unallocated write-ins: ${bundle?fmt(writeIns):'—'}. Shown separately, never treated as one candidate in the margin. Named write-ins are included. No winner is called.`,summary).className='house-note';

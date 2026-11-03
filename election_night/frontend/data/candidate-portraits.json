@@ -1,0 +1,353 @@
+{
+  "senate:White": {
+    "candidateName": "Rebecca White",
+    "slug": "rebecca-white",
+    "sourcePage": "https://legislature.vermont.gov/people/single/2026/37414",
+    "originalImage": "https://legislature.vermont.gov/Documents/Legislators/White,Rebecca.jpg",
+    "note": "",
+    "path": "assets/candidates/rebecca-white.jpg",
+    "sha256": "5c8af499dc2b8e38f64bd8a8df83240b8cea5527184a57721030a01da93c50dc",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "senate:Major": {
+    "candidateName": "Joe Major",
+    "slug": "joe-major",
+    "sourcePage": "https://legislature.vermont.gov/people/single/2026/40395",
+    "originalImage": "https://legislature.vermont.gov/Documents/Legislators/Major,Joe.jpg",
+    "note": "",
+    "path": "assets/candidates/joe-major.jpg",
+    "sha256": "aee269524dbc75608f59f4544656b8cad388151120455cee71a746677e42ae28",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "senate:Burrows": {
+    "candidateName": "Elizabeth Burrows",
+    "slug": "elizabeth-burrows-legislature",
+    "sourcePage": "https://legislature.vermont.gov/people/single/2026/34722",
+    "originalImage": "https://legislature.vermont.gov/Documents/Legislators/Burrows,%20Elizabeth.jpg",
+    "note": "",
+    "path": "assets/candidates/elizabeth-burrows-legislature.jpg",
+    "sha256": "16c94b94ad9af5df01c9567365eda00cf6a65cefc7520f884b7986c41e7b36f9",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "senate:Murray": {
+    "candidateName": "Andrea Murray",
+    "slug": "andrea-murray",
+    "sourcePage": "https://andrea4vt.com/",
+    "originalImage": "https://andrea4vt.com/airo-assets/images/pages/home/hero-candidate",
+    "note": "",
+    "path": "assets/candidates/andrea-murray.png",
+    "sha256": "1f9505e273762363053fea98fece9d039f84726b8ae152755c434d0c5a4cd46e",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "senate:Williams": {
+    "candidateName": "Jack Williams",
+    "slug": "jack-williams",
+    "sourcePage": "https://vtdigger.org/profile/jack-williams/",
+    "originalImage": "https://vtdigger.org/wp-content/uploads/2024/07/Jack-Williams-2024-1.jpg",
+    "note": "2024 candidate-guide portrait; the named profile is the identity source.",
+    "path": "assets/candidates/jack-williams.jpg",
+    "sha256": "6a5ca86a47811cff22b0cca9c4c6683ed75563aa999991c4f37cd8aae5dadc70",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "senate:Gleason": {
+    "candidateName": "Jonathan Gleason",
+    "slug": "jonathan-gleason",
+    "sourcePage": "https://www.hungerfreevt.org/jonathan-gleason",
+    "originalImage": "https://images.squarespace-cdn.com/content/v1/5f83855960657429dda4af3c/56b408cd-5abb-4ff2-aa5f-aac7b01d615e/Jonathan-Gleason.jpg?format=300w",
+    "note": "Candidate questionnaire profile.",
+    "path": "assets/candidates/jonathan-gleason.jpg",
+    "sha256": "c3bf7a41c74c4f82f2c8bb0bbcf1f0ea8e8ec277e5b3e4e8bbafd21f7fdab7db",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "senate:Izzo": {
+    "candidateName": "Joe Izzo",
+    "status": "unavailable",
+    "note": "No verified usable portrait found in the reviewed public sources."
+  },
+  "house:225967": {
+    "candidateName": "Dylan Morse",
+    "slug": "dylan-morse",
+    "sourcePage": "https://www.morseforvermont.com/",
+    "originalImage": "https://images.squarespace-cdn.com/content/v1/69e98164e4b7d576d295bf7b/480884b4-0b81-4cfe-9e92-d31764fba01e/ScharShoot_Solo.jpg?format=300w",
+    "note": "",
+    "path": "assets/candidates/dylan-morse.jpg",
+    "sha256": "0671e5ed3d389811582e5ac439060a81643f6aec90539ee06a07e0104c30a026",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:225966": {
+    "candidateName": "John G. Tansey",
+    "slug": "john-tansey",
+    "sourcePage": "https://www.tanseyforvt.com/",
+    "originalImage": "https://images.squarespace-cdn.com/content/v1/6956b99d11805e1bcb462ee5/077e3295-ef31-41a2-8194-b2af0c36f2de/JT+New+Headshot+88.JPG?format=300w",
+    "note": "",
+    "path": "assets/candidates/john-tansey.jpg",
+    "sha256": "058a1d5a572df3d95d4c6f9a040997e9741a81c72d3982d5deedf4b15529d570",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:213139": {
+    "candidateName": "Rich Thomas",
+    "status": "unavailable",
+    "note": "No verified usable portrait found in the reviewed public sources."
+  },
+  "house:225968": {
+    "candidateName": "Mark Yuengling",
+    "slug": "mark-yuengling",
+    "sourcePage": "https://myvtrep.com/",
+    "originalImage": "https://myvtrep.com/wp-content/uploads/2024/05/my-campaign-photo-1-edited-1-e1716905912621.png",
+    "note": "Campaign image displayed with a CSS thumbnail crop; original file retained.",
+    "path": "assets/candidates/mark-yuengling.png",
+    "sha256": "45bd673ae41a7c96eedc2b89e72d8ac782d93070145ef1946629dde5b0563b73",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source",
+    "zoom": 2.4,
+    "objectPosition": "50% 65%"
+  },
+  "house:225969": {
+    "candidateName": "Vl Coffin",
+    "slug": "vl-coffin",
+    "sourcePage": "https://legislature.vermont.gov/people/single/2026/40438",
+    "originalImage": "https://legislature.vermont.gov/Documents/Legislators/Coffin,VL%20021.jpg",
+    "note": "",
+    "path": "assets/candidates/vl-coffin.jpg",
+    "sha256": "bcc974437dd1a52376a15f5e495b0dcc9d3435d2c18894dddab4be5eb0b2e13a",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:225973": {
+    "candidateName": "Alice M. Emmons",
+    "slug": "alice-emmons",
+    "sourcePage": "https://legislature.vermont.gov/people/single/2026/14512",
+    "originalImage": "https://legislature.vermont.gov/Documents/Legislators/AEmmons.jpg",
+    "note": "",
+    "path": "assets/candidates/alice-emmons.jpg",
+    "sha256": "16e7ec2f81c448e8e02743450034133930d53973bdeb3dd64bb002bbef3a8f92",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:225970": {
+    "candidateName": "Judith Stern",
+    "status": "unavailable",
+    "note": "No verified usable portrait found in the reviewed public sources."
+  },
+  "house:225972": {
+    "candidateName": "Kristi C. Morris",
+    "slug": "kristi-morris",
+    "sourcePage": "https://legislature.vermont.gov/people/single/2026/33012",
+    "originalImage": "https://legislature.vermont.gov/Documents/Legislators/KristiMorris.jpg",
+    "note": "",
+    "path": "assets/candidates/kristi-morris.jpg",
+    "sha256": "2bd52026d5576bfa1445db5fc5c01c34d302773fc73661e5edca4576b63e8386",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:225971": {
+    "candidateName": "Randy A. Gray",
+    "status": "unavailable",
+    "note": "No verified usable portrait found in the reviewed public sources."
+  },
+  "house:210406": {
+    "candidateName": "Justin Schoville",
+    "slug": "justin-schoville",
+    "sourcePage": "https://vtdigger.org/profile/justin-schoville/",
+    "originalImage": "https://vtdigger.org/wp-content/uploads/2024/07/Justin-Schoville-2024-1.jpg",
+    "note": "2024 candidate-guide portrait; the named profile is the identity source.",
+    "path": "assets/candidates/justin-schoville.jpg",
+    "sha256": "27db7a1d21c959afc7600b92f43a752cfedfd3c3ca51cc4b2b8f5592419c9675",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:211051": {
+    "candidateName": "Kyle Hansen",
+    "slug": "kyle-hansen",
+    "sourcePage": "https://kyle4windsor4vt.com/",
+    "originalImage": "https://kyle4windsor4vt.com/wp/wp-content/uploads/2026/05/kyle-250x300.jpg",
+    "note": "",
+    "path": "assets/candidates/kyle-hansen.jpg",
+    "sha256": "62abbbaca6694d589e173e76c884c7eb4783f429b7cbfbf0014db9fc0f5b456b",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:225974": {
+    "candidateName": "Michael Hoyt",
+    "slug": "michael-hoyt",
+    "sourcePage": "https://legislature.vermont.gov/people/single/2026/41882",
+    "originalImage": "https://legislature.vermont.gov/Documents/Legislators/Hoyt,Mike.jpg",
+    "note": "",
+    "path": "assets/candidates/michael-hoyt.jpg",
+    "sha256": "34be6ca2b25d9d048c28e7649e3a1e0150a5ad4a8262111bef9fb3560d0fca3a",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:225975": {
+    "candidateName": "Charlie Kimbell",
+    "slug": "charlie-kimbell",
+    "sourcePage": "https://legislature.vermont.gov/people/single/2026/27184",
+    "originalImage": "https://legislature.vermont.gov/Documents/Legislators/Kimbell,Charlie%20009.jpg",
+    "note": "",
+    "path": "assets/candidates/charlie-kimbell.jpg",
+    "sha256": "983e0879c7c68d650964d3e976ea98e1e7aad94f9a157e55b407be21ec20207d",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:225976": {
+    "candidateName": "Alanna Ojibway",
+    "slug": "alanna-ojibway",
+    "sourcePage": "https://www.alannaojibway4vt.org/",
+    "originalImage": "https://images.squarespace-cdn.com/content/v1/69c091e259145d1e841f981b/c61c3349-6d03-487c-b917-7cffccc3e489/CCP_bio_AOjibway.jpg?format=300w",
+    "note": "",
+    "path": "assets/candidates/alanna-ojibway.jpg",
+    "sha256": "f944ed32530f9850b398ba2d707494c5652ffc0c90cb89b7858c83cb55569511",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:225977": {
+    "candidateName": "James \"Jimmy\" Coleman",
+    "slug": "jimmy-coleman",
+    "sourcePage": "https://coleman4vt.org/",
+    "originalImage": "https://static.wixstatic.com/media/920af9_a4968873c920463abbbd8a4c9f6916fe~mv2.jpg",
+    "note": "",
+    "path": "assets/candidates/jimmy-coleman.jpg",
+    "sha256": "b203575fc882eb20cae091cb63effe0e892bd9a761d91615d653466cb080211d",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:225978": {
+    "candidateName": "Kirk White",
+    "slug": "kirk-white",
+    "sourcePage": "https://legislature.vermont.gov/people/single/2026/34694",
+    "originalImage": "https://legislature.vermont.gov/Documents/Legislators/White,Kirk.jpg",
+    "note": "",
+    "path": "assets/candidates/kirk-white.jpg",
+    "sha256": "3af17978c584d9c30c15d62b8539b142fb814c90438af8d781b16e7d5dc30dd9",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:225979": {
+    "candidateName": "Michael J. White",
+    "status": "unavailable",
+    "note": "No verified usable portrait found in the reviewed public sources."
+  },
+  "house:225981": {
+    "candidateName": "Bruce Post",
+    "status": "unavailable",
+    "note": "No verified usable portrait found in the reviewed public sources."
+  },
+  "house:225980": {
+    "candidateName": "John K. O'Brien",
+    "slug": "john-obrien",
+    "sourcePage": "https://legislature.vermont.gov/people/single/2026/30977",
+    "originalImage": "https://legislature.vermont.gov/Documents/Legislators/O'Brien,John.jpg",
+    "path": "assets/candidates/john-obrien.jpg",
+    "status": "verified-source",
+    "retrievedAt": "2026-11-02",
+    "sha256": "b31dff1ff635f6074b5a1c750f9f02671ed763c2bef212094131c06d6f32b477",
+    "note": ""
+  },
+  "house:225982": {
+    "candidateName": "Dee Gish",
+    "slug": "dee-gish",
+    "sourcePage": "https://deegishforvt.com/",
+    "originalImage": "https://content.campaignpartner.net/images/155400/Dee_Gish_-_Headshot_1.jpg",
+    "note": "",
+    "path": "assets/candidates/dee-gish.jpg",
+    "sha256": "7e56e73253b44b846733f384d8ed8bb7eb106a3b7218a464aa451f4d21de4b29",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:225983": {
+    "candidateName": "Lauren Morando Rhim",
+    "slug": "lauren-rhim",
+    "sourcePage": "https://www.centerforlearnerequity.org/team-members/",
+    "originalImage": "https://www.centerforlearnerequity.org/wp-content/uploads/Lauren-1-500x500.png",
+    "note": "",
+    "path": "assets/candidates/lauren-rhim.png",
+    "sha256": "3990028d6a43bc74ca5d5323b6f93a5bf7da922da6858c1b95210248de291abe",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:225985": {
+    "candidateName": "Thomas F. Charlton",
+    "slug": "thomas-charlton",
+    "sourcePage": "https://legislature.vermont.gov/people/single/2026/40439",
+    "originalImage": "https://legislature.vermont.gov/Documents/Legislators/Charlton,Thomas%20060.jpg",
+    "note": "",
+    "path": "assets/candidates/thomas-charlton.jpg",
+    "sha256": "8aae806797e4efe83ed14a5defc85160adcd34ba90d4c19c97a563ed47bafbdd",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:225984": {
+    "candidateName": "William \"Will\" Hoser",
+    "slug": "will-hoser",
+    "sourcePage": "https://www.williamhoser.com/",
+    "originalImage": "https://images.squarespace-cdn.com/content/v1/69b86dc63ab3a879560d8ae3/95f4e897-be9c-45f9-a194-927626a4c553/william-hoser-vermont.png?format=300w",
+    "note": "",
+    "path": "assets/candidates/will-hoser.png",
+    "sha256": "93b2e79759dd14a527ced47c8b968880ca3416cb3acf57c60c9620e191c2161b",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:225916": {
+    "candidateName": "Valorie Taylor",
+    "slug": "valorie-taylor",
+    "sourcePage": "https://legislature.vermont.gov/people/single/2026/41956",
+    "originalImage": "https://legislature.vermont.gov/Documents/Legislators/Taylor.Valorie.jpg",
+    "note": "",
+    "path": "assets/candidates/valorie-taylor.jpg",
+    "sha256": "6a89ee355946eaa73d62bd4031759f9200cf2da2ee902daa8a28ff811e36f161",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:225930": {
+    "candidateName": "Kevin C. Winter",
+    "slug": "kevin-winter",
+    "sourcePage": "https://legislature.vermont.gov/people/single/2026/40430",
+    "originalImage": "https://legislature.vermont.gov/Documents/Legislators/Winter,Kevin%20017.jpg",
+    "note": "",
+    "path": "assets/candidates/kevin-winter.jpg",
+    "sha256": "3d4e15f2cf5fad7f582f98ff8295731faef0b7e4f1ed22d95e11e948100a5e5f",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:225931": {
+    "candidateName": "Phoebe Tucker",
+    "slug": "phoebe-tucker",
+    "sourcePage": "https://www.phoebeforvermont.com/",
+    "originalImage": "https://images.squarespace-cdn.com/content/v1/69f8da1f487d6a1f1cda7920/b5fb6840-0f2f-4a64-b28b-29eceb827d11/PhoebeTSept24-3507+copy.jpg?format=300w",
+    "note": "",
+    "path": "assets/candidates/phoebe-tucker.jpg",
+    "sha256": "302441685b4fe70dece824a081df11c122c9563c14a2a41c943bc850d1f590b3",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:225964": {
+    "candidateName": "Chris Morrow",
+    "slug": "chris-morrow",
+    "sourcePage": "https://legislature.vermont.gov/people/single/2026/40437",
+    "originalImage": "https://legislature.vermont.gov/Documents/Legislators/Morrow,Chris%20066.jpg",
+    "note": "",
+    "path": "assets/candidates/chris-morrow.jpg",
+    "sha256": "223acfcb7f4cb0f0eb0b842b756f50fb8d2be808e9cd4fb8452751ca08333672",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  },
+  "house:225965": {
+    "candidateName": "E. Stuart Coleman",
+    "slug": "stuart-coleman",
+    "sourcePage": "https://outside.vermont.gov/dept/sos/Elections_Division/voters/voter_guide/121125.pdf#page=40",
+    "originalImage": "embedded image on PDF page 40",
+    "note": "Candidate-supplied portrait, official 2026 SOS voter guide; extracted without retouching.",
+    "path": "assets/candidates/stuart-coleman.png",
+    "sha256": "30b31e421790eb08e1b7f533f5c84db4c585062717ea411f7eb74c54e80e28ff",
+    "retrievedAt": "2026-11-02",
+    "status": "verified-source"
+  }
+}

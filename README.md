@@ -76,6 +76,15 @@ D3 7.9.0 is vendored with its license in `election_night/frontend/vendor`.
 
 ## Separate results display
 
+The results display includes 36px candidate portraits beside Senate and House
+table names. Images are bundled locally and keyed to candidate identities rather
+than table position. Missing or failed photos use the same-size initials fallback.
+Selecting a photo opens its original named source page. Sources, retrieval dates,
+original image URLs and file hashes are recorded in
+`election_night/frontend/data/candidate-portraits.json`; these include legislative,
+campaign, candidate-guide and professional-profile pages. Some guide portraits
+date to 2024. Source attribution does not imply endorsement or ownership.
+
 Select **Open results display ↗** in the control panel. The display opens separately;
 if the browser opens a tab, drag it into its own window or onto another monitor.
 Keep both views in the same browser profile. The display follows saved results,

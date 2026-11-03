@@ -74,3 +74,10 @@ th.vote-heading{padding-right:47px}
 .results-display #houseResults{margin-top:12px;padding-top:0;border-top:0}
 .results-display .house-race[hidden]{display:none}
 @media(max-width:850px){.results-display .display-race-toolbar{align-items:flex-start;flex-direction:column;gap:8px}#displaySnapshot{text-align:left}.display-race-toolbar label{max-width:100%}#displayRace{min-width:0}}
+.candidate-identity{display:flex;align-items:center;gap:9px}
+.candidate-avatar{position:relative;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;flex:0 0 36px;overflow:hidden;border-radius:50%;background:#263640;border:1px solid #526572;color:#dce6ed;text-decoration:none}
+.candidate-avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 25%}
+.candidate-initials{font-size:11px;font-weight:700;letter-spacing:.04em}
+.candidate-name-text{min-width:0;white-space:normal}
+.candidate-avatar:focus-visible{outline:2px solid #62a8ff;outline-offset:2px}
+.results-display #modelTable td{vertical-align:middle}
