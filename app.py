@@ -23,7 +23,8 @@ def fetch_sos():
     return pull(2026)
 
 demo=str(st.query_params.get('demo','0'))=='1'
-request=viewer(demo=demo,sos_response=st.session_state.get('osca_sos_response'),
+display=str(st.query_params.get('display','0'))=='1'
+request=viewer(demo=demo,display=display,sos_response=st.session_state.get('osca_sos_response'),
     key='osca_election_night_v2',default=None)
 
 if isinstance(request,dict):
@@ -33,7 +34,7 @@ if isinstance(request,dict):
         if request.get('action')=='mode':
             st.query_params['demo']='1' if request.get('demo') else '0'
             st.rerun()
-        elif request.get('action')=='sos' and not demo:
+        elif request.get('action')=='sos' and not demo and not display:
             try:
                 with st.spinner('Reading official Vermont SOS results…'):
                     data=fetch_sos()

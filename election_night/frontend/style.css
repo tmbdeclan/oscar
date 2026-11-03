@@ -14,3 +14,38 @@ th.vote-heading{padding-right:47px}
 .vote-cell .performance-badge{position:absolute;right:9px;top:50%;transform:translateY(-50%);width:29px;margin:0;text-align:center}
 #entryTable td.vote-cell{min-width:136px}
 #entryTable td.vote-cell input[type=number]{text-align:right;font-variant-numeric:tabular-nums}
+
+/* Presentation window: follows the control panel, with read-only results. */
+.display-status{display:none}
+.results-display main{max-width:1800px;padding:20px 26px}
+.results-display .osca-brand{padding-bottom:12px;margin-bottom:10px;gap:14px}
+.results-display .osca-brand img{width:48px;height:48px}
+.results-display .osca-brand h1{font-size:22px}
+.results-display .osca-brand p,.results-display header .eyebrow,.results-display header p,.results-display .toolbar,.results-display .control-only,.results-display #townEntry,.results-display #ballotSwitch,.results-display main>details,.results-display footer,.results-display #demoBanner button,.results-display #demoBanner a,.results-display #timeline,.results-display #townDetails,.results-display .chart-hint,.results-display .scenario details,.results-display .scenario .section-head>label,.results-display .rollout>p.muted{display:none}
+.results-display #demoBanner{padding:10px 14px;margin-bottom:12px}
+.results-display #demoBanner span{font-size:12px}
+.results-display header h1{font-size:25px;margin:0}
+.results-display .display-status{display:flex;gap:20px;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:10px}
+.results-display .display-status>span:first-child{color:var(--green);letter-spacing:1px;font-weight:700}
+.results-display #feedStatus{font-size:11px;margin:6px 0}
+.results-display .controls{display:block;margin-bottom:14px}
+.results-display #snapshotLabel{font-size:13px;color:#d4dfe7}
+.results-display #map,.results-display #votes,.results-display #pressure{pointer-events:none}
+.results-display .panel{margin-top:12px;padding:16px}
+.results-display #modelTable{font-size:15px;font-variant-numeric:tabular-nums}
+.results-display #modelTable td,.results-display #modelTable th{padding-top:10px;padding-bottom:10px}
+.results-display #modelTable td:last-child{color:var(--muted);font-size:12px}
+.results-display .scenario .performance-legend{font-size:11px;max-width:none}
+.results-display .scenario .table-scroll{max-height:none}
+@media(max-width:850px){.results-display main{padding:14px}.results-display .display-status{flex-wrap:wrap;gap:4px}.results-display #modelTable{font-size:13px}}
+
+@media(min-width:1150px){
+ .results-display .layout{grid-template-columns:minmax(240px,25%) minmax(350px,1fr) minmax(340px,34%);gap:18px}
+ .results-display .layout>.scenario{margin:0;padding:0;border:0;background:none}
+ .results-display #modelTable{font-size:13px}
+ .results-display #modelTable th:nth-child(4),.results-display #modelTable td:nth-child(4),.results-display #modelTable th:nth-child(5),.results-display #modelTable td:nth-child(5){display:none}
+ .results-display #modelTable td:first-child,.results-display #modelTable th:first-child{white-space:normal;min-width:120px}
+ .results-display .scenario .section-head p{font-size:11px}
+ .results-display .scenario .performance-legend{font-size:10px;line-height:1.45}
+ .results-display #modelStatus{font-size:12px}
+}

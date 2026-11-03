@@ -70,3 +70,21 @@ implementation remains recoverable in Git history (last prior revision:
 scripts remain in the repository but are not used by the new interface.
 
 D3 7.9.0 is vendored with its license in `election_night/frontend/vendor`.
+
+
+## Separate results display
+
+Select **Open results display ↗** in the control panel. The display opens separately;
+if the browser opens a tab, drag it into its own window or onto another monitor.
+Keep both views in the same browser profile. The display follows saved results,
+the selected reporting snapshot, comparators, overlays, focus, turnout scale, and
+switching assumptions. It never saves entries or polls SOS independently.
+
+The presentation view (`?display=1`, plus `&demo=1` for simulation) hides editing
+controls and places the map, charts, and turnout table side by side on wide screens.
+Synchronization uses same-origin BroadcastChannel with browser-storage fallback;
+it is not cross-device sharing. Closing the control panel leaves the last snapshot
+visible with a disconnected notice. A cached display snapshot is marked as waiting
+until the control panel reconnects. Live and simulation channels remain separate.
+
+Run synchronization checks with `node election_night/tests/display-sync.test.cjs`.

@@ -6,12 +6,14 @@ const $=s=>document.querySelector(s), M=OSCAModel, fmt=n=>Math.round(n).toLocale
 const [base,geo,primaryTiming,crossData,primaryCandidates,partyCalibration]=await Promise.all(['data/baseline.json','data/towns.geojson','data/primary-timing.json','data/crossballot.json','data/primary-candidates-2026.json','data/party-multipliers-2024.json'].map(u=>fetch(u).then(r=>{if(!r.ok)throw Error('Missing local data');return r.json();})));
 const config=[['White','Rebecca White','#62a8ff'],['Major','Joe Major','#ff9a4d'],['Burrows','Elizabeth Burrows','#64d68b'],['Murray','Andrea Murray','#ff82bd'],['Williams','Jack Williams','#b59cff'],['Gleason','Jonathan Gleason','#4ddbd2'],['Izzo','Joe Izzo','#c4cbd1']];
 const isDemo=window.OSCABridge.embedded?Boolean(hostArgs.demo):new URLSearchParams(location.search).get('demo')==='1';
+const isDisplay=window.OSCABridge.embedded?Boolean(hostArgs.display):new URLSearchParams(location.search).get('display')==='1';
+if(isDisplay){document.body.classList.add('results-display');document.title='OSCA · Results display';document.querySelector('.layout').append(document.querySelector('.scenario'));document.querySelector('.performance-legend').textContent='Arrows versus the selected 2024 comparator: ↑ / ↓ 2–<5 percentage points; ↑↑ / ↓↓ 5 points or more. Complete towns only. No arrow near baseline or without data. Hover for the calculation.';}
 const candidates=config.map(([key,name,color])=>({key,name,color})),keys=candidates.map(c=>c.key),towns=base.rows.map(r=>r.town),STORE=isDemo?'osca-simulation-v1':'osca-general-election-v1';
 const blank=town=>({town,status:'unreported',ballots:null,votes:Object.fromEntries(keys.map(k=>[k,null])),source:'Not reported'});
 const requestedComparators={Burrows:'Joe Major',Major:'Alison H. Clarkson',Izzo:'Marc Nemeth'};
 const requestedComparatorIds=Object.fromEntries(Object.entries(requestedComparators).map(([key,name])=>[key,base.candidates.find(c=>c.name===name)?.key||'']));
 const empty=()=>({version:1,demo:isDemo,comparatorDefaultsVersion:1,official:towns.map(blank),manual:{},comparators:Object.fromEntries(candidates.map(c=>[c.key,requestedComparatorIds[c.key]||base.candidates.find(b=>b.name===c.name)?.key||''])),history:[]});
-let state=empty(),selected=0,dirty=false,interval=null,busy=false,generalProjection=null;
+let state=empty(),selected=0,dirty=false,interval=null,busy=false,generalProjection=null,displaySync=null;
 function checkedSession(s){
  if(Boolean(s?.demo)!==isDemo)throw Error('Simulation and live sessions cannot be mixed');
  if(s?.version!==1||!Array.isArray(s.official)||!s.manual||!Array.isArray(s.history)||!s.comparators)throw Error('Not an OSCA session');
@@ -27,7 +29,7 @@ try{const stored=localStorage.getItem(STORE);if(stored)state=checkedSession(JSON
 if(!state.comparatorDefaultsVersion){Object.assign(state.comparators,requestedComparatorIds);state.comparatorDefaultsVersion=1;persist();}
 if(isDemo){state=empty();state.timingProvenance=primaryTiming;state.history=makeOSCADemo(base.rows,keys,blank,primaryTiming);state.official=structuredClone(state.history.at(-1).rows);$('#demoBanner').hidden=false;$('#refresh').disabled=true;$('#auto').disabled=true;$('#demoLink').hidden=true;$('#save').hidden=true;$('#save').parentElement.querySelector('h2').textContent='Simulated town results';$('#save').parentElement.querySelector('p').textContent='Read-only synthetic totals follow the reporting snapshot selected above. Return to the live workspace for manual entry.';$('#feedStatus').textContent=`SIMULATION: ${primaryTiming.snapshots.length} recorded 2026 primary snapshots plus an empty starting point. Clocks shifted to general-election dates; SOS polling disabled. Playback advances one snapshot every 2.5 seconds.`;document.title='SIMULATION · OSCA Election Night';}
 function merged(){return state.official.map(r=>structuredClone(state.manual[r.town]||r));}
-function persist(){try{localStorage.setItem(STORE,JSON.stringify(state));$('#saveStatus').textContent='Saved in this browser';}catch(e){$('#saveStatus').textContent='Browser storage unavailable or full—export this session now';}}
+function persist(){if(isDisplay)return;try{localStorage.setItem(STORE,JSON.stringify(state));$('#saveStatus').textContent='Saved in this browser';}catch(e){$('#saveStatus').textContent='Browser storage unavailable or full—export this session now';}}
 function snapshot(source,meta={}){
  state.history.push({time:new Date().toISOString(),source,rows:merged(),...meta});selected=state.history.length-1;persist();draw();
 }
@@ -92,7 +94,7 @@ function drawMap(){
  const svg=d3.select('#map'),width=$('#map').clientWidth||350,height=$('#map').clientHeight||560;svg.attr('viewBox',`0 0 ${width} ${height}`);svg.selectAll('*').remove();
  const snap=state.history[selected],prev=state.history[Math.max(0,selected-1)],rows=new Map(snap.rows.map(r=>[r.town,r]));
  const path=d3.geoPath(d3.geoMercator().fitExtent([[12,10],[width-12,height-10]],geo));
- svg.selectAll('path').data(geo.features).join('path').attr('class','town').attr('tabindex',0).attr('d',path).attr('fill',f=>{
+ svg.selectAll('path').data(geo.features).join('path').attr('class','town').attr('tabindex',isDisplay?-1:0).attr('d',path).attr('fill',f=>{
   const r=rows.get(f.properties.TOWNNAME.toUpperCase()),old=prev.rows.find(p=>p.town===r.town);
   if(selected>0&&JSON.stringify(r)!==JSON.stringify(old))return '#ff9a4d';return {complete:'#62c985',partial:'#e2c575',unreported:'#1d2630'}[r.status];
  }).attr('aria-label',f=>f.properties.TOWNNAME+' '+rows.get(f.properties.TOWNNAME.toUpperCase()).status).on('click',(_,f)=>townInfo(f.properties.TOWNNAME.toUpperCase())).on('keydown',(e,f)=>{if(e.key==='Enter'||e.key===' ')townInfo(f.properties.TOWNNAME.toUpperCase());}).append('title').text(f=>f.properties.TOWNNAME);
@@ -145,13 +147,16 @@ function drawCharts(){
  if(showSwitch&&generalProjection.results.some(r=>r.name===fc.name))pressure.push({color:fc.color,model:true,dashed:true,values:switchTotals.map(t=>M.margin(t,fc.name))});
  if($('#overlay').checked&&state.comparators[focus])pressure.push({color:'#b8c2cd',dashed:true,values:state.history.map(s=>{const v={};for(const b of base.candidates){const reported=new Set(s.rows.filter(r=>r.status!=='unreported').map(r=>r.town));v[b.key]=base.rows.filter(r=>reported.has(r.town)).reduce((n,r)=>n+(r.votes[b.key]||0),0);}return M.margin(v,state.comparators[focus]);})});
  chart('#pressure',pressure,230,true);
+ displaySync?.publish();
  $('#switchOverlayStatus').textContent=!$('#switchOverlay').checked?'Switching-model overlay off.':!generalProjection?'Switching-model overlay unavailable: resolve model input errors below.':`${fmt(generalProjection.switchers)} assumed switchers · ${fmt(generalProjection.turnout)} district scenario ballots · dotted lines sum full modeled town totals for the ${state.history[selected].rows.filter(r=>r.status!=='unreported').length} towns represented at this cursor. `+(generalProjection.results.some(r=>r.name===fc.name)?`${fc.name}: ${fmt(switchTotals[selected][fc.name])} modeled votes; margin ${signed(M.margin(switchTotals[selected],fc.name))} among six modeled nominees.`:'Joe Izzo has no switching-model projection.');
 }
 function drawModel(){
  const rows=state.history[selected].rows,scale=Number($('#scale').value),model=M.scenario(rows,base.rows,keys,scale/100),totals=M.totals(rows,keys),body=$('#modelTable tbody');body.replaceChildren();
  $('#modelStatus').textContent=!Number.isFinite(scale)||scale<1||scale>300?'Enter a turnout scale from 1% to 300%.':model?`Scenario only · ${model.complete}/25 complete towns · ${(model.coverage*100).toFixed(1)}% historical ballot coverage · ${fmt(36121*scale/100)} hypothetical district ballots. Remaining towns use pooled support from completed towns.`:'Awaiting at least one complete town with ballots and all candidate counts. No projection is inferred from missing results.';
+ if(isDisplay)$('#modelStatus').textContent=model?`${model.complete}/25 complete towns · ${scale}% of 2024 turnout · hypothetical scenario`:'Awaiting complete town returns';
  const valid=model&&scale>=1&&scale<=300,ranked=valid?[...candidates].sort((a,b)=>model.votes[b.key]-model.votes[a.key]):candidates;
  for(const c of ranked){const tr=el('tr',null,body);el('td',c.name,tr).style.color=c.color;const reported=el('td',fmt(totals[c.key]),tr);reported.className='vote-cell';performanceBadge(reported,rows,c,true);el('td',valid?fmt(model.votes[c.key]):'—',tr);el('td',valid?String(1+candidates.filter(o=>model.votes[o.key]>model.votes[c.key]).length):'—',tr);
+  if(isDisplay){const comparator=base.candidates.find(b=>b.key===state.comparators[c.key])?.name||'No comparator';tr.firstChild.title='2024 comparator: '+comparator;el('td',comparator,tr);continue;}
   const sel=el('select',null,el('td',null,tr));sel.setAttribute('aria-label',c.name+' 2024 comparator');option(sel,'','No comparator');for(const b of base.candidates)option(sel,b.key,b.name);sel.value=state.comparators[c.key];sel.addEventListener('change',()=>{state.comparators[c.key]=sel.value;persist();drawCharts();drawModel();updateEntryIndicators();});
  }
 }
@@ -159,9 +164,9 @@ function draw(){
  if(!state.history.length)return;const snap=state.history[selected];$('#timeline').max=state.history.length-1;$('#timeline').value=selected;
  const t=new Date(snap.time).toLocaleString('en-US',{timeZone:'America/New_York',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
  $('#snapshotLabel').textContent=`${selected+1}/${state.history.length} · ${t} ET · ${snap.source}`;
- $('#modeBadge').textContent=isDemo?'SIMULATION':selected===state.history.length-1?'Latest snapshot':'Reviewing history';drawMap();drawCharts();drawModel();if(isDemo)renderEntry();
+ $('#modeBadge').textContent=isDemo?'SIMULATION':selected===state.history.length-1?'Latest snapshot':'Reviewing history';drawMap();drawCharts();drawModel();if(isDemo&&!isDisplay)renderEntry();displaySync?.publish();
 }
-$('#timeline').addEventListener('input',e=>{selected=Number(e.target.value);draw();});$('#focus').addEventListener('change',drawCharts);$('#overlay').addEventListener('change',drawCharts);$('#switchOverlay').addEventListener('change',drawCharts);$('#scale').addEventListener('input',drawModel);
+$('#timeline').addEventListener('input',e=>{selected=Number(e.target.value);draw();});$('#focus').addEventListener('change',drawCharts);$('#overlay').addEventListener('change',drawCharts);$('#switchOverlay').addEventListener('change',drawCharts);$('#scale').addEventListener('input',()=>{drawModel();displaySync?.publish();});
 async function refresh(){
  if(isDemo)return;
  if(busy)return;if(dirty){$('#feedStatus').textContent='SOS refresh paused: save or resolve unsaved table edits first.';return;}
@@ -183,7 +188,7 @@ async function refresh(){
   if(changed)snapshot(data.official?'SOS official refresh':'SOS unofficial refresh',{feedUpdated:data.feedUpdated,urls:data.urls});else persist();
   renderEntry();$('#feedStatus').textContent=`SOS ${data.official?'official':'unofficial'} · feed updated ${data.feedUpdated||'not supplied'} (SOS label) · fetched ${new Date(data.fetchedAt).toLocaleString('en-US',{timeZone:'America/New_York'})} ET · ${changed?'new snapshot saved':'no changed results'} · ${Object.keys(state.manual).length} manual overrides retained.`;
  }catch(e){$('#feedStatus').textContent='SOS refresh failed; previous results retained. '+e.message;}
- finally{busy=false;$('#refresh').disabled=false;}
+ finally{busy=false;$('#refresh').disabled=false;displaySync?.publish();}
 }
 $('#refresh').addEventListener('click',refresh);$('#auto').addEventListener('change',()=>{clearInterval(interval);if($('#auto').checked){refresh();interval=setInterval(refresh,60000);}});
 $('#export').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(isDemo?'SIMULATION-':'')+'osca-session-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);});
@@ -227,5 +232,21 @@ $('#crossAttribution').addEventListener('input',drawCrossballot);$('#crossBaseli
 if(['#ballotSwitch','#generalProjection'].includes(location.hash)){$('#ballotSwitch').open=true;requestAnimationFrame(()=>$(location.hash).scrollIntoView());}
 for(const r of primaryTiming.towns){const tr=el('tr',null,$('#timingTable tbody'));el('td',r.town,tr);el('td',r.first_observed_primary,tr);el('td',r.source_label,tr);}
 for(const r of [...base.rows,{town:'DISTRICT TOTAL',ballots:36121,votes:Object.fromEntries(base.candidates.map(c=>[c.key,base.rows.reduce((s,r)=>s+(r.votes[c.key]||0),0)]))}]){const tr=el('tr',null,$('#baselineTable tbody'));el('td',r.town,tr);el('td',fmt(r.ballots),tr);for(const c of base.candidates)el('td',fmt(r.votes[c.key]||0),tr);}
-renderEntry();draw();let resize;new ResizeObserver(()=>{clearTimeout(resize);resize=setTimeout(draw,80);}).observe($('.layout'));
+if(!isDisplay)renderEntry();draw();
+const settingIds=['focus','overlay','switchOverlay','scale','crossAttribution','crossBaseline','projectionScale'];
+function displayPayload(){return {state,selected,settings:Object.fromEntries(settingIds.map(id=>[id,$('#'+id).type==='checkbox'?$('#'+id).checked:$('#'+id).value])),feedStatus:$('#feedStatus').textContent};}
+displaySync=createOSCADisplaySync({key:STORE,isDisplay,read:displayPayload,onStatus:text=>{$('#displayConnection').textContent=text;},onUpdate:payload=>{
+ const incoming=checkedSession(payload.state);if(!incoming.history.length)throw Error('Empty display history');
+ state=incoming;selected=Math.min(state.history.length-1,Math.max(0,Number.isInteger(payload.selected)?payload.selected:state.history.length-1));
+ for(const id of settingIds){const value=payload.settings?.[id],control=$('#'+id);if(control.type==='checkbox'){if(typeof value==='boolean')control.checked=value;}else if(typeof value==='string'&&value.length<100){if(control.tagName!=='SELECT'||[...control.options].some(o=>o.value===value))control.value=value;}}
+ $('#feedStatus').textContent=typeof payload.feedStatus==='string'?payload.feedStatus:'';drawCrossballot();draw();
+}});
+const displayTarget=new URL(window.OSCABridge.embedded?(document.referrer||location.href):location.href);displayTarget.pathname=window.OSCABridge.embedded?'/':location.pathname;displayTarget.search='';displayTarget.hash='';displayTarget.searchParams.set('display','1');if(isDemo)displayTarget.searchParams.set('demo','1');
+$('#openDisplay').href=displayTarget.href;
+$('#openDisplay').addEventListener('click',()=>{
+ displaySync.publish(true);
+ $('#displayHelp').textContent='The results display opens separately. If your browser opens a tab, drag it into its own window or onto another screen. It follows this control panel in the same browser.';
+});
+
+let resize;new ResizeObserver(()=>{clearTimeout(resize);resize=setTimeout(draw,80);}).observe($('.layout'));
 })().catch(e=>{document.querySelector('#feedStatus').textContent='App could not start: '+e.message;});
