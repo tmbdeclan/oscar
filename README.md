@@ -88,3 +88,36 @@ visible with a disconnected notice. A cached display snapshot is marked as waiti
 until the control panel reconnects. Live and simulation channels remain separate.
 
 Run synchronization checks with `node election_night/tests/display-sync.test.cjs`.
+
+
+## House contests
+
+Thirteen 2026 House races overlap the Windsor Senate district. Each section includes
+only its representative towns, a reporting map, cumulative candidate totals, a
+reported-vote table, and a seat-aware margin chart. The default final-seat gap is
+first minus second for one seat, or second minus third for two seats. Selecting a
+candidate instead shows their votes minus the Nth-highest other candidate for N
+seats. Ties are zero; an uncontested final seat has no invented opponent or margin.
+Named write-ins are contenders; unallocated write-ins are shown separately.
+
+The combined SOS refresh reads the House feed in addition to Senate and turnout,
+retaining prior House results on a House-feed failure. Successful updates are saved
+in the same immutable reporting snapshots and synchronize to the presentation view.
+Old snapshots without House data remain explicitly unobserved. Existing manual
+Senate overrides remain independent. No House manual-entry or forecast is added.
+
+House contests crossing the Senate boundary use their full district returns and
+maps: 39 distinct towns, including 14 outside the Senate district. Hartford is split
+between Windsor-4 and Windsor-6: each race uses only its corresponding reporting
+split, but maps show the whole town with a '(part)' note. Whole-town turnout is not
+used as the split's ballot denominator. Completion follows town turnout reporting;
+Hartford can remain partial until both splits have reported.
+
+`election_night/frontend/data/house-races.json` records the official SOS roster URL and checksum,
+with unknown vote counts at startup. Its 2024 ballot reference is used only to size
+synthetic demonstration data. `house-towns.geojson` uses the same VCGI town outlines
+as the Senate map. House demo votes are invented; external-town reporting times are
+also invented and clearly labeled. They do not assert a House primary chronology.
+
+Checks: `node election_night/tests/house.test.cjs` and
+`python -m unittest discover -s election_night/tests`.

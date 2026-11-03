@@ -2,8 +2,8 @@
 (async function(){
 'use strict';
 const hostArgs=await window.OSCABridge.ready;
-const $=s=>document.querySelector(s), M=OSCAModel, fmt=n=>Math.round(n).toLocaleString('en-US'), signed=n=>(n>=0?'+':'−')+fmt(Math.abs(n));
-const [base,geo,primaryTiming,crossData,primaryCandidates,partyCalibration]=await Promise.all(['data/baseline.json','data/towns.geojson','data/primary-timing.json','data/crossballot.json','data/primary-candidates-2026.json','data/party-multipliers-2024.json'].map(u=>fetch(u).then(r=>{if(!r.ok)throw Error('Missing local data');return r.json();})));
+const $=s=>document.querySelector(s), M=OSCAModel, H=OSCAHouse, fmt=n=>Math.round(n).toLocaleString('en-US'), signed=n=>(n>=0?'+':'−')+fmt(Math.abs(n));
+const [base,geo,primaryTiming,crossData,primaryCandidates,partyCalibration,houseCatalog,houseGeo]=await Promise.all(['data/baseline.json','data/towns.geojson','data/primary-timing.json','data/crossballot.json','data/primary-candidates-2026.json','data/party-multipliers-2024.json','data/house-races.json','data/house-towns.geojson'].map(u=>fetch(u).then(r=>{if(!r.ok)throw Error('Missing local data');return r.json();})));
 const config=[['White','Rebecca White','#62a8ff'],['Major','Joe Major','#ff9a4d'],['Burrows','Elizabeth Burrows','#64d68b'],['Murray','Andrea Murray','#ff82bd'],['Williams','Jack Williams','#b59cff'],['Gleason','Jonathan Gleason','#4ddbd2'],['Izzo','Joe Izzo','#c4cbd1']];
 const isDemo=window.OSCABridge.embedded?Boolean(hostArgs.demo):new URLSearchParams(location.search).get('demo')==='1';
 const isDisplay=window.OSCABridge.embedded?Boolean(hostArgs.display):new URLSearchParams(location.search).get('display')==='1';
@@ -12,7 +12,7 @@ const candidates=config.map(([key,name,color])=>({key,name,color})),keys=candida
 const blank=town=>({town,status:'unreported',ballots:null,votes:Object.fromEntries(keys.map(k=>[k,null])),source:'Not reported'});
 const requestedComparators={Burrows:'Joe Major',Major:'Alison H. Clarkson',Izzo:'Marc Nemeth'};
 const requestedComparatorIds=Object.fromEntries(Object.entries(requestedComparators).map(([key,name])=>[key,base.candidates.find(c=>c.name===name)?.key||'']));
-const empty=()=>({version:1,demo:isDemo,comparatorDefaultsVersion:1,official:towns.map(blank),manual:{},comparators:Object.fromEntries(candidates.map(c=>[c.key,requestedComparatorIds[c.key]||base.candidates.find(b=>b.name===c.name)?.key||''])),history:[]});
+const empty=()=>({version:1,demo:isDemo,comparatorDefaultsVersion:1,official:towns.map(blank),manual:{},house:null,houseFocus:{},comparators:Object.fromEntries(candidates.map(c=>[c.key,requestedComparatorIds[c.key]||base.candidates.find(b=>b.name===c.name)?.key||''])),history:[]});
 let state=empty(),selected=0,dirty=false,interval=null,busy=false,generalProjection=null,displaySync=null;
 function checkedSession(s){
  if(Boolean(s?.demo)!==isDemo)throw Error('Simulation and live sessions cannot be mixed');
@@ -21,6 +21,8 @@ function checkedSession(s){
  checkRows(s.official);for(const [town,row] of Object.entries(s.manual)){if(row.town!==town||!towns.includes(town)||M.validate(row,keys).length)throw Error('Invalid manual row');}
  if(s.history.length>3000)throw Error('Session exceeds 3,000 snapshots');
  for(const h of s.history){checkRows(h.rows);if(!Number.isFinite(Date.parse(h.time))||typeof h.source!=='string')throw Error('Invalid snapshot');}
+ if(s.house)H.validate(s.house,houseCatalog);for(const h of s.history)if(h.house)H.validate(h.house,houseCatalog);
+ if(!s.houseFocus||typeof s.houseFocus!=='object'||Array.isArray(s.houseFocus))s.houseFocus={};
  for(const k of keys)if(s.comparators[k]&&!base.candidates.some(c=>c.key===s.comparators[k]))throw Error('Unknown comparator');
  return s;
 }
@@ -28,10 +30,11 @@ try{const stored=localStorage.getItem(STORE);if(stored)state=checkedSession(JSON
 // Apply the user's new defaults once to older sessions, preserving later manual choices.
 if(!state.comparatorDefaultsVersion){Object.assign(state.comparators,requestedComparatorIds);state.comparatorDefaultsVersion=1;persist();}
 if(isDemo){state=empty();state.timingProvenance=primaryTiming;state.history=makeOSCADemo(base.rows,keys,blank,primaryTiming);state.official=structuredClone(state.history.at(-1).rows);$('#demoBanner').hidden=false;$('#refresh').disabled=true;$('#auto').disabled=true;$('#demoLink').hidden=true;$('#save').hidden=true;$('#save').parentElement.querySelector('h2').textContent='Simulated town results';$('#save').parentElement.querySelector('p').textContent='Read-only synthetic totals follow the reporting snapshot selected above. Return to the live workspace for manual entry.';$('#feedStatus').textContent=`SIMULATION: ${primaryTiming.snapshots.length} recorded 2026 primary snapshots plus an empty starting point. Clocks shifted to general-election dates; SOS polling disabled. Playback advances one snapshot every 2.5 seconds.`;document.title='SIMULATION · OSCA Election Night';}
+if(isDemo){const demos=H.demo(houseCatalog,state.history);state.history.forEach((h,i)=>h.house=demos[i]);state.house=demos.at(-1);}
 function merged(){return state.official.map(r=>structuredClone(state.manual[r.town]||r));}
 function persist(){if(isDisplay)return;try{localStorage.setItem(STORE,JSON.stringify(state));$('#saveStatus').textContent='Saved in this browser';}catch(e){$('#saveStatus').textContent='Browser storage unavailable or full—export this session now';}}
 function snapshot(source,meta={}){
- state.history.push({time:new Date().toISOString(),source,rows:merged(),...meta});selected=state.history.length-1;persist();draw();
+ state.history.push({time:new Date().toISOString(),source,rows:merged(),house:structuredClone(state.house||null),...meta});selected=state.history.length-1;persist();draw();
 }
 if(!state.history.length)state.history.push({time:new Date().toISOString(),source:'No results entered',rows:merged()});selected=isDemo?Math.floor(state.history.length/2):state.history.length-1;
 function el(tag,text,parent){const n=document.createElement(tag);if(text!=null)n.textContent=text;if(parent)parent.append(n);return n;}
@@ -160,22 +163,67 @@ function drawModel(){
   const sel=el('select',null,el('td',null,tr));sel.setAttribute('aria-label',c.name+' 2024 comparator');option(sel,'','No comparator');for(const b of base.candidates)option(sel,b.key,b.name);sel.value=state.comparators[c.key];sel.addEventListener('change',()=>{state.comparators[c.key]=sel.value;persist();drawCharts();drawModel();updateEntryIndicators();});
  }
 }
+function drawHouse(){
+ const snap=state.history[selected],bundle=snap.house,previous=state.history[Math.max(0,selected-1)].house,body=$('#houseCards');body.replaceChildren();
+ const races=bundle?.races||houseCatalog.races;
+ const jump=$('#houseJump');if(!jump.options.length){option(jump,'','Select a House race');for(const race of houseCatalog.races)option(jump,'house-'+race.key.toLowerCase().replace(/[^a-z0-9]+/g,'-'),race.name);jump.addEventListener('change',()=>{const target=document.getElementById(jump.value);if(target)target.scrollIntoView({block:'start'});});}
+ $('#houseFeedStatus').textContent=(state.houseWarning?state.houseWarning+' Previous House results retained. ': '')+(isDemo?'SIMULATION · synthetic House votes. External-town reporting times are invented; no House forecast is implied.':bundle?`SOS ${bundle.official?'official':'unofficial'} · House feed fetched ${new Date(bundle.fetchedAt).toLocaleString('en-US',{timeZone:'America/New_York'})} ET.`:'No House feed saved at this reporting snapshot. Pull SOS results to begin.');
+ for(const race of races){
+  const id='house-'+race.key.toLowerCase().replace(/[^a-z0-9]+/g,'-'),card=el('section',null,body);card.className='panel house-race';card.id=id;
+  const header=el('div',null,card);header.className='section-head';const title=el('div',null,header);el('h2',race.name,title);el('p',`${race.seats} seat${race.seats===1?'':'s'} · `+race.rows.map(r=>r.town.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())+(r.partialTown?' (part)':'')).join(' · '),title).className='house-note';
+  const controls=el('label','Margin focus ',header);controls.className='house-controls';const focus=el('select',null,controls);focus.setAttribute('aria-label',race.name+' House margin focus');option(focus,'','Final-seat gap');for(const c of race.candidates)option(focus,c.key,c.name);
+  const focusKey=race.candidates.some(c=>c.key===state.houseFocus?.[race.key])?state.houseFocus[race.key]:'';focus.value=focusKey;focus.addEventListener('change',()=>{state.houseFocus??={};state.houseFocus[race.key]=focus.value;persist();drawHouse();displaySync?.publish();});
+  const layout=el('div',null,card);layout.className='house-layout';const mapPanel=el('div',null,layout),map=el('div',null,mapPanel);map.innerHTML='<svg class="house-map" role="img"></svg>';const svgNode=map.firstChild;svgNode.setAttribute('aria-label',race.name+' reporting map');
+  const coverage=el('p',`${race.rows.filter(r=>r.status==='complete').length}/${race.rows.length} towns complete · ${race.rows.filter(r=>r.status==='partial').length} partial`,mapPanel);coverage.className='house-coverage';
+  el('p','Green: complete · Gold: partial · Orange: new/revised · Gray: not reported',mapPanel).className='house-note';
+  const townDetail=el('p','Select a town for its House results.',mapPanel);townDetail.className='house-town-detail';
+  const outside=race.rows.filter(r=>!towns.includes(r.town)).map(r=>r.town.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase()));
+  if(outside.length)el('p','Includes the full House district, including '+outside.join(', ')+' outside the Windsor Senate district.',mapPanel).className='house-note';
+  if(race.rows.some(r=>r.partialTown))el('p','Hartford outline shows the whole town; only this House district’s split is counted. Reporting may remain partial until all town splits report.',mapPanel).className='house-note';
+  const features=houseGeo.features.filter(f=>race.rows.some(r=>r.town===f.properties.TOWNNAME.toUpperCase())),geoSubset={type:'FeatureCollection',features};
+  const width=mapPanel.clientWidth||260,height=svgNode.clientHeight||280,svg=d3.select(svgNode).attr('viewBox',`0 0 ${width} ${height}`),path=d3.geoPath(d3.geoMercator().fitExtent([[16,16],[width-16,height-16]],geoSubset));
+  const rowMap=new Map(race.rows.map(r=>[r.town,r])),oldRows=previous?.races?.find(r=>r.key===race.key)?.rows;
+  svg.selectAll('path').data(features).join('path').attr('class','town').attr('tabindex',isDisplay?-1:0).attr('d',path).attr('fill',f=>{const r=rowMap.get(f.properties.TOWNNAME.toUpperCase()),old=oldRows?.find(o=>o.town===r.town);if(selected>0&&r.status!=='unreported'&&(!old||JSON.stringify([r.status,r.votes])!==JSON.stringify([old.status,old.votes])))return '#ff9a4d';return {complete:'#62c985',partial:'#e2c575',unreported:'#1d2630'}[r.status];}).attr('aria-label',f=>race.name+' '+f.properties.TOWNNAME+' '+rowMap.get(f.properties.TOWNNAME.toUpperCase()).status).on('click',(_,f)=>inspect(f)).on('keydown',(e,f)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();inspect(f);}}).append('title').text(f=>f.properties.TOWNNAME);
+  function inspect(f){const row=rowMap.get(f.properties.TOWNNAME.toUpperCase());townDetail.textContent=`${row.town}${row.partialTown?' (House split only)':''}: ${row.status} · `+race.candidates.map(c=>`${c.name}: ${row.votes[c.key]==null?'—':fmt(row.votes[c.key])}`).join(' · ');}
+  const labels=features.map(f=>{const [x,y]=path.centroid(f);return {x,y,name:f.properties.TOWNNAME.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())+(rowMap.get(f.properties.TOWNNAME.toUpperCase()).partialTown?' (part)':'')};});
+  for(let pass=0;pass<30;pass++)for(let a=0;a<labels.length;a++)for(let b=a+1;b<labels.length;b++){const l=labels[a],r=labels[b],dy=16-Math.abs(l.y-r.y);if(Math.abs(l.x-r.x)<(l.name.length+r.name.length)*2.9&&dy>0){const direction=l.y<r.y?-1:1;l.y+=direction*dy/2;r.y-=direction*dy/2;}}
+  svg.append('g').selectAll('text').data(labels).join('text').attr('class','house-map-label').attr('x',l=>Math.max(l.name.length*2.9+3,Math.min(width-l.name.length*2.9-3,l.x))).attr('y',l=>l.y).attr('dy','.35em').attr('text-anchor','middle').text(l=>l.name);
+  const charts=el('div',null,layout);charts.className='house-charts';el('h3','Candidate totals',charts);const votesDiv=el('div',null,charts);votesDiv.innerHTML=`<svg id="${id}-votes" role="img" aria-label="${race.name} cumulative House candidate totals"></svg>`;
+  const marginTitle=el('h3',race.seats===2?'Two-seat margin':'One-seat margin',charts);marginTitle.style.marginTop='12px';const focusName=race.candidates.find(c=>c.key===focusKey)?.name;
+  el('p',focusName?`${focusName} minus ${race.seats===2?'second':'first'}-highest other candidate`:`Final-seat gap: ${race.seats===2?'second minus third':'first minus second'} place.`,charts).className='house-margin-note';
+  const marginDiv=el('div',null,charts);marginDiv.innerHTML=`<svg id="${id}-margin" role="img" aria-label="${race.name} final-seat margin"></svg>`;
+  const palette=['#62a8ff','#ff9a4d','#64d68b','#ff82bd','#b59cff','#4ddbd2','#c4cbd1'],colors=new Map(race.candidates.map((c,i)=>[c.key,palette[i%palette.length]]));
+  const historicRaces=state.history.map(h=>h.house?.races?.find(r=>r.key===race.key)||null),historicTotals=historicRaces.map(r=>r?H.totals(r):null);
+  chart('#'+id+'-votes',race.candidates.map(c=>({color:colors.get(c.key),short:c.name,values:historicTotals.map(t=>t?.[c.key]??null)})),210);
+  const margins=historicTotals.map(t=>t?(focusKey?H.margin(t,focusKey,race.seats):H.seatGap(t,race.seats)?.value??null):null);
+  chart('#'+id+'-margin',[{color:'#64d68b',short:focusName||'Final seat',values:margins}],150,true);
+  if(!margins.some(v=>v!==null))d3.select('#'+id+'-margin').append('text').attr('x','50%').attr('y','45%').attr('text-anchor','middle').attr('fill','#a2b0bc').attr('font-size',11).text(race.candidates.length<=race.seats?'No named challenger for final seat':'Awaiting House returns');
+  const summary=el('div',null,layout);summary.className='house-summary';el('h3','Reported House votes',summary);const table=el('table',null,summary);table.className='house-totals';const th=el('tr',null,el('thead',null,table));['Candidate','Votes'].forEach(v=>el('th',v,th));const tb=el('tbody',null,table),totals=H.totals(race);
+  for(const c of [...race.candidates].sort((a,b)=>totals[b.key]-totals[a.key]||a.name.localeCompare(b.name))){const tr=el('tr',null,tb),name=el('td',null,tr);el('div',c.name,name).style.color=colors.get(c.key);el('div',c.party+(c.writeIn?' · named write-in':''),name).className='house-party';el('td',bundle?fmt(totals[c.key]):'—',tr);}
+  const gap=H.seatGap(totals,race.seats),nameOf=key=>race.candidates.find(c=>c.key===key)?.name;
+  el('p',gap?`Final-seat gap: ${fmt(gap.value)} votes · ${nameOf(gap.inside)} over ${nameOf(gap.outside)}${gap.value===0?' (tied)':''}.`:!Object.values(totals).some(v=>v>0)?'Awaiting reported House votes.':'No named challenger for the final seat; no competitive margin calculated.',summary).className='house-gap';
+  const writeIns=race.rows.filter(r=>r.status!=='unreported').reduce((n,r)=>n+(r.otherWriteIns||0),0);el('p',`Other / unallocated write-ins: ${bundle?fmt(writeIns):'—'}. Shown separately, never treated as one candidate in the margin. Named write-ins are included. No winner is called.`,summary).className='house-note';
+ }
+}
+
 function draw(){
  if(!state.history.length)return;const snap=state.history[selected];$('#timeline').max=state.history.length-1;$('#timeline').value=selected;
  const t=new Date(snap.time).toLocaleString('en-US',{timeZone:'America/New_York',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
  $('#snapshotLabel').textContent=`${selected+1}/${state.history.length} · ${t} ET · ${snap.source}`;
- $('#modeBadge').textContent=isDemo?'SIMULATION':selected===state.history.length-1?'Latest snapshot':'Reviewing history';drawMap();drawCharts();drawModel();if(isDemo&&!isDisplay)renderEntry();displaySync?.publish();
+ $('#modeBadge').textContent=isDemo?'SIMULATION':selected===state.history.length-1?'Latest snapshot':'Reviewing history';drawMap();drawCharts();drawModel();drawHouse();if(isDemo&&!isDisplay)renderEntry();displaySync?.publish();
 }
 $('#timeline').addEventListener('input',e=>{selected=Number(e.target.value);draw();});$('#focus').addEventListener('change',drawCharts);$('#overlay').addEventListener('change',drawCharts);$('#switchOverlay').addEventListener('change',drawCharts);$('#scale').addEventListener('input',()=>{drawModel();displaySync?.publish();});
 async function refresh(){
  if(isDemo)return;
  if(busy)return;if(dirty){$('#feedStatus').textContent='SOS refresh paused: save or resolve unsaved table edits first.';return;}
- busy=true;$('#refresh').disabled=true;$('#feedStatus').textContent='Reading official SOS election index, Senate results, and turnout…';
+ let incomingHouse=null,houseProblem='';
+ busy=true;$('#refresh').disabled=true;$('#feedStatus').textContent='Reading official SOS election index, Senate results, House results, and turnout…';
  try{
   let data;
   if(window.OSCABridge.embedded)data=await window.OSCABridge.refresh();
   else{const response=await fetch('/api/sos',{cache:'no-store'});data=await response.json();if(!response.ok)throw Error(data.error||'SOS request failed');}
   if(data.year!==2026||!Array.isArray(data.rows)||!Array.isArray(data.candidates))throw Error('Unexpected SOS schema');
+  houseProblem=data.houseError||'';if(data.house){try{incomingHouse=H.validate(data.house,houseCatalog);}catch(e){houseProblem='House update rejected: '+e.message;}}
   const idMap={};for(const c of data.candidates){const match=candidates.find(x=>c.name.toLowerCase()===x.name.toLowerCase());if(!match)throw Error('SOS candidate roster changed: '+c.name+'. Update adapter before applying.');idMap[c.key]=match.key;}
   if(new Set(Object.values(idMap)).size!==keys.length)throw Error('SOS roster is incomplete; prior results retained');
   const mapped=data.rows.map(r=>{const votes=Object.fromEntries(keys.map(k=>[k,null]));for(const [id,v] of Object.entries(r.votes)){if(idMap[id])votes[idMap[id]]=v;}return {...r,votes,source:data.official?'SOS official':'SOS unofficial',note:r.warning||''};});
@@ -184,10 +232,10 @@ async function refresh(){
   // Inconsistent partial vote/turnout payloads keep vote counts but omit ballots until reconciled.
   for(const r of mapped)if(M.validate(r,keys).length){r.ballots=null;r.status='partial';r.note='SOS turnout and vote payloads are not yet synchronized';}
   const next=towns.map(t=>mapped.find(r=>r.town===t)||blank(t));
-  const changed=JSON.stringify(state.official)!==JSON.stringify(next);state.official=next;
+  const changed=JSON.stringify(state.official)!==JSON.stringify(next)||(incomingHouse&&JSON.stringify(state.house?.races)!==JSON.stringify(incomingHouse.races));state.official=next;if(incomingHouse)state.house=incomingHouse;state.houseWarning=houseProblem;
   if(changed)snapshot(data.official?'SOS official refresh':'SOS unofficial refresh',{feedUpdated:data.feedUpdated,urls:data.urls});else persist();
-  renderEntry();$('#feedStatus').textContent=`SOS ${data.official?'official':'unofficial'} · feed updated ${data.feedUpdated||'not supplied'} (SOS label) · fetched ${new Date(data.fetchedAt).toLocaleString('en-US',{timeZone:'America/New_York'})} ET · ${changed?'new snapshot saved':'no changed results'} · ${Object.keys(state.manual).length} manual overrides retained.`;
- }catch(e){$('#feedStatus').textContent='SOS refresh failed; previous results retained. '+e.message;}
+  renderEntry();drawHouse();$('#feedStatus').textContent=`SOS ${data.official?'official':'unofficial'} · feed updated ${data.feedUpdated||'not supplied'} (SOS label) · fetched ${new Date(data.fetchedAt).toLocaleString('en-US',{timeZone:'America/New_York'})} ET · ${changed?'new snapshot saved':'no changed results'} · ${Object.keys(state.manual).length} manual overrides retained. ${houseProblem||((incomingHouse?.races.length||0)+' House contests refreshed.')}`;
+ }catch(e){if(incomingHouse){state.house=incomingHouse;snapshot('House SOS refresh · Senate update retained');$('#feedStatus').textContent='House results updated; previous Senate results retained. '+e.message;}else $('#feedStatus').textContent='SOS refresh failed; previous results retained. '+e.message;}
  finally{busy=false;$('#refresh').disabled=false;displaySync?.publish();}
 }
 $('#refresh').addEventListener('click',refresh);$('#auto').addEventListener('change',()=>{clearInterval(interval);if($('#auto').checked){refresh();interval=setInterval(refresh,60000);}});
