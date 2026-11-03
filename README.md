@@ -11,8 +11,10 @@ streamlit run app.py
 
 The entrypoint mounts the versioned `election_night/frontend` custom component.
 Its SOS button communicates with the Python adapter using Streamlit's components-v1
-protocol; no external API server or secrets are needed. Public SOS requests are
-cached for 45 seconds. Browser polling is optional at 60-second intervals.
+protocol; no external API server or secrets are needed. The optional monitor checks the SOS feed index every 15 seconds using conditional
+HTTP requests; result files are cached by their published version. A shared
+five-second minimum between index requests protects against overlapping browser
+checks, and a manual refresh bypasses that local minimum.
 
 Open `?demo=1` or select **Try election-night simulation** for the synthetic replay.
 Return to live mode to enter actual preliminary results or fetch SOS. The simulation
@@ -121,3 +123,31 @@ also invented and clearly labeled. They do not assert a House primary chronology
 
 Checks: `node election_night/tests/house.test.cjs` and
 `python -m unittest discover -s election_night/tests`.
+
+
+## SOS release monitor
+
+Enable **Watch SOS every 15 seconds** in the control panel. The monitor retrieves
+and revalidates the official manifest using ETag / If-None-Match and Last-Modified /
+If-Modified-Since, with Cache-Control: no-cache on that index request. Changes to
+Senate, House, turnout paths, availability, or certification status produce a new
+release fingerprint and trigger immediate retrieval. Successful result files are
+cached by URL/version; unchanged checks return timing metadata without the result
+bundle. There is no 45-second result-cache delay after a new release is detected.
+An unavailable House payload is retried without redownloading successful feeds.
+Failures retain the previous results; unchanged checks create no result snapshots.
+
+The timing strip shows the source index's Last-Modified publication timestamp,
+last attempted index check, monitor status, and estimated next release. The
+estimate initially assumes five minutes; after observing at least two recent
+intervals between 240 and 360 seconds it uses their median. Missed release windows
+are labeled overdue instead of silently rolling the estimate forward. It is not
+a scheduled or guaranteed SOS release time. The source currently advertises a
+60-second public cache; source caching, network errors, and background-browser
+timer throttling can delay detection. The control panel must remain open, and
+unsaved table edits pause polling to protect those entries.
+
+Publication timing and monitor settings synchronize to the separate display,
+which never polls independently. Simulation mode keeps polling disabled.
+Checks: `python -m unittest discover -s election_night/tests` and
+`node election_night/tests/feed-timing.test.cjs`.

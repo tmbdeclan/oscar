@@ -214,15 +214,20 @@ function draw(){
  $('#modeBadge').textContent=isDemo?'SIMULATION':selected===state.history.length-1?'Latest snapshot':'Reviewing history';drawMap();drawCharts();drawModel();drawHouse();if(isDemo&&!isDisplay)renderEntry();displaySync?.publish();
 }
 $('#timeline').addEventListener('input',e=>{selected=Number(e.target.value);draw();});$('#focus').addEventListener('change',drawCharts);$('#overlay').addEventListener('change',drawCharts);$('#switchOverlay').addEventListener('change',drawCharts);$('#scale').addEventListener('input',()=>{drawModel();displaySync?.publish();});
-async function refresh(){
- if(isDemo)return;
- if(busy)return;if(dirty){$('#feedStatus').textContent='SOS refresh paused: save or resolve unsaved table edits first.';return;}
+async function refresh(force=true){
+ if(isDemo||isDisplay)return;
+ if(busy)return;if(dirty){$('#feedStatus').textContent='SOS checking paused: save or resolve unsaved table edits first.';return;}
  let incomingHouse=null,houseProblem='';
- busy=true;$('#refresh').disabled=true;$('#feedStatus').textContent='Reading official SOS election index, Senate results, House results, and turnout…';
+ busy=true;$('#refresh').disabled=true;if(force)$('#feedStatus').textContent='Checking official SOS feed index; new Senate and House releases load automatically…';
  try{
-  let data;
-  if(window.OSCABridge.embedded)data=await window.OSCABridge.refresh();
-  else{const response=await fetch('/api/sos',{cache:'no-store'});data=await response.json();if(!response.ok)throw Error(data.error||'SOS request failed');}
+  const knownVersion=typeof state.sosVersion==='string'&&/^[a-f0-9]{64}$/.test(state.sosVersion)?state.sosVersion:null;
+  let envelope;
+  if(window.OSCABridge.embedded)envelope=await window.OSCABridge.refresh(knownVersion,force);
+  else{const query=new URLSearchParams({force:force?'1':'0'});if(knownVersion)query.set('version',knownVersion);const response=await fetch('/api/sos?'+query,{cache:'no-store'});envelope=await response.json();if(!response.ok){const error=Error(envelope.error||'SOS request failed');error.timing=envelope.timing;throw error;}}
+  if(envelope.year!==2026||typeof envelope.version!=='string'||!/^[a-f0-9]{64}$/.test(envelope.version))throw Error('Unexpected SOS release schema');
+  state.feedTiming=envelope.timing;paintFeedTiming();
+  if(envelope.unchanged){if(envelope.version!==knownVersion)throw Error('Unrecognized unchanged release');return;}
+  const data=envelope.data;
   if(data.year!==2026||!Array.isArray(data.rows)||!Array.isArray(data.candidates))throw Error('Unexpected SOS schema');
   houseProblem=data.houseError||'';if(data.house){try{incomingHouse=H.validate(data.house,houseCatalog);}catch(e){houseProblem='House update rejected: '+e.message;}}
   const idMap={};for(const c of data.candidates){const match=candidates.find(x=>c.name.toLowerCase()===x.name.toLowerCase());if(!match)throw Error('SOS candidate roster changed: '+c.name+'. Update adapter before applying.');idMap[c.key]=match.key;}
@@ -233,13 +238,13 @@ async function refresh(){
   // Inconsistent partial vote/turnout payloads keep vote counts but omit ballots until reconciled.
   for(const r of mapped)if(M.validate(r,keys).length){r.ballots=null;r.status='partial';r.note='SOS turnout and vote payloads are not yet synchronized';}
   const next=towns.map(t=>mapped.find(r=>r.town===t)||blank(t));
-  const changed=JSON.stringify(state.official)!==JSON.stringify(next)||(incomingHouse&&JSON.stringify(state.house?.races)!==JSON.stringify(incomingHouse.races));state.official=next;if(incomingHouse)state.house=incomingHouse;state.houseWarning=houseProblem;
+  const changed=JSON.stringify(state.official)!==JSON.stringify(next)||(incomingHouse&&JSON.stringify(state.house?.races)!==JSON.stringify(incomingHouse.races));state.official=next;state.sosVersion=envelope.version;if(incomingHouse)state.house=incomingHouse;state.houseWarning=houseProblem;
   if(changed)snapshot(data.official?'SOS official refresh':'SOS unofficial refresh',{feedUpdated:data.feedUpdated,urls:data.urls});else persist();
   renderEntry();drawHouse();$('#feedStatus').textContent=`SOS ${data.official?'official':'unofficial'} · feed updated ${data.feedUpdated||'not supplied'} (SOS label) · fetched ${new Date(data.fetchedAt).toLocaleString('en-US',{timeZone:'America/New_York'})} ET · ${changed?'new snapshot saved':'no changed results'} · ${Object.keys(state.manual).length} manual overrides retained. ${houseProblem||((incomingHouse?.races.length||0)+' House contests refreshed.')}`;
- }catch(e){if(incomingHouse){state.house=incomingHouse;snapshot('House SOS refresh · Senate update retained');$('#feedStatus').textContent='House results updated; previous Senate results retained. '+e.message;}else $('#feedStatus').textContent='SOS refresh failed; previous results retained. '+e.message;}
- finally{busy=false;$('#refresh').disabled=false;displaySync?.publish();}
+ }catch(e){state.feedTiming=e.timing||{...(state.feedTiming||{}),lastCheckedAt:new Date().toISOString(),error:e.message};if(incomingHouse){state.house=incomingHouse;snapshot('House SOS refresh · Senate update retained');$('#feedStatus').textContent='House results updated; previous Senate results retained. '+e.message;}else $('#feedStatus').textContent='SOS refresh failed; previous results retained. '+e.message;}
+ finally{busy=false;$('#refresh').disabled=false;paintFeedTiming();displaySync?.publish();}
 }
-$('#refresh').addEventListener('click',refresh);$('#auto').addEventListener('change',()=>{clearInterval(interval);if($('#auto').checked){refresh();interval=setInterval(refresh,60000);}});
+$('#refresh').addEventListener('click',()=>refresh(true));$('#auto').addEventListener('change',()=>{clearInterval(interval);if($('#auto').checked&&!isDemo&&!isDisplay){refresh(false);interval=setInterval(()=>refresh(false),15000);}paintFeedTiming();displaySync?.publish();});
 $('#export').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(isDemo?'SIMULATION-':'')+'osca-session-'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);});
 $('#import').addEventListener('change',async e=>{try{const file=e.target.files[0];if(!file)return;if(file.size>30e6)throw Error('Session exceeds 30 MB');const imported=checkedSession(JSON.parse(await file.text()));if(!confirm('Replace this browser’s current session with this imported session? Export first if needed.'))return;state=imported;dirty=false;if(!state.history.length)snapshot('Imported session');selected=state.history.length-1;persist();renderEntry();draw();}catch(e){$('#errors').textContent='Import rejected: '+e.message;}finally{$('#import').value='';}});
 window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
@@ -281,14 +286,19 @@ $('#crossAttribution').addEventListener('input',drawCrossballot);$('#crossBaseli
 if(['#ballotSwitch','#generalProjection'].includes(location.hash)){$('#ballotSwitch').open=true;requestAnimationFrame(()=>$(location.hash).scrollIntoView());}
 for(const r of primaryTiming.towns){const tr=el('tr',null,$('#timingTable tbody'));el('td',r.town,tr);el('td',r.first_observed_primary,tr);el('td',r.source_label,tr);}
 for(const r of [...base.rows,{town:'DISTRICT TOTAL',ballots:36121,votes:Object.fromEntries(base.candidates.map(c=>[c.key,base.rows.reduce((s,r)=>s+(r.votes[c.key]||0),0)]))}]){const tr=el('tr',null,$('#baselineTable tbody'));el('td',r.town,tr);el('td',fmt(r.ballots),tr);for(const c of base.candidates)el('td',fmt(r.votes[c.key]||0),tr);}
+function paintFeedTiming(){
+ const info=OSCAFeedTiming.describe(state.feedTiming,Date.now(),{demo:isDemo,watching:$('#auto').checked});
+ for(const [id,key] of [['sosPublished','published'],['sosChecked','checked'],['sosExpected','next'],['sosWatch','watch'],['sosTimingNote','note']])$('#'+id).textContent=info[key];
+}
+paintFeedTiming();setInterval(paintFeedTiming,1000);
 if(!isDisplay)renderEntry();draw();
-const settingIds=['focus','overlay','switchOverlay','scale','crossAttribution','crossBaseline','projectionScale'];
+const settingIds=['auto','focus','overlay','switchOverlay','scale','crossAttribution','crossBaseline','projectionScale'];
 function displayPayload(){return {state,selected,settings:Object.fromEntries(settingIds.map(id=>[id,$('#'+id).type==='checkbox'?$('#'+id).checked:$('#'+id).value])),feedStatus:$('#feedStatus').textContent};}
 displaySync=createOSCADisplaySync({key:STORE,isDisplay,read:displayPayload,onStatus:text=>{$('#displayConnection').textContent=text;},onUpdate:payload=>{
  const incoming=checkedSession(payload.state);if(!incoming.history.length)throw Error('Empty display history');
  state=incoming;selected=Math.min(state.history.length-1,Math.max(0,Number.isInteger(payload.selected)?payload.selected:state.history.length-1));
  for(const id of settingIds){const value=payload.settings?.[id],control=$('#'+id);if(control.type==='checkbox'){if(typeof value==='boolean')control.checked=value;}else if(typeof value==='string'&&value.length<100){if(control.tagName!=='SELECT'||[...control.options].some(o=>o.value===value))control.value=value;}}
- $('#feedStatus').textContent=typeof payload.feedStatus==='string'?payload.feedStatus:'';drawCrossballot();draw();
+ $('#feedStatus').textContent=typeof payload.feedStatus==='string'?payload.feedStatus:'';paintFeedTiming();drawCrossballot();draw();
 }});
 const displayTarget=new URL(window.OSCABridge.embedded?(document.referrer||location.href):location.href);displayTarget.pathname=window.OSCABridge.embedded?'/':location.pathname;displayTarget.search='';displayTarget.hash='';displayTarget.searchParams.set('display','1');if(isDemo)displayTarget.searchParams.set('demo','1');
 $('#openDisplay').href=displayTarget.href;

@@ -11,7 +11,7 @@
    if(mode!==null&&mode!==Boolean(args.demo)){location.reload();return;}
    mode=Boolean(args.demo);resolveReady(args);
    const response=args.sos_response;
-   if(response&&pending.has(response.requestId)){const p=pending.get(response.requestId);clearTimeout(p.timer);pending.delete(response.requestId);response.error?p.reject(Error(response.error)):p.resolve(response.data);}
+   if(response&&pending.has(response.requestId)){const p=pending.get(response.requestId);clearTimeout(p.timer);pending.delete(response.requestId);if(response.error){const error=Error(response.error);error.timing=response.timing;p.reject(error);}else p.resolve(response.data);}
    height();
   });
   send('streamlit:componentReady',{apiVersion:1});
@@ -19,11 +19,11 @@
   window.addEventListener('load',height);window.addEventListener('resize',height);
  }
  window.OSCABridge={embedded,ready,get args(){return args;},
-  refresh(){
+  refresh(knownVersion=null,force=false){
    if(!embedded)throw Error('Streamlit refresh is only available when embedded');
    const requestId=crypto.randomUUID();return new Promise((resolve,reject)=>{
     const timer=setTimeout(()=>{pending.delete(requestId);reject(Error('SOS request timed out; previous results retained'));},95000);
-    pending.set(requestId,{resolve,reject,timer});send('streamlit:setComponentValue',{dataType:'json',value:{action:'sos',requestId}});
+    pending.set(requestId,{resolve,reject,timer});send('streamlit:setComponentValue',{dataType:'json',value:{action:'sos',requestId,knownVersion,force}});
    });
   },
   navigate(demo){send('streamlit:setComponentValue',{dataType:'json',value:{action:'mode',demo:Boolean(demo),requestId:crypto.randomUUID()}});}

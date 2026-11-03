@@ -2,7 +2,7 @@
 from pathlib import Path
 import streamlit as st
 import streamlit.components.v1 as components
-from election_night.sos import pull
+from election_night.polling import FeedMonitor
 
 ROOT=Path(__file__).resolve().parent
 FRONTEND=ROOT/'election_night'/'frontend'
@@ -18,9 +18,9 @@ st.markdown('''<style>
 
 viewer=components.declare_component('osca_viewer',path=str(FRONTEND))
 
-@st.cache_data(ttl=45,show_spinner=False)
-def fetch_sos():
-    return pull(2026)
+@st.cache_resource
+def sos_monitor():
+    return FeedMonitor(2026)
 
 demo=str(st.query_params.get('demo','0'))=='1'
 display=str(st.query_params.get('display','0'))=='1'
@@ -37,8 +37,8 @@ if isinstance(request,dict):
         elif request.get('action')=='sos' and not demo and not display:
             try:
                 with st.spinner('Reading official Vermont SOS results…'):
-                    data=fetch_sos()
+                    data=sos_monitor().check(request.get('knownVersion'),force=request.get('force') is True)
                 st.session_state.osca_sos_response={'requestId':request_id,'data':data}
             except Exception as exc:
-                st.session_state.osca_sos_response={'requestId':request_id,'error':f'SOS refresh unavailable: {exc}'}
+                st.session_state.osca_sos_response={'requestId':request_id,'error':f'SOS refresh unavailable: {exc}','timing':sos_monitor().status(str(exc))}
             st.rerun()
