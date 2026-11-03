@@ -14,5 +14,6 @@ assert.equal(JSON.stringify(catalog),before);assert(demo[0].races.every(r=>Objec
 assert(demo.at(-1).races.every(r=>Object.values(H.totals(r)).some(v=>v>0)));
 const invalid=structuredClone(demo.at(-1));invalid.races[0].rows[0].votes[invalid.races[0].candidates[0].key]=-1;assert.throws(()=>H.validate(invalid,catalog));
 const missing=structuredClone(demo.at(-1));missing.races.pop();assert.throws(()=>H.validate(missing,catalog));
+const renamed=structuredClone(demo.at(-1));renamed.races[0].name='<svg onload=alert(1)>';assert.throws(()=>H.validate(renamed,catalog));
 const hartford=catalog.races.filter(r=>r.rows.some(t=>t.town==='HARTFORD'));assert.equal(hartford.length,2);assert(hartford.every(r=>r.rows.find(t=>t.town==='HARTFORD').partialTown));
 console.log('House checks passed: 13 rosters, full district geography, 1/2-seat margins, ties, uncontested races, zero/no reports, demo isolation, and snapshot validation.');

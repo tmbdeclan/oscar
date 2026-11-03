@@ -6,7 +6,7 @@
   const seen=new Set();
   for(const race of bundle.races){
    const expected=catalog.races.find(r=>r.key===race.key);
-   if(!expected||seen.has(race.key)||race.seats!==expected.seats)throw Error('Unknown or duplicate House contest');seen.add(race.key);
+   if(!expected||seen.has(race.key)||race.seats!==expected.seats||race.name!==expected.name)throw Error('Unknown or duplicate House contest');seen.add(race.key);
    if(!Array.isArray(race.candidates)||!race.candidates.length||race.candidates.length>80||new Set(race.candidates.map(c=>c.key)).size!==race.candidates.length)throw Error('Invalid House roster');
    for(const c of race.candidates)if(typeof c.key!=='string'||!/^\d+$/.test(c.key)||typeof c.name!=='string'||c.name.length>200||typeof c.party!=='string'||c.party.length>100)throw Error('Invalid House candidate');
    const towns=new Set(expected.rows.map(r=>r.town)),keys=race.candidates.map(c=>c.key);

@@ -163,6 +163,7 @@ function drawModel(){
   const sel=el('select',null,el('td',null,tr));sel.setAttribute('aria-label',c.name+' 2024 comparator');option(sel,'','No comparator');for(const b of base.candidates)option(sel,b.key,b.name);sel.value=state.comparators[c.key];sel.addEventListener('change',()=>{state.comparators[c.key]=sel.value;persist();drawCharts();drawModel();updateEntryIndicators();});
  }
 }
+function houseChartSvg(parent,id,label){const node=document.createElementNS('http://www.w3.org/2000/svg','svg');node.id=id;node.setAttribute('role','img');node.setAttribute('aria-label',label);parent.append(node);return node;}
 function drawHouse(){
  const snap=state.history[selected],bundle=snap.house,previous=state.history[Math.max(0,selected-1)].house,body=$('#houseCards');body.replaceChildren();
  const races=bundle?.races||houseCatalog.races;
@@ -188,10 +189,10 @@ function drawHouse(){
   const labels=features.map(f=>{const [x,y]=path.centroid(f);return {x,y,name:f.properties.TOWNNAME.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())+(rowMap.get(f.properties.TOWNNAME.toUpperCase()).partialTown?' (part)':'')};});
   for(let pass=0;pass<30;pass++)for(let a=0;a<labels.length;a++)for(let b=a+1;b<labels.length;b++){const l=labels[a],r=labels[b],dy=16-Math.abs(l.y-r.y);if(Math.abs(l.x-r.x)<(l.name.length+r.name.length)*2.9&&dy>0){const direction=l.y<r.y?-1:1;l.y+=direction*dy/2;r.y-=direction*dy/2;}}
   svg.append('g').selectAll('text').data(labels).join('text').attr('class','house-map-label').attr('x',l=>Math.max(l.name.length*2.9+3,Math.min(width-l.name.length*2.9-3,l.x))).attr('y',l=>l.y).attr('dy','.35em').attr('text-anchor','middle').text(l=>l.name);
-  const charts=el('div',null,layout);charts.className='house-charts';el('h3','Candidate totals',charts);const votesDiv=el('div',null,charts);votesDiv.innerHTML=`<svg id="${id}-votes" role="img" aria-label="${race.name} cumulative House candidate totals"></svg>`;
+  const charts=el('div',null,layout);charts.className='house-charts';el('h3','Candidate totals',charts);const votesDiv=el('div',null,charts);houseChartSvg(votesDiv,id+'-votes',race.name+' cumulative House candidate totals');
   const marginTitle=el('h3',race.seats===2?'Two-seat margin':'One-seat margin',charts);marginTitle.style.marginTop='12px';const focusName=race.candidates.find(c=>c.key===focusKey)?.name;
   el('p',focusName?`${focusName} minus ${race.seats===2?'second':'first'}-highest other candidate`:`Final-seat gap: ${race.seats===2?'second minus third':'first minus second'} place.`,charts).className='house-margin-note';
-  const marginDiv=el('div',null,charts);marginDiv.innerHTML=`<svg id="${id}-margin" role="img" aria-label="${race.name} final-seat margin"></svg>`;
+  const marginDiv=el('div',null,charts);houseChartSvg(marginDiv,id+'-margin',race.name+' final-seat margin');
   const palette=['#62a8ff','#ff9a4d','#64d68b','#ff82bd','#b59cff','#4ddbd2','#c4cbd1'],colors=new Map(race.candidates.map((c,i)=>[c.key,palette[i%palette.length]]));
   const historicRaces=state.history.map(h=>h.house?.races?.find(r=>r.key===race.key)||null),historicTotals=historicRaces.map(r=>r?H.totals(r):null);
   chart('#'+id+'-votes',race.candidates.map(c=>({color:colors.get(c.key),short:c.name,values:historicTotals.map(t=>t?.[c.key]??null)})),210);
