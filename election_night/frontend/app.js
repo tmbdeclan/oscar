@@ -9,6 +9,21 @@ const isDemo=window.OSCABridge.embedded?Boolean(hostArgs.demo):new URLSearchPara
 const isDisplay=window.OSCABridge.embedded?Boolean(hostArgs.display):new URLSearchParams(location.search).get('display')==='1';
 if(isDisplay){document.body.classList.add('results-display');document.title='OSCA · Results display';document.querySelector('.layout').append(document.querySelector('.scenario'));document.querySelector('.performance-legend').textContent='Arrows versus the selected 2024 comparator: ↑ / ↓ 2–<5 percentage points; ↑↑ / ↓↓ 5 points or more. Complete towns only. No arrow near baseline or without data. Hover for the calculation.';}
 const candidates=config.map(([key,name,color])=>({key,name,color})),keys=candidates.map(c=>c.key),towns=base.rows.map(r=>r.town),STORE=isDemo?'osca-simulation-v1':'osca-general-election-v1';
+// Race selection belongs to the presentation window, independent of control settings.
+let displayRace='senate';
+if(isDisplay){
+ try{displayRace=sessionStorage.getItem(STORE+'-display-race')||'senate';}catch(e){}
+ if(displayRace!=='senate'&&!houseCatalog.races.some(r=>r.key===displayRace))displayRace='senate';
+ option($('#displayRace'),'senate','Windsor Senate · 3 seats');
+ for(const race of houseCatalog.races)option($('#displayRace'),race.key,`${race.name} · ${race.seats} seat${race.seats===1?'':'s'}`);
+ $('#displayRace').value=displayRace;applyDisplayRace();
+ $('#displayRace').addEventListener('change',()=>{displayRace=$('#displayRace').value;try{sessionStorage.setItem(STORE+'-display-race',displayRace);}catch(e){}applyDisplayRace();draw();});
+}
+function applyDisplayRace(){
+ if(!isDisplay)return;
+ document.body.dataset.displayRace=displayRace;
+ document.querySelector('header h1').textContent=displayRace==='senate'?'Windsor Senate Election Night':houseCatalog.races.find(r=>r.key===displayRace).name+' Election Night';
+}
 const blank=town=>({town,status:'unreported',ballots:null,votes:Object.fromEntries(keys.map(k=>[k,null])),source:'Not reported'});
 const requestedComparators={Burrows:'Joe Major',Major:'Alison H. Clarkson',Izzo:'Marc Nemeth'};
 const requestedComparatorIds=Object.fromEntries(Object.entries(requestedComparators).map(([key,name])=>[key,base.candidates.find(c=>c.name===name)?.key||'']));
@@ -170,7 +185,7 @@ function drawHouse(){
  const jump=$('#houseJump');if(!jump.options.length){option(jump,'','Select a House race');for(const race of houseCatalog.races)option(jump,'house-'+race.key.toLowerCase().replace(/[^a-z0-9]+/g,'-'),race.name);jump.addEventListener('change',()=>{const target=document.getElementById(jump.value);if(target)target.scrollIntoView({block:'start'});});}
  $('#houseFeedStatus').textContent=(state.houseWarning?state.houseWarning+' Previous House results retained. ': '')+(isDemo?'SIMULATION · synthetic House votes. External-town reporting times are invented; no House forecast is implied.':bundle?`SOS ${bundle.official?'official':'unofficial'} · House feed fetched ${new Date(bundle.fetchedAt).toLocaleString('en-US',{timeZone:'America/New_York'})} ET.`:'No House feed saved at this reporting snapshot. Pull SOS results to begin.');
  for(const race of races){
-  const id='house-'+race.key.toLowerCase().replace(/[^a-z0-9]+/g,'-'),card=el('section',null,body);card.className='panel house-race';card.id=id;
+  const id='house-'+race.key.toLowerCase().replace(/[^a-z0-9]+/g,'-'),card=el('section',null,body);card.className='panel house-race';card.id=id;card.hidden=isDisplay&&displayRace!==race.key;
   const header=el('div',null,card);header.className='section-head';const title=el('div',null,header);el('h2',race.name,title);el('span',isDemo?'SIMULATION · SYNTHETIC RESULTS':bundle?(bundle.official?'SOS OFFICIAL':'SOS UNOFFICIAL'):'AWAITING SOS RESULTS',title).className='house-source-badge'+(isDemo?' synthetic':'');el('p',`${race.seats} seat${race.seats===1?'':'s'} · `+race.rows.map(r=>r.town.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())+(r.partialTown?' (part)':'')).join(' · '),title).className='house-note';
   const controls=el('label','Margin focus ',header);controls.className='house-controls';const focus=el('select',null,controls);focus.setAttribute('aria-label',race.name+' House margin focus');option(focus,'','Final-seat gap');for(const c of race.candidates)option(focus,c.key,c.name);
   const focusKey=race.candidates.some(c=>c.key===state.houseFocus?.[race.key])?state.houseFocus[race.key]:'';focus.value=focusKey;focus.addEventListener('change',()=>{state.houseFocus??={};state.houseFocus[race.key]=focus.value;persist();drawHouse();displaySync?.publish();});
@@ -211,6 +226,7 @@ function draw(){
  if(!state.history.length)return;const snap=state.history[selected];$('#timeline').max=state.history.length-1;$('#timeline').value=selected;
  const t=new Date(snap.time).toLocaleString('en-US',{timeZone:'America/New_York',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
  $('#snapshotLabel').textContent=`${selected+1}/${state.history.length} · ${t} ET · ${snap.source}`;
+ if(isDisplay)$('#displaySnapshot').textContent=$('#snapshotLabel').textContent;
  $('#modeBadge').textContent=isDemo?'SIMULATION':selected===state.history.length-1?'Latest snapshot':'Reviewing history';drawMap();drawCharts();drawModel();drawHouse();if(isDemo&&!isDisplay)renderEntry();displaySync?.publish();
 }
 $('#timeline').addEventListener('input',e=>{selected=Number(e.target.value);draw();});$('#focus').addEventListener('change',drawCharts);$('#overlay').addEventListener('change',drawCharts);$('#switchOverlay').addEventListener('change',drawCharts);$('#scale').addEventListener('input',()=>{drawModel();displaySync?.publish();});

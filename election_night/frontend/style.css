@@ -61,3 +61,16 @@ th.vote-heading{padding-right:47px}
 .house-source-badge{display:inline-block;font-size:10px;letter-spacing:1px;color:#a9c4d8;margin:0 0 5px;font-weight:700}.house-source-badge.synthetic{color:#f4c680}
 
 .feed-timing{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-top:12px;background:#111a22}.feed-timing>div>span{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.6px}.feed-timing strong{font-size:12px;font-weight:500}.feed-timing p{grid-column:1/-1;font-size:11px;margin:0;color:var(--muted)}.results-display .feed-timing{padding:8px 12px;gap:8px;margin-top:8px}.results-display .feed-timing strong{font-size:11px}.results-display .feed-timing p{font-size:10px}@media(max-width:800px){.feed-timing{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* A presentation window shows one locally selected race at a time. */
+.display-race-toolbar{display:none}
+.results-display .display-race-toolbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:14px 0 8px}
+.display-race-toolbar label{display:flex;align-items:center;gap:10px;white-space:nowrap;font-size:13px}
+#displayRace{min-width:265px;max-width:100%}
+#displaySnapshot{font-size:12px;color:var(--muted);text-align:right}
+.results-display[data-display-race="senate"] #houseResults{display:none}
+.results-display:not([data-display-race="senate"]) #rollout{display:none}
+.results-display #rollout>.controls,.results-display #houseResults>.section-head{display:none}
+.results-display #houseResults{margin-top:12px;padding-top:0;border-top:0}
+.results-display .house-race[hidden]{display:none}
+@media(max-width:850px){.results-display .display-race-toolbar{align-items:flex-start;flex-direction:column;gap:8px}#displaySnapshot{text-align:left}.display-race-toolbar label{max-width:100%}#displayRace{min-width:0}}

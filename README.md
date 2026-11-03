@@ -151,3 +151,13 @@ Publication timing and monitor settings synchronize to the separate display,
 which never polls independently. Simulation mode keeps polling disabled.
 Checks: `python -m unittest discover -s election_night/tests` and
 `node election_night/tests/feed-timing.test.cjs`.
+
+
+## Display race selector
+
+The results display includes **Show race**, with the Windsor Senate contest and all
+13 overlapping House contests. It shows only the selected race and retains the
+shared source timing, connection status, and selected reporting snapshot. The
+choice is stored in that display window's session storage, survives reloads, and
+is independent of the control panel and other displays. The control panel still
+shows all races. Switching views does not change results or model assumptions.
