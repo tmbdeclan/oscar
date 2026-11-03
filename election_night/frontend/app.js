@@ -89,15 +89,26 @@ $('#save').addEventListener('click',()=>{
 });
 function townInfo(town){const r=state.history[selected].rows.find(r=>r.town===town),b=base.rows.find(r=>r.town===town);$('#townDetails').textContent=`${town}: ${r.status} · ${r.ballots===null?'unknown ballots':fmt(r.ballots)+' ballots'} · 2024: ${fmt(b.ballots)} ballots. `+candidates.map(c=>`${c.key}: ${r.votes[c.key]==null?'—':fmt(r.votes[c.key])}`).join(' · ');}
 function drawMap(){
- const svg=d3.select('#map'),width=$('#map').clientWidth||350,height=410;svg.attr('viewBox',`0 0 ${width} ${height}`);svg.selectAll('*').remove();
+ const svg=d3.select('#map'),width=$('#map').clientWidth||350,height=$('#map').clientHeight||560;svg.attr('viewBox',`0 0 ${width} ${height}`);svg.selectAll('*').remove();
  const snap=state.history[selected],prev=state.history[Math.max(0,selected-1)],rows=new Map(snap.rows.map(r=>[r.town,r]));
  const path=d3.geoPath(d3.geoMercator().fitExtent([[12,10],[width-12,height-10]],geo));
  svg.selectAll('path').data(geo.features).join('path').attr('class','town').attr('tabindex',0).attr('d',path).attr('fill',f=>{
   const r=rows.get(f.properties.TOWNNAME.toUpperCase()),old=prev.rows.find(p=>p.town===r.town);
   if(selected>0&&JSON.stringify(r)!==JSON.stringify(old))return '#ff9a4d';return {complete:'#62c985',partial:'#e2c575',unreported:'#1d2630'}[r.status];
  }).attr('aria-label',f=>f.properties.TOWNNAME+' '+rows.get(f.properties.TOWNNAME.toUpperCase()).status).on('click',(_,f)=>townInfo(f.properties.TOWNNAME.toUpperCase())).on('keydown',(e,f)=>{if(e.key==='Enter'||e.key===' ')townInfo(f.properties.TOWNNAME.toUpperCase());}).append('title').text(f=>f.properties.TOWNNAME);
- const labels=new Set(['WOODSTOCK','HARTFORD','HARTLAND','WEST WINDSOR','WEATHERSFIELD']);
- svg.selectAll('text').data(geo.features.filter(f=>labels.has(f.properties.TOWNNAME.toUpperCase()))).join('text').attr('x',f=>path.centroid(f)[0]).attr('y',f=>path.centroid(f)[1]).attr('text-anchor','middle').attr('font-size',10).attr('fill','#eff4f8').attr('stroke','#0f1419').attr('stroke-width',3).attr('paint-order','stroke').attr('pointer-events','none').text(f=>f.properties.TOWNNAME.replace('WEST ','W. '));
+ // Label every district town; separate close labels and connect displaced names.
+ const labels=geo.features.map(f=>{const [x,y]=path.centroid(f),name=f.properties.TOWNNAME.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase());return {name,ax:x,ay:y,x,y,w:name.length*5.2+4};});
+ for(const label of labels)label.x=Math.max(label.w/2+3,Math.min(width-label.w/2-3,label.x));
+ for(let pass=0;pass<60;pass++){
+  for(let i=0;i<labels.length;i++)for(let j=i+1;j<labels.length;j++){
+   const a=labels[i],b=labels[j],overlapX=(a.w+b.w)/2+3-Math.abs(a.x-b.x),overlapY=13-Math.abs(a.y-b.y);
+   if(overlapX>0&&overlapY>0){const direction=a.y<b.y?-1:1;a.y+=direction*overlapY/2;b.y-=direction*overlapY/2;}
+  }
+  for(const label of labels)label.y=Math.max(10,Math.min(height-10,label.y));
+ }
+ svg.append('g').attr('aria-hidden','true').attr('pointer-events','none').selectAll('line').data(labels.filter(l=>Math.hypot(l.x-l.ax,l.y-l.ay)>5)).join('line').attr('x1',l=>l.ax).attr('y1',l=>l.ay).attr('x2',l=>l.x).attr('y2',l=>l.y).attr('stroke','#c4d1dc').attr('stroke-width',.8);
+ svg.append('g').attr('pointer-events','none').selectAll('text').data(labels).join('text').attr('class','town-label').attr('x',l=>l.x).attr('y',l=>l.y).attr('dy','.35em').attr('text-anchor','middle').attr('font-size',10).attr('fill','#eff4f8').attr('stroke','#0f1419').attr('stroke-width',2.5).attr('paint-order','stroke').text(l=>l.name);
+
  const complete=snap.rows.filter(r=>r.status==='complete').length,partial=snap.rows.filter(r=>r.status==='partial').length;
  const coverage=snap.rows.filter(r=>r.status==='complete').reduce((s,r)=>s+base.rows.find(b=>b.town===r.town).ballots,0)/36121;
  $('#coverage').textContent=`${complete}/25 towns complete · ${partial} partial · ${(coverage*100).toFixed(1)}% of 2024 ballots in complete towns.`;
