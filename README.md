@@ -110,6 +110,10 @@ first minus second for one seat, or second minus third for two seats. Selecting 
 candidate instead shows their votes minus the Nth-highest other candidate for N
 seats. Ties are zero; an uncontested final seat has no invented opponent or margin.
 Named write-ins are contenders; unallocated write-ins are shown separately.
+SOS releases may omit unreported races or towns. Available House results load
+immediately; omitted towns retain prior counts or remain awaiting results, with
+an explicit note in each affected race. Unknown contests and invalid counts
+still reject the House update.
 
 The combined SOS refresh reads the House feed in addition to Senate and turnout,
 retaining prior House results on a House-feed failure. Successful updates are saved

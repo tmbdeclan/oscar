@@ -207,6 +207,7 @@ function drawHouse(){
   const focusKey=race.candidates.some(c=>c.key===state.houseFocus?.[race.key])?state.houseFocus[race.key]:'';focus.value=focusKey;focus.addEventListener('change',()=>{state.houseFocus??={};state.houseFocus[race.key]=focus.value;persist();drawHouse();displaySync?.publish();});
   const layout=el('div',null,card);layout.className='house-layout';const mapPanel=el('div',null,layout),map=el('div',null,mapPanel);map.innerHTML='<svg class="house-map" role="img"></svg>';const svgNode=map.firstChild;svgNode.setAttribute('aria-label',race.name+' reporting map');
   const coverage=el('p',`${race.rows.filter(r=>r.status==='complete').length}/${race.rows.length} towns complete · ${race.rows.filter(r=>r.status==='partial').length} partial`,mapPanel);coverage.className='house-coverage';
+  if(race.missingFromLatest?.length)el('p','Absent from latest SOS release: '+race.missingFromLatest.join(', ')+'. Prior counts retained where available; otherwise awaiting results.',mapPanel).className='house-note';
   el('p','Green: complete · Gold: partial · Orange: new/revised · Gray: not reported',mapPanel).className='house-note';
   const townDetail=el('p','Select a town for its House results.',mapPanel);townDetail.className='house-town-detail';
   const outside=race.rows.filter(r=>!towns.includes(r.town)).map(r=>r.town.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase()));
@@ -261,7 +262,7 @@ async function refresh(force=true){
   if(envelope.unchanged){if(envelope.version!==knownVersion)throw Error('Unrecognized unchanged release');return;}
   const data=envelope.data;
   if(data.year!==2026||!Array.isArray(data.rows)||!Array.isArray(data.candidates))throw Error('Unexpected SOS schema');
-  houseProblem=data.houseError||'';if(data.house){try{incomingHouse=H.validate(data.house,houseCatalog);}catch(e){houseProblem='House update rejected: '+e.message;}}
+  houseProblem=data.houseError||'';if(data.house){try{incomingHouse=H.mergeFeed(data.house,houseCatalog,state.house);}catch(e){houseProblem='House update rejected: '+e.message;}}
   const idMap={};for(const c of data.candidates){const match=candidates.find(x=>c.name.toLowerCase()===x.name.toLowerCase());if(!match)throw Error('SOS candidate roster changed: '+c.name+'. Update adapter before applying.');idMap[c.key]=match.key;}
   if(new Set(Object.values(idMap)).size!==keys.length)throw Error('SOS roster is incomplete; prior results retained');
   const mapped=data.rows.map(r=>{const votes=Object.fromEntries(keys.map(k=>[k,null]));for(const [id,v] of Object.entries(r.votes)){if(idMap[id])votes[idMap[id]]=v;}return {...r,votes,source:data.official?'SOS official':'SOS unofficial',note:r.warning||''};});

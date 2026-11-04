@@ -19,6 +19,30 @@
   }
   return bundle;
  }
+ function mergeFeed(bundle,catalog,previous=null){
+  if(!bundle||!Array.isArray(bundle.races)||!bundle.races.length||new Set(bundle.races.map(r=>r.key)).size!==bundle.races.length)throw Error('Invalid House feed contest set');
+  if(previous)validate(previous,catalog);
+  // SOS publishes reported towns only. Validate the supplied footprint before
+  // filling omissions, so an unknown town or malformed count cannot be hidden.
+  for(const race of bundle.races){
+   const expected=catalog.races.find(r=>r.key===race.key);
+   if(!expected||!Array.isArray(race.rows)||!race.rows.length)throw Error('Unknown or empty House contest');
+   validate({races:[race]},{races:[{...expected,rows:expected.rows.filter(r=>race.rows.some(x=>x.town===r.town))}]});
+  }
+  const races=catalog.races.map(expected=>{
+   const incoming=bundle.races.find(r=>r.key===expected.key),prior=previous?.races.find(r=>r.key===expected.key),fallback=prior||expected;
+   const roster=new Map(fallback.candidates.map(c=>[c.key,c]));for(const c of incoming?.candidates||[])roster.set(c.key,c);
+   const candidates=[...roster.values()],missing=[];
+   const rows=expected.rows.map(template=>{
+    const current=incoming?.rows.find(r=>r.town===template.town),old=fallback.rows.find(r=>r.town===template.town);
+    if(!current)missing.push(template.town);
+    const row=structuredClone(current||old||template);
+    row.votes=Object.fromEntries(candidates.map(c=>[c.key,row.votes[c.key]??(row.status==='unreported'?null:0)]));return row;
+   });
+   return {...structuredClone(incoming||fallback),candidates,rows,missingFromLatest:missing};
+  });
+  return validate({...bundle,races},catalog);
+ }
  function totals(race){return Object.fromEntries(race.candidates.map(c=>[c.key,race.rows.filter(r=>r.status!=='unreported').reduce((n,r)=>n+(r.votes[c.key]??0),0)]));}
  function margin(votes,key,seats){
   if(!Object.hasOwn(votes,key))return null;
@@ -41,5 +65,5 @@
    return {...row,status:reported?'complete':'unreported',ballots:reported?ballots:null,votes,otherWriteIns:0};
   })}))}));
  }
- const api={validate,totals,margin,seatGap,demo};if(typeof module!=='undefined')module.exports=api;else root.OSCAHouse=api;
+ const api={validate,mergeFeed,totals,margin,seatGap,demo};if(typeof module!=='undefined')module.exports=api;else root.OSCAHouse=api;
 })(typeof window!=='undefined'?window:globalThis);

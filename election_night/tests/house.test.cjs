@@ -17,3 +17,15 @@ const missing=structuredClone(demo.at(-1));missing.races.pop();assert.throws(()=
 const renamed=structuredClone(demo.at(-1));renamed.races[0].name='<svg onload=alert(1)>';assert.throws(()=>H.validate(renamed,catalog));
 const hartford=catalog.races.filter(r=>r.rows.some(t=>t.town==='HARTFORD'));assert.equal(hartford.length,2);assert(hartford.every(r=>r.rows.find(t=>t.town==='HARTFORD').partialTown));
 console.log('House checks passed: 13 rosters, full district geography, 1/2-seat margins, ties, uncontested races, zero/no reports, demo isolation, and snapshot validation.');
+// Election-night feeds omit entire races and individual unreported towns.
+const partial=structuredClone(demo.at(-1));partial.races=partial.races.slice(1);const omittedTown=partial.races.find(r=>r.rows.length>1);const absent=omittedTown.rows.pop();
+const partialBefore=JSON.stringify(partial),merged=H.mergeFeed(partial,catalog);
+assert.equal(merged.races.length,13);H.validate(merged,catalog);
+assert.equal(merged.races[0].rows[0].status,'unreported');
+assert.equal(merged.races.find(r=>r.key===omittedTown.key).rows.find(r=>r.town===absent.town).status,'unreported');
+const retained=H.mergeFeed(partial,catalog,demo.at(-1));
+assert.deepEqual(H.totals(retained.races[0]),H.totals(demo.at(-1).races[0]));
+assert(retained.races[0].missingFromLatest.length>0);assert.equal(JSON.stringify(partial),partialBefore);
+const badPartial=structuredClone(partial);badPartial.races[0].rows[0].votes[badPartial.races[0].candidates[0].key]=-2;assert.throws(()=>H.mergeFeed(badPartial,catalog));
+const duplicated=structuredClone(partial);duplicated.races.push(duplicated.races[0]);assert.throws(()=>H.mergeFeed(duplicated,catalog));
+console.log('Partial SOS House feeds: absent races and towns retained or marked awaiting; invalid counts and duplicates still rejected.');
